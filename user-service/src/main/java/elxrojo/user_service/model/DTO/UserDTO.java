@@ -9,9 +9,10 @@ public class UserDTO {
     private Long id;
     private String nombres;
     private String apellidos;
-    private Integer dni;
+    private Long dni;
     private String email;
-    private Integer telefono;
-    private Integer cvu;
+    private Long telefono;
+    private String cvu;
     private String alias;
+    private String contrasena;
 }
