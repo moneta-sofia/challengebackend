@@ -2,6 +2,7 @@ package elxrojo.user_service.service.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.user_service.model.DTO.UserDTO;
+import elxrojo.user_service.model.User;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
 import org.slf4j.Logger;
@@ -14,8 +15,6 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -36,12 +35,25 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public UserDTO signup(UserDTO user) throws IOException {
-        log.info("CVU: " + generateCVU());
-        log.info("Alias: " + generateAlias());
+    public UserDTO signup(UserDTO userDTO) throws IOException {
 
-//        userRepository.existsByCvu(Integer.parseInt(cvu.toString()));
-        return null;
+        String cvu = generateCVU();
+        while (userRepository.existsByCvu(cvu)) {
+            cvu = generateCVU();
+        }
+
+        String alias = generateAlias();
+        while (userRepository.existsByAlias(alias)) {
+            alias = generateAlias();
+        }
+
+        userDTO.setAlias(alias);
+        userDTO.setCvu(cvu);
+
+        User user = mapper.convertValue(userDTO, User.class);
+        userRepository.save(user);
+
+        return userDTO;
     }
 
 
@@ -70,7 +82,6 @@ public class UserServiceImpl implements IUserService {
                 words = reader.lines().collect(Collectors.toList());
             }
 
-
             for (int i = 0; i < 3; i++) {
                 alias.append(words.get(new Random().nextInt(words.size())));
                 if (i < 2) {
@@ -83,8 +94,4 @@ public class UserServiceImpl implements IUserService {
             return null;
         }
     }
-
-
-
-
 }
