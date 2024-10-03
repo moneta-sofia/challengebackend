@@ -1,12 +1,13 @@
 package elxrojo.user_service.service.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import elxrojo.user_service.exception.BadRequest;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl implements IUserService {
 
-    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+//    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
 
     @Autowired
@@ -36,24 +37,41 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserDTO signup(UserDTO userDTO) throws IOException {
+        try {
+            //        Generating Alias and CVU
+            String cvu = generateCVU();
+            while (userRepository.existsByCvu(cvu)) {
+                cvu = generateCVU();
+            }
 
-        String cvu = generateCVU();
-        while (userRepository.existsByCvu(cvu)) {
-            cvu = generateCVU();
+            String alias = generateAlias();
+            while (userRepository.existsByAlias(alias)) {
+                alias = generateAlias();
+            }
+
+            userDTO.setAlias(alias);
+            userDTO.setCvu(cvu);
+
+            //        Validations
+
+            if (userRepository.existsByEmail(userDTO.getEmail())){
+                throw new BadRequest("This email already exists!");
+            }
+            if (userRepository.existsByDni(userDTO.getDni())){
+                throw new BadRequest("This DNI already exists!");
+            }
+            if (userRepository.existsByPhone(userDTO.getPhone())){
+                throw new BadRequest("This phone already exists!");
+            }
+
+            User user = mapper.convertValue(userDTO, User.class);
+            userRepository.save(user);
+
+            return userDTO;
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred during login!");
         }
 
-        String alias = generateAlias();
-        while (userRepository.existsByAlias(alias)) {
-            alias = generateAlias();
-        }
-
-        userDTO.setAlias(alias);
-        userDTO.setCvu(cvu);
-
-        User user = mapper.convertValue(userDTO, User.class);
-        userRepository.save(user);
-
-        return userDTO;
     }
 
 
@@ -61,6 +79,7 @@ public class UserServiceImpl implements IUserService {
     public UserDTO login(String email, String password) {
         return null;
     }
+
 
     private String generateCVU(){
         StringBuilder cvu = new StringBuilder();
@@ -90,8 +109,7 @@ public class UserServiceImpl implements IUserService {
             }
             return alias.toString();
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            return null;
+            throw new RuntimeException(e);
         }
     }
 }
