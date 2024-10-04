@@ -1,0 +1,12 @@
+stages:
+  - build
+  - test
+
+include:
+  - local: '/user-service/.gitlab-ci.yml'
+
+workflow:
+  rules:
+    - changes:
+        - user-service/**
+
