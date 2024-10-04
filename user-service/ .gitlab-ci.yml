@@ -1,0 +1,45 @@
+stages:
+  - build
+  - test
+#  - deploy
+
+variables:
+  MAVEN_CLI_OPTS: "-s .mvn/wrapper/maven-wrapper.properties"
+#  MAVEN_OPTS: "-Dmaven.test.skip=true"
+
+build:
+  stage: build
+  image: maven:3.8.1-jdk-11
+  script:
+    - echo "Compilando el microservicio..."
+    - mvn clean package
+  artifacts:
+    paths:
+      - target/*.jar
+  only:
+    - main
+
+test:
+  stage: test
+  image: maven:3.8.1-jdk-11
+  script:
+    - echo "Ejecutando pruebas..."
+    - mvn test
+  artifacts:
+    when: always
+    paths:
+      - target/surefire-reports/
+  only:
+    - merge_requests
+
+#deploy:
+#  stage: deploy
+#  image: maven:3.8.1-jdk-11
+#  script:
+#    - echo "Desplegando el microservicio..."
+#    - mvn deploy
+#  only:
+#    - main
+#  environment:
+#    name: production
+#    url: https://my-payment-service.com

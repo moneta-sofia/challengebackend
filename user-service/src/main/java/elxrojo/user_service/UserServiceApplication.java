@@ -29,9 +29,6 @@ public class UserServiceApplication {
 						.title("User Service")
 						.version(appVersion)
 								.description("This API is part of the Backend Challenge project, designed to manage user operations and services. It includes endpoints for registration, authentication, and user data management, ensuring secure and efficient handling of requests."));
-
-//						.termsOfService("http://swagger.io/terms/")
-//						.license(new License().name("Apache 2.0").url("http://springdoc.org")));
 	}
 
 }

@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="242103c6-8660-40cd-859a-63195d808e5e" name="Changes" comment="Exceptions added">
+    <list default="true" id="242103c6-8660-40cd-859a-63195d808e5e" name="Changes" comment="Implementing Swagger">
+      <change afterPath="$PROJECT_DIR$/user-service/ .gitlab-ci.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/pom.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/user-service/src/main/java/elxrojo/user_service/UserServiceApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/java/elxrojo/user_service/UserServiceApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/user-service/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +133,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727963085888</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Implementing Swagger">
+      <option name="closed" value="true" />
+      <created>1728026593055</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1728026593055</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -152,6 +159,7 @@
     <MESSAGE value="Adding UserService and some methods" />
     <MESSAGE value="Finishing sign in" />
     <MESSAGE value="Exceptions added" />
-    <option name="LAST_COMMIT_MESSAGE" value="Exceptions added" />
+    <MESSAGE value="Implementing Swagger" />
+    <option name="LAST_COMMIT_MESSAGE" value="Implementing Swagger" />
   </component>
 </project>
