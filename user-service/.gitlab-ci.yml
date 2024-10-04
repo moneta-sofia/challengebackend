@@ -12,6 +12,7 @@ build:
   image: maven:3.8.1-jdk-11
   script:
     - echo "Compilando el microservicio..."
+    - cd user-service
     - mvn clean package
   artifacts:
     paths:
