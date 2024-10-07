@@ -38,6 +38,18 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserDTO signup(UserDTO userDTO) throws IOException {
         try {
+            //        Validations
+
+            if (userRepository.existsByEmail(userDTO.getEmail())){
+                throw new BadRequest("This email already exists!");
+            }
+            if (userRepository.existsByDni(userDTO.getDni())){
+                throw new BadRequest("This DNI already exists!");
+            }
+            if (userRepository.existsByPhone(userDTO.getPhone())){
+                throw new BadRequest("This phone already exists!");
+            }
+
             //        Generating Alias and CVU
             String cvu = generateCVU();
             while (userRepository.existsByCvu(cvu)) {
@@ -52,24 +64,12 @@ public class UserServiceImpl implements IUserService {
             userDTO.setAlias(alias);
             userDTO.setCvu(cvu);
 
-            //        Validations
-
-            if (userRepository.existsByEmail(userDTO.getEmail())){
-                throw new BadRequest("This email already exists!");
-            }
-            if (userRepository.existsByDni(userDTO.getDni())){
-                throw new BadRequest("This DNI already exists!");
-            }
-            if (userRepository.existsByPhone(userDTO.getPhone())){
-                throw new BadRequest("This phone already exists!");
-            }
-
             User user = mapper.convertValue(userDTO, User.class);
             userRepository.save(user);
 
             return userDTO;
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred during login!");
+            throw new RuntimeException("An error occurred during sign up!");
         }
 
     }

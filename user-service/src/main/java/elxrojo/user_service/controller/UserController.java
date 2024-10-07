@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-//@RequestMapping("/users")
+@RequestMapping("/users")
 public class UserController {
 
     @Autowired
@@ -28,5 +28,10 @@ public class UserController {
                 userRegistered.getCvu(),
                 userRegistered.getAlias());
         return ResponseEntity.ok(userResponse) ;
+    }
+
+    @GetMapping("/ping")
+    public ResponseEntity<String> ping() {
+        return ResponseEntity.ok("pong");
     }
 }

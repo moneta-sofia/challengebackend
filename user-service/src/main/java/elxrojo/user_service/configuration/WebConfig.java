@@ -14,6 +14,12 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:3000") // Especificar los orígenes permitidos
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos permitidos
                 .allowedHeaders("*") // Permitir todos los encabezados
-                .allowCredentials(true); // Permitir credenciales si es necesario
+                .allowCredentials(true) // Permitir credenciales si es necesario
+                .maxAge(3600);
+        registry.addMapping("/users/register")
+                .allowedOrigins("http://localhost:3000")
+                .allowedMethods("POST")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 }
