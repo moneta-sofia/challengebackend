@@ -1,0 +1,27 @@
+server:
+  port: 8083
+spring:
+  application:
+    name: gateway-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/BackendChallenge
+  cloud:
+    gateway:
+      default-filters:
+        - TokenRelay=
+      routes:
+        - id: user-service-register
+          uri: http://localhost:8081
+          predicates:
+          - Path=/users/register
+          filters:
+          - RemoveRequestHeader=Authorization
+        - id: user-service-authenticated
+          uri: http://localhost:8081
+          predicates:
+          - Path=/users/**
+          filters:
+          - TokenRelay
