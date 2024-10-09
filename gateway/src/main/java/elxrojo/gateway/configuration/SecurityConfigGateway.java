@@ -7,7 +7,7 @@
     import org.springframework.security.web.SecurityFilterChain;
     import org.springframework.security.web.server.SecurityWebFilterChain;
 
-    @EnableWebSecurity
+    @Configuration
     public class SecurityConfigGateway {
 
         @Bean
