@@ -16,10 +16,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*") // Permitir todos los encabezados
                 .allowCredentials(true) // Permitir credenciales si es necesario
                 .maxAge(3600);
-        registry.addMapping("/users/register")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("POST")
-                .allowedHeaders("*")
-                .allowCredentials(true);
     }
 }
