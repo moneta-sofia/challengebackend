@@ -6,9 +6,9 @@ import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.keycloak.admin.client.Keycloak;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
@@ -32,8 +32,10 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private IUserRepository userRepository;
 
-    ObjectMapper mapper = new ObjectMapper();
+    @Autowired
+    private KeycloakService keycloakService;
 
+    ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public UserDTO signup(UserDTO userDTO) throws IOException {
@@ -64,10 +66,16 @@ public class UserServiceImpl implements IUserService {
             userDTO.setAlias(alias);
             userDTO.setCvu(cvu);
 
-            User user = mapper.convertValue(userDTO, User.class);
-            userRepository.save(user);
+
+            int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
+
+            if (UserCreatedKL == 200) {
+                User user = mapper.convertValue(userDTO, User.class);
+                userRepository.save(user);
+            }
 
             return userDTO;
+
         } catch (Exception e) {
             throw new RuntimeException("An error occurred during sign up!");
         }
