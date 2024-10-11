@@ -7,6 +7,7 @@ import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -100,6 +104,29 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserDTO login(String email, String password) {
         return null;
+    }
+
+    @Override
+    public UserDTO getUserById(String id) {
+        try {
+            Optional<UserRepresentation> user = keycloakService.findInKeycloak(id);
+            if (user.isPresent()) {
+                Map<String, List<String>> attributes = user.get().getAttributes();
+                UserDTO userDTO = new UserDTO();
+                userDTO.setEmail(user.get().getEmail());
+                userDTO.setFirstName(user.get().getFirstName());
+                userDTO.setLastName(user.get().getLastName());
+                userDTO.setDni(Long.parseLong(attributes.get("dni").get(0)));
+                userDTO.setPhone(Long.parseLong(attributes.get("phone").get(0)));
+                userDTO.setAlias(attributes.get("alias").get(0));
+                userDTO.setCvu(attributes.get("cvu").get(0));
+
+                return userDTO  ;
+            }
+            return null;
+        } catch (Exception e) {
+            throw new RuntimeException("Error converting user");
+        }
     }
 
 

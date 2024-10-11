@@ -39,8 +39,9 @@ public class UserController {
         return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token)) ;
     }
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
-        return ResponseEntity.ok("pong");
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> ping(@PathVariable String id) {
+        UserDTO user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
     }
 }

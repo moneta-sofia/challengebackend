@@ -18,7 +18,7 @@
             http
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeExchange(exchanges -> exchanges
-                            .pathMatchers("/users/register").permitAll()  // Rutas públicas
+                            .pathMatchers("/users/**").permitAll()  // Rutas públicas // Rutas públicas
                             .anyExchange().authenticated()                // Otras rutas deben estar autenticadas
                     )
                     .csrf(csrf -> csrf.disable())                    // Deshabilitar CSRF si no lo necesitas

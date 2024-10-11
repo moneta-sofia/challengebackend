@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
-import static org.keycloak.admin.client.KeycloakBuilder.builder;
+import java.util.*;
 
 @Service
 public class KeycloakService {
@@ -39,15 +37,15 @@ public class KeycloakService {
     private static final Logger log = LoggerFactory.getLogger(KeycloakService.class);
 
 
-    private Keycloak createUserInstance(){
+    private Keycloak UserInstance(String user, String password){
         try {
             return KeycloakBuilder.builder()
                     .serverUrl(SERVER_URL)
                     .realm(REALM)
                     .clientId(CLIENT_ID)
                     .clientSecret(CLIENT_SECRET)
-                    .username(ADMIN_USERNAME)
-                    .password(ADMIN_PASSWORD)
+                    .username((user != null) ? user : ADMIN_USERNAME)
+                    .password((password != null) ? password : ADMIN_PASSWORD)
                     .build();
         } catch (Exception e){
             log.error("Error creating Keycloak instance: ", e);
@@ -60,7 +58,7 @@ public class KeycloakService {
         Response response = null;
         try {
 
-            Keycloak instance = createUserInstance();
+            Keycloak instance = UserInstance(null, null);
 
             // Crear representación del usuario
             UserRepresentation userRepresentation = new UserRepresentation();
@@ -69,6 +67,15 @@ public class KeycloakService {
             userRepresentation.setEmail(userDTO.getEmail());
             userRepresentation.setFirstName(userDTO.getFirstName());
             userRepresentation.setLastName(userDTO.getLastName());
+
+            // Agregar atributos personalizados
+            Map<String, List<String>> attributes = new HashMap<>();
+            attributes.put("phone", Collections.singletonList(userDTO.getPhone().toString()));
+            attributes.put("dni", Collections.singletonList(userDTO.getDni().toString()));
+            attributes.put("alias", Collections.singletonList(userDTO.getAlias()));
+            attributes.put("cvu", Collections.singletonList(userDTO.getCvu()));
+
+            userRepresentation.setAttributes(attributes);
 
             // Crear credenciales
             CredentialRepresentation credential = new CredentialRepresentation();
@@ -85,6 +92,8 @@ public class KeycloakService {
                 String errorMessage = response.readEntity(String.class); // Captura el mensaje de error de Keycloak
                 throw new RuntimeException("Failed to create user in Keycloak: " + response.getStatus() + " - " + errorMessage);
             }
+
+            instance.close();
             return response.getStatus();
         } catch (Exception e) {
             log.error("Error creating user in Keycloak: ", e);
@@ -93,19 +102,25 @@ public class KeycloakService {
     }
 
 
+    public Optional<UserRepresentation> findInKeycloak(String sub){
+        try {
+            Keycloak instance = UserInstance(null, null);
+            UserRepresentation userFound = instance.realm(REALM).users().get(sub).toRepresentation();
+            instance.close();
+            return Optional.ofNullable(userFound) ;
+        } catch (Exception e) {
+            log.error("Error finding user in Keycloak: ", e);
+            throw new RuntimeException("Failed to find user in Keycloak: " + e.getMessage());
+        }
+    }
+
 
     public String getToken(String username, String password) {
         try {
-            Keycloak getTokenInstance = KeycloakBuilder.builder()
-                    .serverUrl(SERVER_URL)
-                    .realm(REALM)
-                    .clientId(CLIENT_ID)
-                    .clientSecret(CLIENT_SECRET)
-                    .username(username)
-                    .password(password)
-                    .build();
-
-            return getTokenInstance.tokenManager().grantToken().getToken();
+            Keycloak instance = UserInstance(username, password);
+            String token = instance.tokenManager().grantToken().getToken();
+            instance.close();
+            return token;
         } catch (Exception e) {
             log.error("Error getting token: ", e);
             throw new RuntimeException("Failed to get token: " + e.getMessage());
