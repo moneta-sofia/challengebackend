@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.Enumeration;
 
 @RestController
 @RequestMapping("/users")
@@ -25,7 +24,7 @@ public class UserController {
         UserWithTokenResponse results = userService.signup(userDTO);
 
         UserDTO userCreated = results.getUserDTO();
-        String token = (String) results.getAccesToken();
+        String token = (String) results.getAccessToken();
 
         User userResponse = new User(
                 userCreated.getFirstName(),

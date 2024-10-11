@@ -14,17 +14,17 @@ public class UserWithTokenResponse {
     private UserDTO userDTO;
 
     private User user;
-    private String accesToken;
+    private String accessToken;
 
 
     public UserWithTokenResponse(UserDTO userDTO, String accesToken) {
         this.userDTO = userDTO;
-        this.accesToken = accesToken;
+        this.accessToken = accesToken;
     }
 
     public UserWithTokenResponse(User user, String accesToken) {
         this.user = user;
-        this.accesToken = accesToken;
+        this.accessToken = accesToken;
     }
 
 
