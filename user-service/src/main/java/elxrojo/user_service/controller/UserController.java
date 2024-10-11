@@ -2,6 +2,7 @@ package elxrojo.user_service.controller;
 
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
+import elxrojo.user_service.model.UserWithTokenResponse;
 import elxrojo.user_service.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,23 +20,24 @@ public class UserController {
     IUserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> RegisterUser(@RequestBody UserDTO userDTO, HttpServletRequest request) throws IOException {
-        Enumeration<String> headerNames = request.getHeaderNames();
-        while (headerNames.hasMoreElements()) {
-            String headerName = headerNames.nextElement();
-            System.out.println(headerName + ": " + request.getHeader(headerName));
-        }
+    public ResponseEntity<UserWithTokenResponse> RegisterUser(@RequestBody UserDTO userDTO, HttpServletRequest request) throws IOException {
 
-        UserDTO userRegistered = userService.signup(userDTO);
+        UserWithTokenResponse results = userService.signup(userDTO);
+
+        UserDTO userCreated = results.getUserDTO();
+        String token = (String) results.getAccesToken();
+
         User userResponse = new User(
-                userRegistered.getFirstName(),
-                userRegistered.getLastName(),
-                userRegistered.getDni(),
-                userRegistered.getEmail(),
-                userRegistered.getPhone(),
-                userRegistered.getCvu(),
-                userRegistered.getAlias());
-        return ResponseEntity.ok(userResponse) ;
+                userCreated.getFirstName(),
+                userCreated.getLastName(),
+                userCreated.getDni(),
+                userCreated.getEmail(),
+                userCreated.getPhone(),
+                userCreated.getCvu(),
+                userCreated.getAlias());
+
+
+        return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token)) ;
     }
 
     @GetMapping("/ping")

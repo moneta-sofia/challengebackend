@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.user_service.exception.BadRequest;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
+import elxrojo.user_service.model.UserWithTokenResponse;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
-import org.keycloak.admin.client.Keycloak;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
+    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
 //    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
 
@@ -35,10 +38,17 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private KeycloakService keycloakService;
 
+    @Value("${keycloak.realm}")
+    private String REALM;
+
     ObjectMapper mapper = new ObjectMapper();
 
+
     @Override
-    public UserDTO signup(UserDTO userDTO) throws IOException {
+    public UserWithTokenResponse signup(UserDTO userDTO) throws IOException {
+
+        String token;
+
         try {
             //        Validations
 
@@ -69,12 +79,16 @@ public class UserServiceImpl implements IUserService {
 
             int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
 
-            if (UserCreatedKL == 200) {
+            log.info("Keycloak status: " + UserCreatedKL);
+
+            if (UserCreatedKL == 201) {
                 User user = mapper.convertValue(userDTO, User.class);
                 userRepository.save(user);
+
             }
 
-            return userDTO;
+            token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
+            return new UserWithTokenResponse(userDTO,token);
 
         } catch (Exception e) {
             throw new RuntimeException("An error occurred during sign up!");
