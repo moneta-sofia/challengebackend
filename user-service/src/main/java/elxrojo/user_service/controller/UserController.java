@@ -22,9 +22,7 @@ public class UserController {
 
     @PostMapping("/register")
     public ResponseEntity<UserWithTokenResponse> RegisterUser(@RequestBody UserDTO userDTO, HttpServletRequest request) throws IOException {
-
         UserWithTokenResponse results = userService.signup(userDTO);
-
         UserDTO userCreated = results.getUserDTO();
         String token = (String) results.getAccessToken();
 
@@ -37,8 +35,7 @@ public class UserController {
                 userCreated.getCvu(),
                 userCreated.getAlias());
 
-
-        return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token)) ;
+        return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token));
     }
 
     @GetMapping("/{id}")
@@ -48,9 +45,9 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String,String>> login(@RequestBody Map<String, String> loginData) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> loginData) {
         String token = userService.login(loginData.get("email"), loginData.get("password"));
-        HashMap<String,String> response = new HashMap<String,String>();
+        HashMap<String, String> response = new HashMap<String, String>();
         response.put("token", token);
         return ResponseEntity.ok(response);
 

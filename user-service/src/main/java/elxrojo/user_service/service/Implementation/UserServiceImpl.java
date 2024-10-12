@@ -1,12 +1,13 @@
 package elxrojo.user_service.service.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import elxrojo.user_service.exception.BadRequest;
+import elxrojo.user_service.exception.CustomException;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
+import jakarta.transaction.Transactional;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -56,14 +56,14 @@ public class UserServiceImpl implements IUserService {
         try {
             //        Validations
 
-            if (userRepository.existsByEmail(userDTO.getEmail())){
-                throw new BadRequest("This email already exists!");
+            if (userRepository.existsByEmail(userDTO.getEmail())) {
+                throw new CustomException("This email already exists!", HttpStatus.BAD_REQUEST);
             }
-            if (userRepository.existsByDni(userDTO.getDni())){
-                throw new BadRequest("This DNI already exists!");
+            if (userRepository.existsByDni(userDTO.getDni())) {
+                throw new CustomException("This DNI already exists!", HttpStatus.BAD_REQUEST);
             }
-            if (userRepository.existsByPhone(userDTO.getPhone())){
-                throw new BadRequest("This phone already exists!");
+            if (userRepository.existsByPhone(userDTO.getPhone())) {
+                throw new CustomException("This phone already exists!", HttpStatus.BAD_REQUEST);
             }
 
             //        Generating Alias and CVU
@@ -88,25 +88,36 @@ public class UserServiceImpl implements IUserService {
             if (UserCreatedKL == 201) {
                 User user = mapper.convertValue(userDTO, User.class);
                 userRepository.save(user);
-
             }
-
             token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
-            return new UserWithTokenResponse(userDTO,token);
-
-        } catch (Exception e) {
+            return new UserWithTokenResponse(userDTO, token);
+        } catch (CustomException e) {
+            throw e;
+        } catch (RuntimeException e) {
             throw new RuntimeException("An error occurred during sign up!");
         }
-
     }
 
     @Override
     public String login(String email, String password) {
         try {
 
+            String passwordFound = userRepository.findPasswordByEmail(email);
+            System.out.println(passwordFound);
+
+            if (email.isBlank() || password.isBlank()) {
+                throw new CustomException("Incomplete login information", HttpStatus.BAD_REQUEST);
+            } else if (!userRepository.existsByEmail(email)) {
+                throw new CustomException("Non-existent user :/", HttpStatus.NOT_FOUND);
+            } else if (!passwordFound.equals(password)) {
+                throw new CustomException("Incorrect password :/", HttpStatus.UNAUTHORIZED);
+            }
+
             return keycloakService.getToken(email, password);
-        } catch (RuntimeException e){
-            throw new RuntimeException("Failed to get token: " + e.getMessage());
+        } catch (CustomException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed login: " + e.getMessage());
         }
     }
 
@@ -125,7 +136,7 @@ public class UserServiceImpl implements IUserService {
                 userDTO.setAlias(attributes.get("alias").get(0));
                 userDTO.setCvu(attributes.get("cvu").get(0));
 
-                return userDTO  ;
+                return userDTO;
             }
             return null;
         } catch (Exception e) {
@@ -133,8 +144,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-
-    private String generateCVU(){
+    private String generateCVU() {
         StringBuilder cvu = new StringBuilder();
         for (int i = 0; i < 22; i++) {
             cvu.append((int) (Math.random() * 10));
