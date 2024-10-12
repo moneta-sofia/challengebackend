@@ -8,6 +8,6 @@ import java.io.IOException;
 
 public interface IUserService {
     UserWithTokenResponse signup(UserDTO user) throws IOException;
-    UserDTO login(String email, String password);
+    String login(String email, String password);
     UserDTO getUserById(String id);
 }

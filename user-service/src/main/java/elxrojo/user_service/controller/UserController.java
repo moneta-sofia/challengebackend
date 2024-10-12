@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -44,4 +46,14 @@ public class UserController {
         UserDTO user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<Map<String,String>> login(@RequestBody Map<String, String> loginData) {
+        String token = userService.login(loginData.get("email"), loginData.get("password"));
+        HashMap<String,String> response = new HashMap<String,String>();
+        response.put("token", token);
+        return ResponseEntity.ok(response);
+
+    }
+
 }

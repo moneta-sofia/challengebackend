@@ -100,10 +100,14 @@ public class UserServiceImpl implements IUserService {
 
     }
 
-
     @Override
-    public UserDTO login(String email, String password) {
-        return null;
+    public String login(String email, String password) {
+        try {
+
+            return keycloakService.getToken(email, password);
+        } catch (RuntimeException e){
+            throw new RuntimeException("Failed to get token: " + e.getMessage());
+        }
     }
 
     @Override
@@ -138,7 +142,6 @@ public class UserServiceImpl implements IUserService {
         return cvu.toString();
     }
 
-
     public String generateAlias() throws IOException {
         try {
             StringBuilder alias = new StringBuilder();
@@ -147,7 +150,7 @@ public class UserServiceImpl implements IUserService {
             // Read the lines from the file
             List<String> words;
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
-                words = reader.lines().collect(Collectors.toList());
+                words = reader.lines().toList();
             }
 
             for (int i = 0; i < 3; i++) {
