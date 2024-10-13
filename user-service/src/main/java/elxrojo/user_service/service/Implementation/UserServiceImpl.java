@@ -7,7 +7,6 @@ import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
-import jakarta.transaction.Transactional;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,10 +27,8 @@ import java.util.Random;
 
 @Service
 public class UserServiceImpl implements IUserService {
+
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
-
-//    private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
-
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -120,6 +117,15 @@ public class UserServiceImpl implements IUserService {
             throw new RuntimeException("Failed login: " + e.getMessage());
         }
     }
+
+    public void logout(String token){
+        try {
+            keycloakService.logoutInKeycloak(token);
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Failed to logout: " + e.getMessage());
+        }
+    }
+
 
     @Override
     public UserDTO getUserById(String id) {

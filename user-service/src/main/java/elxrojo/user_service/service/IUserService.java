@@ -10,4 +10,5 @@ public interface IUserService {
     UserWithTokenResponse signup(UserDTO user) throws IOException;
     String login(String email, String password);
     UserDTO getUserById(String id);
+    void logout(String token);
 }

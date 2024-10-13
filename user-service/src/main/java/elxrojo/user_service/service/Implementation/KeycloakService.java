@@ -1,14 +1,20 @@
 package elxrojo.user_service.service.Implementation;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import elxrojo.user_service.exception.CustomException;
 import elxrojo.user_service.model.DTO.UserDTO;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
+import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.keycloak.representations.idm.UserSessionRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -124,6 +130,24 @@ public class KeycloakService {
         } catch (Exception e) {
             log.error("Error getting token: ", e);
             throw new RuntimeException("Failed to get token: " + e.getMessage());
+        }
+    }
+
+    public void logoutInKeycloak(String token){
+        try {
+            Keycloak instance = UserInstance(null, null);
+            DecodedJWT jwt = JWT.decode(token);
+            String sub = jwt.getSubject();
+            List<UserSessionRepresentation> sessionRepresentations = instance.realm(REALM).users().get(sub).getUserSessions();
+            if (sessionRepresentations.isEmpty()) {
+                throw new CustomException("No sessions to close", HttpStatus.BAD_REQUEST);
+            }
+            instance.realm(REALM).users().get(sub).logout();
+            instance.close();
+        }catch (CustomException e) {
+            throw e;
+        }catch (Exception e) {
+            throw new RuntimeException("Failed logout" + e.getMessage());
         }
     }
 
