@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -29,6 +30,9 @@ import java.util.Random;
 public class UserServiceImpl implements IUserService {
 
     private static final Logger log = LoggerFactory.getLogger(UserServiceImpl.class);
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -77,6 +81,7 @@ public class UserServiceImpl implements IUserService {
             userDTO.setAlias(alias);
             userDTO.setCvu(cvu);
 
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
             int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
 
