@@ -133,6 +133,7 @@ public class KeycloakService {
         }
     }
 
+
     public void logoutInKeycloak(String token){
         try {
             Keycloak instance = UserInstance(null, null);

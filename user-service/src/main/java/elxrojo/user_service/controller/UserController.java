@@ -54,10 +54,12 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<Map<String,String>> logout(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring("Bearer ".length());
         userService.logout(token);
-        return ResponseEntity.ok("OK");
+        HashMap<String, String> response = new HashMap<String, String>();
+        response.put("response", "OK");
+        return ResponseEntity.ok(response);
     }
 
 
