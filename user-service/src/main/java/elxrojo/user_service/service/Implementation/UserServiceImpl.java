@@ -81,17 +81,15 @@ public class UserServiceImpl implements IUserService {
             userDTO.setAlias(alias);
             userDTO.setCvu(cvu);
 
-            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-
             int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
+            token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
 
-            log.info("Keycloak status: " + UserCreatedKL);
+            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
             if (UserCreatedKL == 201) {
                 User user = mapper.convertValue(userDTO, User.class);
                 userRepository.save(user);
             }
-            token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
             return new UserWithTokenResponse(userDTO, token);
         } catch (CustomException e) {
             throw e;
@@ -111,7 +109,7 @@ public class UserServiceImpl implements IUserService {
                 throw new CustomException("Incomplete login information", HttpStatus.BAD_REQUEST);
             } else if (!userRepository.existsByEmail(email)) {
                 throw new CustomException("Non-existent user :/", HttpStatus.NOT_FOUND);
-            } else if (!passwordFound.equals(password)) {
+            } else if (!passwordEncoder.matches(password, passwordFound)) {
                 throw new CustomException("Incorrect password :/", HttpStatus.UNAUTHORIZED);
             }
 
