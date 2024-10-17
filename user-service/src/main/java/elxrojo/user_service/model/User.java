@@ -28,17 +28,17 @@ public class User {
     @Column
     private String email;
 
-    @Column(name = "phone", length = 10, columnDefinition = "char(10)")
-    private Long phone;
+    @Column(name = "accountId", nullable = false)
+    private Long accountId;
 
-    @Column
-    private String password;
 
-    @Column(name = "cvu", length = 22, columnDefinition = "char(22)")
-    private String cvu;
-    @Column
-    private String alias;
-
+    public User(String firstName, String lastName, Long dni, String email, Long accountId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dni = dni;
+        this.email = email;
+        this.accountId = accountId;
+    }
 
     public User(Long id, String firstName, String lastName, Long dni, String email, Long telefono, String password) {
         this.id = id;
@@ -46,21 +46,9 @@ public class User {
         this.lastName = lastName;
         this.dni = dni;
         this.email = email;
-        this.phone = telefono;
-        this.password = password;
     }
 
     public User() {
-    }
-
-    public User(String firstName, String lastName, Long dni, String email, Long telefono, String cvu, String alias) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.dni = dni;
-        this.email = email;
-        this.phone = telefono;
-        this.cvu = cvu;
-        this.alias = alias;
     }
 
 }

@@ -68,18 +68,18 @@ public class UserServiceImpl implements IUserService {
             }
 
             //        Generating Alias and CVU
-            String cvu = generateCVU();
-            while (userRepository.existsByCvu(cvu)) {
-                cvu = generateCVU();
-            }
-
-            String alias = generateAlias();
-            while (userRepository.existsByAlias(alias)) {
-                alias = generateAlias();
-            }
-
-            userDTO.setAlias(alias);
-            userDTO.setCvu(cvu);
+//            String cvu = generateCVU();
+//            while (userRepository.existsByCvu(cvu)) {
+//                cvu = generateCVU();
+//            }
+//
+//            String alias = generateAlias();
+//            while (userRepository.existsByAlias(alias)) {
+//                alias = generateAlias();
+//            }
+//
+//            userDTO.setAlias(alias);
+//            userDTO.setCvu(cvu);
 
             int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
             token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
@@ -142,8 +142,6 @@ public class UserServiceImpl implements IUserService {
                 userDTO.setLastName(user.get().getLastName());
                 userDTO.setDni(Long.parseLong(attributes.get("dni").get(0)));
                 userDTO.setPhone(Long.parseLong(attributes.get("phone").get(0)));
-                userDTO.setAlias(attributes.get("alias").get(0));
-                userDTO.setCvu(attributes.get("cvu").get(0));
 
                 return userDTO;
             }

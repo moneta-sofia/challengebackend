@@ -78,8 +78,6 @@ public class KeycloakService {
             Map<String, List<String>> attributes = new HashMap<>();
             attributes.put("phone", Collections.singletonList(userDTO.getPhone().toString()));
             attributes.put("dni", Collections.singletonList(userDTO.getDni().toString()));
-            attributes.put("alias", Collections.singletonList(userDTO.getAlias()));
-            attributes.put("cvu", Collections.singletonList(userDTO.getCvu()));
 
             userRepresentation.setAttributes(attributes);
 

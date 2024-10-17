@@ -14,7 +14,5 @@ public class UserDTO {
     private Long dni;
     private String email;
     private Long phone;
-    private String cvu;
-    private String alias;
     private String password;
 }

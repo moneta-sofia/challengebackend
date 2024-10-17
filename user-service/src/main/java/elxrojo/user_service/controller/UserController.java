@@ -31,9 +31,7 @@ public class UserController {
                 userCreated.getLastName(),
                 userCreated.getDni(),
                 userCreated.getEmail(),
-                userCreated.getPhone(),
-                userCreated.getCvu(),
-                userCreated.getAlias());
+                userCreated.getPhone());
 
         return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token));
     }
