@@ -23,6 +23,13 @@ public class AccountController {
         return ResponseEntity.ok(idAccountCreated);
     }
 
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<Float> getBalance(@PathVariable Long userId){
+        Float balance = accountService.getBalance(userId);
+        return ResponseEntity.ok(balance);
+    }
+
     @GetMapping("/ping")
     public ResponseEntity<String> ping(){
         return ResponseEntity.ok("pong");
