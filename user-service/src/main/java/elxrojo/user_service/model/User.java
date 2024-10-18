@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table
+@Table(name = "user")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
 
@@ -17,18 +17,25 @@ public class User {
     @Column(name = "userId")
     private Long id;
 
-    @Column
+    @Column(name = "firstName")
     private String firstName;
-    @Column
+
+    @Column(name = "lastName")
     private String lastName;
 
     @Column(name = "dni", length = 8, columnDefinition = "char(8)")
     private Long dni;
 
     @Column
+    private String password;
+
+    @Column(name = "phone", length = 10, columnDefinition = "char(10)")
+    private Long phone;
+
+    @Column
     private String email;
 
-    @Column(name = "accountId", nullable = false)
+    @Column(name = "accountId", nullable = true)
     private Long accountId;
 
 

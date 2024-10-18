@@ -15,4 +15,5 @@ public class UserDTO {
     private String email;
     private Long phone;
     private String password;
+    private Long accountId;
 }

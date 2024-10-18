@@ -5,6 +5,7 @@ import elxrojo.user_service.exception.CustomException;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
+import elxrojo.user_service.repository.AccountRepository;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -41,6 +42,9 @@ public class UserServiceImpl implements IUserService {
     private IUserRepository userRepository;
 
     @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
     private KeycloakService keycloakService;
 
     @Value("${keycloak.realm}")
@@ -67,34 +71,43 @@ public class UserServiceImpl implements IUserService {
                 throw new CustomException("This phone already exists!", HttpStatus.BAD_REQUEST);
             }
 
-            //        Generating Alias and CVU
-//            String cvu = generateCVU();
+//                    Generating Alias and CVU
+            String cvu = generateCVU();
 //            while (userRepository.existsByCvu(cvu)) {
 //                cvu = generateCVU();
 //            }
-//
-//            String alias = generateAlias();
+
+            String alias = generateAlias();
 //            while (userRepository.existsByAlias(alias)) {
 //                alias = generateAlias();
 //            }
-//
-//            userDTO.setAlias(alias);
-//            userDTO.setCvu(cvu);
 
+
+            log.debug("Intentando crear usuario en Keycloak...");
             int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
+            log.debug("Código de estado al crear usuario en Keycloak: {}", UserCreatedKL);
+
+            log.debug("Obteniendo token para el nuevo usuario...");
             token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
 
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
             if (UserCreatedKL == 201) {
+                log.debug("Guardando usuario en el repositorio...");
+
                 User user = mapper.convertValue(userDTO, User.class);
+                Long idGenerated = userRepository.save(user).getId();
+                log.debug("Usuario guardado con ID generado: {}", idGenerated);
+                Long accountId = accountRepository.createAccount(alias, cvu, idGenerated );
+                user.setAccountId(accountId);
                 userRepository.save(user);
+
             }
             return new UserWithTokenResponse(userDTO, token);
         } catch (CustomException e) {
             throw e;
         } catch (RuntimeException e) {
-            throw new RuntimeException("An error occurred during sign up!");
+            throw new RuntimeException("An error occurred during sign up!" + e.getMessage(), e);
         }
     }
 

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table
+@Table(name = "account")
 @Getter
 @Setter
 public class Account {
@@ -44,4 +44,6 @@ public class Account {
         this.cvu = cvu;
         this.userId = userId;
     }
+
+
 }
