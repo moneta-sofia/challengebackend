@@ -15,6 +15,9 @@ public class Account {
     @Column(name = "accountId")
     private Long id;
 
+    @Column(name= "name")
+    private String name;
+
     @Column(name = "balance")
     private Float balance;
 
@@ -27,7 +30,18 @@ public class Account {
     @Column(name = "userId", nullable = false)
     private Long userId;
 
-    public Account(Float balance, String alias, String cvu, Long userId) {
+
+    public Account(Long id, String name, Float balance, String alias, String cvu, Long userId) {
+        this.id = id;
+        this.name = name;
+        this.balance = balance;
+        this.alias = alias;
+        this.cvu = cvu;
+        this.userId = userId;
+    }
+
+    public Account(String name, Float balance, String alias, String cvu, Long userId) {
+        this.name = name;
         this.balance = balance;
         this.alias = alias;
         this.cvu = cvu;
@@ -37,13 +51,7 @@ public class Account {
     public Account() {
     }
 
-    public Account(Long id, Float balance, String alias, String cvu, Long userId) {
-        this.id = id;
-        this.balance = balance;
-        this.alias = alias;
-        this.cvu = cvu;
-        this.userId = userId;
-    }
+
 
 
 }

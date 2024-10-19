@@ -99,7 +99,8 @@ public class UserServiceImpl implements IUserService {
                 User user = mapper.convertValue(userDTO, User.class);
                 Long idGenerated = userRepository.save(user).getId();
 
-                Long accountId = accountRepository.createAccount(alias, cvu, idGenerated );
+
+                Long accountId = accountRepository.createAccount(new AccountDTO(user.getFirstName() + " " + user.getLastName(),alias,cvu,idGenerated ) );
                 user.setAccountId(accountId);
                 userRepository.save(user);
 

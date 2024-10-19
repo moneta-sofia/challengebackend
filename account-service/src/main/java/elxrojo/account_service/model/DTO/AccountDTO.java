@@ -9,6 +9,7 @@ import lombok.Setter;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountDTO {
     private Long id;
+    private String name;
     private Float balance;
     private String alias;
     private String cvu;

@@ -22,8 +22,8 @@ public class AccountServiceImpl implements IAccountService {
 
 
     @Override
-    public Long createAccount(String alias, String cvu, Long userId) {
-        Account account = accountRepository.save(new Account(0.0F, alias, cvu, userId));
+    public Long createAccount(String alias, String cvu, Long userId, String name) {
+        Account account = accountRepository.save(new Account(name, 0.0F, alias, cvu, userId));
         Account savedAccount = accountRepository.save(account);
         return savedAccount.getId();
 

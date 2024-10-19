@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.*;
  public interface IFeignAccountRepository {
 
     @PostMapping("/account/create")
-    Long createAccount(@RequestParam String alias,
-                       @RequestParam String cvu,
-                       @RequestParam Long userId);
+    Long createAccount(@RequestBody AccountDTO accountDTO);
 
     @GetMapping("/account/{userId}")
     AccountDTO getAccountByUser(@PathVariable Long userId);
