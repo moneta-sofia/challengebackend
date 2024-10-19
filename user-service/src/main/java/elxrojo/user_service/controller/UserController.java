@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> ping(@PathVariable String id) {
+    public ResponseEntity<UserDTO> getUserBySub(@PathVariable String id) {
         UserDTO user = userService.getUserById(id);
         return ResponseEntity.ok(user);
     }
@@ -60,5 +60,9 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/{userSub}/accounts")
+    public ResponseEntity<Float> getBalanceByUser(@PathVariable String userSub) {
+        return ResponseEntity.ok(userService.getBalanceByUser(userSub));
+    }
 
 }

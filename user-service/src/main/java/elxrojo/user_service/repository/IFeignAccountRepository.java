@@ -1,9 +1,8 @@
 package elxrojo.user_service.repository;
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name= "account-service", url= "http://localhost:8085")
  public interface IFeignAccountRepository {
@@ -12,4 +11,8 @@ import org.springframework.web.bind.annotation.RequestParam;
     Long createAccount(@RequestParam String alias,
                        @RequestParam String cvu,
                        @RequestParam Long userId);
+
+    @GetMapping("/account/{userId}")
+    Float getBalance(@PathVariable Long userId);
+
 }

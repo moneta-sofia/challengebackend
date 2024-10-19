@@ -11,4 +11,5 @@ public interface IUserService {
     String login(String email, String password);
     UserDTO getUserById(String id);
     void logout(String token);
+    float getBalanceByUser(String userSub);
 }

@@ -97,7 +97,7 @@ public class UserServiceImpl implements IUserService {
 
                 User user = mapper.convertValue(userDTO, User.class);
                 Long idGenerated = userRepository.save(user).getId();
-                log.debug("Usuario guardado con ID generado: {}", idGenerated);
+
                 Long accountId = accountRepository.createAccount(alias, cvu, idGenerated );
                 user.setAccountId(accountId);
                 userRepository.save(user);
@@ -142,6 +142,16 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    @Override
+    public float getBalanceByUser(String userSub) {
+        try {
+            Long userId = getUserBySub(userSub).getId();
+            return accountRepository.getBalance(userId);
+        } catch (CustomException e) {
+            throw new CustomException("Failed to get balance ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @Override
     public UserDTO getUserById(String id) {
@@ -155,6 +165,14 @@ public class UserServiceImpl implements IUserService {
                 userDTO.setLastName(user.get().getLastName());
                 userDTO.setDni(Long.parseLong(attributes.get("dni").get(0)));
                 userDTO.setPhone(Long.parseLong(attributes.get("phone").get(0)));
+                String idKl = user.get().getId();
+
+                System.out.println(idKl);
+                System.out.println(idKl);
+                System.out.println(idKl);
+                System.out.println(idKl);
+                System.out.println(idKl);
+                userDTO.setId(idKl);
 
                 return userDTO;
             }
@@ -162,6 +180,12 @@ public class UserServiceImpl implements IUserService {
         } catch (Exception e) {
             throw new RuntimeException("Error converting user");
         }
+    }
+
+    private User getUserBySub(String sub){
+        Optional<UserRepresentation> userKl = keycloakService.findInKeycloak(sub);
+        User user = userRepository.findByEmail(userKl.get().getEmail());
+        return user;
     }
 
     private String generateCVU() {
