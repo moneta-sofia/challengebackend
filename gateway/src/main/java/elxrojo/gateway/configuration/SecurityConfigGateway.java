@@ -18,10 +18,11 @@
             http
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeExchange(exchanges -> exchanges
-                            .pathMatchers("/users/**").permitAll()  // Rutas públicas // Rutas públicas
-                            .anyExchange().authenticated()                // Otras rutas deben estar autenticadas
+                            .pathMatchers("/users/{usersub}/accounts").authenticated()
+                            .pathMatchers("/users/**").permitAll()
+                            .anyExchange().authenticated()
                     )
-                    .csrf(csrf -> csrf.disable())                    // Deshabilitar CSRF si no lo necesitas
+                    .csrf(csrf -> csrf.disable())
                     .oauth2ResourceServer(oauth2 -> oauth2
                             .jwt(jwt -> jwt.jwkSetUri("http://localhost:8080/realms/BackendChallenge/protocol/openid-connect/certs"))
                     );
