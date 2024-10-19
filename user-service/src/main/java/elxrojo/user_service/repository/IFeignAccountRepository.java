@@ -1,5 +1,6 @@
 package elxrojo.user_service.repository;
 
+import elxrojo.user_service.model.DTO.AccountDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,6 @@ import org.springframework.web.bind.annotation.*;
                        @RequestParam Long userId);
 
     @GetMapping("/account/{userId}")
-    Float getBalance(@PathVariable Long userId);
+    AccountDTO getAccountByUser(@PathVariable Long userId);
 
 }

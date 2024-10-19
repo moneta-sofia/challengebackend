@@ -1,5 +1,6 @@
 package elxrojo.user_service.service;
 
+import elxrojo.user_service.model.DTO.AccountDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.UserWithTokenResponse;
 
@@ -11,5 +12,5 @@ public interface IUserService {
     String login(String email, String password);
     UserDTO getUserById(String id);
     void logout(String token);
-    float getBalanceByUser(String userSub);
+    AccountDTO getAccountByUser(String userSub);
 }

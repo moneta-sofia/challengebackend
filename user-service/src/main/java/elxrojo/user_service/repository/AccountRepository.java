@@ -1,5 +1,6 @@
 package elxrojo.user_service.repository;
 
+import elxrojo.user_service.model.DTO.AccountDTO;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +21,8 @@ public class AccountRepository {
     }
 
 
-    public Float getBalance(@PathVariable Long userId){
-        return feignAccountRepository.getBalance(userId);
+    public AccountDTO getAccountByUser(@PathVariable Long userId){
+        return feignAccountRepository.getAccountByUser(userId);
     }
 
 }

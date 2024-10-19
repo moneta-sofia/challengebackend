@@ -2,6 +2,7 @@ package elxrojo.user_service.service.Implementation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.user_service.exception.CustomException;
+import elxrojo.user_service.model.DTO.AccountDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -143,10 +144,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public float getBalanceByUser(String userSub) {
+    public AccountDTO getAccountByUser(String userSub) {
         try {
             Long userId = getUserBySub(userSub).getId();
-            return accountRepository.getBalance(userId);
+            return accountRepository.getAccountByUser(userId);
         } catch (CustomException e) {
             throw new CustomException("Failed to get balance ", HttpStatus.INTERNAL_SERVER_ERROR);
         }

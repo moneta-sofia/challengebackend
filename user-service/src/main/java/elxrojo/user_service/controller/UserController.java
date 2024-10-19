@@ -1,5 +1,6 @@
 package elxrojo.user_service.controller;
 
+import elxrojo.user_service.model.DTO.AccountDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -61,8 +62,8 @@ public class UserController {
     }
 
     @GetMapping("/{userSub}/accounts")
-    public ResponseEntity<Float> getBalanceByUser(@PathVariable String userSub) {
-        return ResponseEntity.ok(userService.getBalanceByUser(userSub));
+    public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable String userSub) {
+        return ResponseEntity.ok(userService.getAccountByUser(userSub));
     }
 
 }

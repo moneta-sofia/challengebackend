@@ -1,7 +1,9 @@
 package elxrojo.account_service.service.implementation;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.account_service.exception.CustomException;
 import elxrojo.account_service.model.Account;
+import elxrojo.account_service.model.DTO.AccountDTO;
 import elxrojo.account_service.repository.IAccountRepository;
 import elxrojo.account_service.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ public class AccountServiceImpl implements IAccountService {
     @Autowired
     private IAccountRepository accountRepository;
 
+    ObjectMapper mapper = new ObjectMapper();
+
+
     @Override
     public Long createAccount(String alias, String cvu, Long userId) {
         Account account = accountRepository.save(new Account(0.0F, alias, cvu, userId));
@@ -25,17 +30,16 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public Float getBalance(Long userId) {
+    public AccountDTO getAccountByUser(Long userId) {
         try {
             Optional<Account> account = accountRepository.findByUserId(userId);
-            float balance;
-
             if (account.isPresent()) {
-                balance = account.get().getBalance();
+                AccountDTO accountDTO = mapper.convertValue(account.get(), AccountDTO.class);
+                return accountDTO;
             } else {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
-            return balance;
+
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {

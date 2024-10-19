@@ -2,6 +2,7 @@ package elxrojo.account_service.controller;
 
 
 import elxrojo.account_service.model.Account;
+import elxrojo.account_service.model.DTO.AccountDTO;
 import elxrojo.account_service.service.IAccountService;
 import elxrojo.account_service.service.implementation.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +26,9 @@ public class AccountController {
 
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Float> getBalance(@PathVariable Long userId){
-        Float balance = accountService.getBalance(userId);
-        return ResponseEntity.ok(balance);
+    public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable Long userId){
+        AccountDTO account = accountService.getAccountByUser(userId);
+        return ResponseEntity.ok(account);
     }
 
     @GetMapping("/ping")
