@@ -42,7 +42,7 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionDTO getTansactionsByAccount(Long accountId) {
+    public TransactionDTO getTransactionsByAccount(Long accountId) {
         try {
             Optional<Transaction> transaction = transactionRepository.findByAccountId(accountId);
             if (transaction.isPresent()) {

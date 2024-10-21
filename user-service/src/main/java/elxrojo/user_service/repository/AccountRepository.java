@@ -1,6 +1,7 @@
 package elxrojo.user_service.repository;
 
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.TransactionDTO;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,4 +24,8 @@ public class AccountRepository {
         return feignAccountRepository.getAccountByUser(userId);
     }
 
+
+    public TransactionDTO getTransactionsByAccount(@PathVariable Long userId){
+        return feignAccountRepository.getTransactionsByAccount(userId);
+    }
 }

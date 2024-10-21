@@ -3,6 +3,7 @@ package elxrojo.user_service.service.Implementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.user_service.exception.CustomException;
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -145,17 +146,6 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public AccountDTO getAccountByUser(String userSub) {
-        try {
-            Long userId = getUserBySub(userSub).getId();
-            return accountRepository.getAccountByUser(userId);
-        } catch (CustomException e) {
-            throw new CustomException("Failed to get balance ", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
-    @Override
     public UserDTO getUserById(String id) {
         try {
             Optional<UserRepresentation> user = keycloakService.findInKeycloak(id);
@@ -181,6 +171,25 @@ public class UserServiceImpl implements IUserService {
             return null;
         } catch (Exception e) {
             throw new RuntimeException("Error converting user");
+        }
+    }
+
+    @Override
+    public AccountDTO getAccountByUser(String userSub) {
+        try {
+            Long userId = getUserBySub(userSub).getId();
+            return accountRepository.getAccountByUser(userId);
+        } catch (CustomException e) {
+            throw new CustomException("Failed to get balance ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public TransactionDTO getTransactionsByAccount(Long accountId) {
+        try {
+            return accountRepository.getTransactionsByAccount(accountId);
+        } catch (CustomException e) {
+            throw new CustomException("Failed to get transactions ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

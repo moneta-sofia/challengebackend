@@ -1,6 +1,7 @@
 package elxrojo.user_service.service;
 
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.UserWithTokenResponse;
 
@@ -13,4 +14,6 @@ public interface IUserService {
     UserDTO getUserById(String id);
     void logout(String token);
     AccountDTO getAccountByUser(String userSub);
+    TransactionDTO getTransactionsByAccount(Long accountId);
+
 }
