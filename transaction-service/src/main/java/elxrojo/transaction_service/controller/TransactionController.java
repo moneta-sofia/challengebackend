@@ -24,4 +24,9 @@ public class TransactionController {
         transactionService.createTransaction(amount, transactionType, origin, name, destination, accountId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/{accountId}")
+    public ResponseEntity<TransactionDTO> getTransactionByAccountID(@PathVariable Long accountId) {
+        return ResponseEntity.ok(transactionService.getTansactionsByAccount(accountId));
+    }
 }

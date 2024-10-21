@@ -1,6 +1,7 @@
 package elxrojo.transaction_service.service;
 
 import elxrojo.transaction_service.model.DTO.TransactionDTO;
+import elxrojo.transaction_service.model.Transaction;
 import elxrojo.transaction_service.model.TransactionType;
 
 import java.util.Date;
