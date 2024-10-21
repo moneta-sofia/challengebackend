@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.account_service.exception.CustomException;
 import elxrojo.account_service.model.Account;
 import elxrojo.account_service.model.DTO.AccountDTO;
+import elxrojo.account_service.model.DTO.TransactionDTO;
 import elxrojo.account_service.repository.IAccountRepository;
+import elxrojo.account_service.repository.IFeignTransactionRepository;
+import elxrojo.account_service.repository.TransactionRepository;
 import elxrojo.account_service.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,9 @@ public class AccountServiceImpl implements IAccountService {
 
     @Autowired
     private IAccountRepository accountRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -45,6 +51,11 @@ public class AccountServiceImpl implements IAccountService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to get balance: " + e.getMessage());
         }
+    }
+
+    @Override
+    public TransactionDTO getTransactionById(Long id){
+        return transactionRepository.getTransactionByAccountId(id);
     }
 
 }

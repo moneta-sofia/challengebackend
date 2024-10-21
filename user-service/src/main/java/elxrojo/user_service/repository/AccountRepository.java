@@ -19,7 +19,6 @@ public class AccountRepository {
         return feignAccountRepository.createAccount(accountDTO);
     }
 
-
     public AccountDTO getAccountByUser(@PathVariable Long userId){
         return feignAccountRepository.getAccountByUser(userId);
     }

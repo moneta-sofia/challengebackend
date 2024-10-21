@@ -1,6 +1,7 @@
 package elxrojo.account_service.controller;
 
 import elxrojo.account_service.model.DTO.AccountDTO;
+import elxrojo.account_service.model.DTO.TransactionDTO;
 import elxrojo.account_service.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,8 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping(){
-        return ResponseEntity.ok("pong");
+    @GetMapping("/{userId}/transactions")
+    public ResponseEntity<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId){
+        return ResponseEntity.ok(accountService.getTransactionById(userId));
     }
 }
