@@ -27,7 +27,7 @@ public class AccountRepository {
     }
 
 
-    public List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId, int limit){
+    public List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId,@RequestParam(required = false)  Integer limit){
         return feignAccountRepository.getTransactionsByAccount(userId, limit);
     }
 }

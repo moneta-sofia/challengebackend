@@ -28,7 +28,8 @@ public class TransactionController {
 
     @GetMapping("/{accountId}")
     public ResponseEntity<List<TransactionDTO>> getTransactionByAccountId(@PathVariable Long accountId,
-                                                                          @RequestParam int limit) {
-        return ResponseEntity.ok(transactionService.getTransactionsByAccount(accountId, limit));
+                                                                          @RequestParam(required = false) Integer limit) {
+        int defaultLimit = (limit != null) ? limit : 50;
+        return ResponseEntity.ok(transactionService.getTransactionsByAccount(accountId, defaultLimit));
     }
 }

@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @GetMapping("/{userSub}/activities")
-    public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam int limit) {
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam(required = false)  Integer limit) {
         return ResponseEntity.ok(userService.getTransactionsByAccount(userSub, limit));
     }
 

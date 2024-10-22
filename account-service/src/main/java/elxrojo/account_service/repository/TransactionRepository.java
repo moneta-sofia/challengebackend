@@ -15,7 +15,7 @@ public class TransactionRepository {
         this.transactionRepository = transactionRepository;
     }
 
-    public List<TransactionDTO> getTransactionByAccountId(@RequestParam Long accountId, @RequestParam int limit) {
+    public List<TransactionDTO> getTransactionByAccountId(@RequestParam Long accountId, @RequestParam(required = false) Integer limit) {
         return transactionRepository.getTransactionByAccountId(accountId, limit);
     }
 

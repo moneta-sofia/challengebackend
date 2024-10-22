@@ -185,7 +185,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<TransactionDTO> getTransactionsByAccount(String sub, int limit) {
+    public List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit) {
         try {
             return accountRepository.getTransactionsByAccount(getUserBySub(sub).getAccountId(), limit);
         } catch (CustomException e) {

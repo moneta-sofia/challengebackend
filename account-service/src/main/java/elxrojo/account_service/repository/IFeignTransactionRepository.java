@@ -12,5 +12,5 @@ import java.util.List;
 public interface IFeignTransactionRepository {
 
     @GetMapping("/transactions/{accountId}")
-    List<TransactionDTO> getTransactionByAccountId(@PathVariable Long accountId, @RequestParam int limit);
+    List<TransactionDTO> getTransactionByAccountId(@PathVariable Long accountId, @RequestParam(required = false) Integer limit);
 }

@@ -18,6 +18,6 @@ import java.util.List;
     AccountDTO getAccountByUser(@PathVariable Long userId);
 
     @GetMapping("accounts/{userId}/transactions")
-    List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId, @RequestParam int limit);
+    List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId, @RequestParam(required = false) Integer limit);
 
 }

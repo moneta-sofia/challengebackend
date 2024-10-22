@@ -55,7 +55,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<TransactionDTO> getTransactionById(Long id, int limit){
+    public List<TransactionDTO> getTransactionById(Long id, Integer limit){
         try {
             return transactionRepository.getTransactionByAccountId(id, limit);
         } catch (CustomException e) {
