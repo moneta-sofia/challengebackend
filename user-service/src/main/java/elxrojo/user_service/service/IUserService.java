@@ -14,6 +14,7 @@ public interface IUserService {
     String login(String email, String password);
     UserDTO getUserById(String id);
     void logout(String token);
+    UserDTO updateUser(UserDTO userDTO, String id);
     AccountDTO getAccountByUser(String userSub);
     List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit);
 

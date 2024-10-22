@@ -8,6 +8,7 @@ import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
 import elxrojo.user_service.repository.AccountRepository;
+import elxrojo.user_service.repository.IUserMapper;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
 import org.keycloak.representations.idm.UserRepresentation;
@@ -44,6 +45,9 @@ public class UserServiceImpl implements IUserService {
     private IUserRepository userRepository;
 
     @Autowired
+    private IUserMapper userMapper;
+
+    @Autowired
     private AccountRepository accountRepository;
 
     @Autowired
@@ -54,6 +58,8 @@ public class UserServiceImpl implements IUserService {
 
     ObjectMapper mapper = new ObjectMapper();
 
+
+//    User functions
 
     @Override
     public UserWithTokenResponse signup(UserDTO userDTO) throws IOException {
@@ -84,24 +90,25 @@ public class UserServiceImpl implements IUserService {
 //                alias = generateAlias();
 //            }
 
+            AccountDTO newAccount = new AccountDTO(null, alias, cvu, null);
 
-            log.debug("Intentando crear usuario en Keycloak...");
+
             int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
-            log.debug("Código de estado al crear usuario en Keycloak: {}", UserCreatedKL);
 
-            log.debug("Obteniendo token para el nuevo usuario...");
+
             token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
 
             userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
             if (UserCreatedKL == 201) {
-                log.debug("Guardando usuario en el repositorio...");
 
                 User user = mapper.convertValue(userDTO, User.class);
                 Long idGenerated = userRepository.save(user).getId();
 
+                newAccount.setName(user.getFirstName() + " " + user.getLastName());
+                newAccount.setUserId(idGenerated);
+                Long accountId = accountRepository.createAccount(newAccount);
 
-                Long accountId = accountRepository.createAccount(new AccountDTO(user.getFirstName() + " " + user.getLastName(),alias,cvu,idGenerated ) );
                 user.setAccountId(accountId);
                 userRepository.save(user);
 
@@ -137,7 +144,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    public void logout(String token){
+    public void logout(String token) {
         try {
             keycloakService.logoutInKeycloak(token);
         } catch (RuntimeException e) {
@@ -175,6 +182,23 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public UserDTO updateUser(UserDTO userUpdated, String sub) {
+        try {
+            User user = getUserBySub(sub);
+            keycloakService.updateUser(userUpdated,sub);
+            userMapper.updateUser(userUpdated, user);
+            userRepository.save(user);
+            return mapper.convertValue(user, UserDTO.class);
+
+        } catch (CustomException e) {
+            throw new CustomException("User cannot be updated!", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+//    Account functions
+
+    @Override
     public AccountDTO getAccountByUser(String userSub) {
         try {
             Long userId = getUserBySub(userSub).getId();
@@ -183,6 +207,9 @@ public class UserServiceImpl implements IUserService {
             throw new CustomException("Failed to get balance ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+//    Transaction function
 
     @Override
     public List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit) {
@@ -193,7 +220,10 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    private User getUserBySub(String sub){
+
+//    Other functions
+
+    private User getUserBySub(String sub) {
         Optional<UserRepresentation> userKl = keycloakService.findInKeycloak(sub);
         User user = userRepository.findByEmail(userKl.get().getEmail());
         return user;

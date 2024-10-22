@@ -23,6 +23,8 @@ public class UserController {
     @Autowired
     IUserService userService;
 
+//    User endpoints
+
     @PostMapping("/register")
     public ResponseEntity<UserWithTokenResponse> RegisterUser(@RequestBody UserDTO userDTO, HttpServletRequest request) throws IOException {
         UserWithTokenResponse results = userService.signup(userDTO);
@@ -45,6 +47,12 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @PatchMapping("/{sub}")
+    public ResponseEntity<UserDTO> updateUserBySub(@RequestBody UserDTO userDTO, @PathVariable String sub){
+        UserDTO userUpdated = userService.updateUser(userDTO, sub);
+        return ResponseEntity.ok(userUpdated);
+    }
+
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> loginData) {
         String token = userService.login(loginData.get("email"), loginData.get("password"));
@@ -63,10 +71,16 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+
+//    Accounts endpoints
+
     @GetMapping("/{userSub}/accounts")
     public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable String userSub) {
         return ResponseEntity.ok(userService.getAccountByUser(userSub));
     }
+
+
+//    Transaction endpoints
 
     @GetMapping("/{userSub}/activities")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam(required = false)  Integer limit) {

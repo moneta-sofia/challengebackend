@@ -7,7 +7,6 @@ import elxrojo.user_service.model.DTO.UserDTO;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
-import org.keycloak.representations.AccessToken;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.keycloak.representations.idm.UserSessionRepresentation;
@@ -115,6 +114,51 @@ public class KeycloakService {
         } catch (Exception e) {
             log.error("Error finding user in Keycloak: ", e);
             throw new RuntimeException("Failed to find user in Keycloak: " + e.getMessage());
+        }
+    }
+
+
+    public void updateUser(UserDTO userDTO, String sub){
+        try {
+            Keycloak instance = UserInstance(null,null);
+            UserRepresentation existingUser = instance.realm(REALM).users().get(sub).toRepresentation();
+
+            if(existingUser == null){
+                throw new CustomException("User not found", HttpStatus.NOT_FOUND);
+            }
+
+            if (userDTO.getFirstName() != null) {
+                existingUser.setFirstName(userDTO.getFirstName());
+            }
+            if (userDTO.getLastName() != null) {
+                existingUser.setLastName(userDTO.getLastName());
+            }
+            if (userDTO.getEmail() != null) {
+                existingUser.setEmail(userDTO.getEmail());
+                existingUser.setUsername(userDTO.getEmail());
+            }
+
+            Map<String, List<String>> attributes = existingUser.getAttributes();
+            if (attributes == null) {
+                attributes = new HashMap<>();
+            }
+
+            if (userDTO.getPhone() != null) {
+                attributes.put("phone", Collections.singletonList(userDTO.getPhone().toString()));
+            }
+            if (userDTO.getDni() != null) {
+                attributes.put("dni", Collections.singletonList(userDTO.getDni().toString()));
+            }
+
+            existingUser.setAttributes(attributes);
+            // Enviar la actualización a Keycloak
+
+            instance.realm(REALM).users().get(sub).update(existingUser);
+
+            instance.close();
+
+        }catch (CustomException e){
+            throw  e;
         }
     }
 
