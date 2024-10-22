@@ -184,12 +184,14 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserDTO updateUser(UserDTO userUpdated, String sub) {
         try {
+            if(userUpdated.getPassword() != null){
+                throw new CustomException("You cannot update the password here ", HttpStatus.BAD_REQUEST);
+            }
             User user = getUserBySub(sub);
             keycloakService.updateUser(userUpdated,sub);
             userMapper.updateUser(userUpdated, user);
             userRepository.save(user);
             return mapper.convertValue(user, UserDTO.class);
-
         } catch (CustomException e) {
             throw new CustomException("User cannot be updated!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
