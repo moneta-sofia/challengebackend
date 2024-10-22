@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Repository
 public class AccountRepository {
     private  IFeignAccountRepository feignAccountRepository;
@@ -25,7 +27,7 @@ public class AccountRepository {
     }
 
 
-    public TransactionDTO getTransactionsByAccount(@PathVariable Long userId){
-        return feignAccountRepository.getTransactionsByAccount(userId);
+    public List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId, int limit){
+        return feignAccountRepository.getTransactionsByAccount(userId, limit);
     }
 }

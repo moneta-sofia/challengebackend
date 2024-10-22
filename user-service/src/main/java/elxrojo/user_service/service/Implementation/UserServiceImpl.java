@@ -185,9 +185,9 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public TransactionDTO getTransactionsByAccount(Long accountId) {
+    public List<TransactionDTO> getTransactionsByAccount(String sub, int limit) {
         try {
-            return accountRepository.getTransactionsByAccount(accountId);
+            return accountRepository.getTransactionsByAccount(getUserBySub(sub).getAccountId(), limit);
         } catch (CustomException e) {
             throw new CustomException("Failed to get transactions ", HttpStatus.INTERNAL_SERVER_ERROR);
         }

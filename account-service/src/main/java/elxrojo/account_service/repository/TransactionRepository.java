@@ -4,6 +4,8 @@ import elxrojo.account_service.model.DTO.TransactionDTO;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Repository
 public class TransactionRepository {
 
@@ -13,8 +15,8 @@ public class TransactionRepository {
         this.transactionRepository = transactionRepository;
     }
 
-    public TransactionDTO getTransactionByAccountId(@RequestParam Long accountId) {
-        return transactionRepository.getTransactionByAccountId(accountId);
+    public List<TransactionDTO> getTransactionByAccountId(@RequestParam Long accountId, @RequestParam int limit) {
+        return transactionRepository.getTransactionByAccountId(accountId, limit);
     }
 
 }

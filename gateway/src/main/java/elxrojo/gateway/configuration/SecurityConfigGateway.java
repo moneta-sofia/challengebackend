@@ -19,6 +19,7 @@
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeExchange(exchanges -> exchanges
                             .pathMatchers("/users/{usersub}/accounts").authenticated()
+                            .pathMatchers("/users/{usersub}/activities").authenticated()
                             .pathMatchers("/users/**").permitAll()
                             .anyExchange().authenticated()
                     )

@@ -7,6 +7,7 @@ import elxrojo.user_service.model.UserWithTokenResponse;
 
 
 import java.io.IOException;
+import java.util.List;
 
 public interface IUserService {
     UserWithTokenResponse signup(UserDTO user) throws IOException;
@@ -14,6 +15,6 @@ public interface IUserService {
     UserDTO getUserById(String id);
     void logout(String token);
     AccountDTO getAccountByUser(String userSub);
-    TransactionDTO getTransactionsByAccount(Long accountId);
+    List<TransactionDTO> getTransactionsByAccount(String sub, int limit);
 
 }

@@ -6,6 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @FeignClient(name= "account-service", url= "http://localhost:8085")
  public interface IFeignAccountRepository {
 
@@ -16,6 +18,6 @@ import org.springframework.web.bind.annotation.*;
     AccountDTO getAccountByUser(@PathVariable Long userId);
 
     @GetMapping("accounts/{userId}/transactions")
-    TransactionDTO getTransactionsByAccount(@PathVariable Long userId);
+    List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId, @RequestParam int limit);
 
 }

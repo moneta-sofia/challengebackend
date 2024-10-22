@@ -1,6 +1,7 @@
 package elxrojo.user_service.controller;
 
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -64,6 +66,11 @@ public class UserController {
     @GetMapping("/{userSub}/accounts")
     public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable String userSub) {
         return ResponseEntity.ok(userService.getAccountByUser(userSub));
+    }
+
+    @GetMapping("/{userSub}/activities")
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam int limit) {
+        return ResponseEntity.ok(userService.getTransactionsByAccount(userSub, limit));
     }
 
 }
