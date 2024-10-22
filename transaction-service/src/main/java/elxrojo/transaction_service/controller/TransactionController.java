@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/transactions")
 public class TransactionController {
@@ -25,7 +27,8 @@ public class TransactionController {
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<TransactionDTO> getTransactionByAccountId(@PathVariable Long accountId) {
-        return ResponseEntity.ok(transactionService.getTransactionsByAccount(accountId));
+    public ResponseEntity<List<TransactionDTO>> getTransactionByAccountId(@PathVariable Long accountId,
+                                                                          @RequestParam int limit) {
+        return ResponseEntity.ok(transactionService.getTransactionsByAccount(accountId, limit));
     }
 }

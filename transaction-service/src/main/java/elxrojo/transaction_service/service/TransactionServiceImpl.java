@@ -7,13 +7,14 @@ import elxrojo.transaction_service.model.Transaction;
 import elxrojo.transaction_service.model.TransactionType;
 import elxrojo.transaction_service.repository.ITransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import javax.security.auth.login.AccountException;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TransactionServiceImpl implements ITransactionService {
@@ -42,14 +43,13 @@ public class TransactionServiceImpl implements ITransactionService {
     }
 
     @Override
-    public TransactionDTO getTransactionsByAccount(Long accountId) {
+    public List<TransactionDTO> getTransactionsByAccount(Long accountId, int limit) {
         try {
-            Optional<Transaction> transaction = transactionRepository.findByAccountId(accountId);
-            if (transaction.isPresent()) {
-                return mapper.convertValue(transaction.get(), TransactionDTO.class);
-            } else {
-                throw new CustomException("Transaction not found", HttpStatus.NOT_FOUND);
-            }
+            Pageable pageable = PageRequest.of(0, limit, Sort.by("dated").descending());
+            List<Transaction> transactions = transactionRepository.findByAccountIdOrderByDatedDesc(accountId, pageable);
+            return transactions.stream()
+                    .map(transaction -> mapper.convertValue(transaction, TransactionDTO.class))
+                    .collect(Collectors.toList());
         } catch (CustomException e) {
             throw e;
         }
