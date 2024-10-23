@@ -79,6 +79,12 @@ public class UserController {
         return ResponseEntity.ok(userService.getAccountByUser(userSub));
     }
 
+    @PatchMapping("/{userSub}/accounts")
+    public ResponseEntity<AccountDTO> updateAccountByUser(@RequestBody AccountDTO accountDTO, @PathVariable String userSub){
+        AccountDTO accountUpdated = userService.updateAccount(userSub, accountDTO);
+        return ResponseEntity.ok(accountUpdated);
+    }
+
 
 //    Transaction endpoints
 

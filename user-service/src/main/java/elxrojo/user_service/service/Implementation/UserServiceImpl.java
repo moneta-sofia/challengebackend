@@ -184,11 +184,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public UserDTO updateUser(UserDTO userUpdated, String sub) {
         try {
-            if(userUpdated.getPassword() != null){
+            if (userUpdated.getPassword() != null) {
                 throw new CustomException("You cannot update the password here ", HttpStatus.BAD_REQUEST);
             }
             User user = getUserBySub(sub);
-            keycloakService.updateUser(userUpdated,sub);
+            keycloakService.updateUser(userUpdated, sub);
             userMapper.updateUser(userUpdated, user);
             userRepository.save(user);
             return mapper.convertValue(user, UserDTO.class);
@@ -207,6 +207,17 @@ public class UserServiceImpl implements IUserService {
             return accountRepository.getAccountByUser(userId);
         } catch (CustomException e) {
             throw new CustomException("Failed to get balance ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public AccountDTO updateAccount(String userSub, AccountDTO account) {
+        try {
+            return accountRepository.updateAccount(getUserBySub(userSub).getAccountId(), account);
+        } catch (CustomException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new RuntimeException("An error occurred during account update!" + e.getMessage());
         }
     }
 

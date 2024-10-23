@@ -71,7 +71,6 @@ public class AccountServiceImpl implements IAccountService {
         } catch (Exception e) {
             throw new RuntimeException("Failed to get balance: " + e.getMessage());
         }
-
     }
 
 

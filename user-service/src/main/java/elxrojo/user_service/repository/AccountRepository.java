@@ -3,7 +3,6 @@ package elxrojo.user_service.repository;
 import elxrojo.user_service.model.DTO.AccountDTO;
 import elxrojo.user_service.model.DTO.TransactionDTO;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,12 +21,21 @@ public class AccountRepository {
         return feignAccountRepository.createAccount(accountDTO);
     }
 
+
+
     public AccountDTO getAccountByUser(@PathVariable Long userId){
         return feignAccountRepository.getAccountByUser(userId);
     }
+
+    public AccountDTO updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account){
+        return feignAccountRepository.updateAccount(accountId, account);
+    }
+
 
 
     public List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId,@RequestParam(required = false)  Integer limit){
         return feignAccountRepository.getTransactionsByAccount(userId, limit);
     }
+
+
 }
