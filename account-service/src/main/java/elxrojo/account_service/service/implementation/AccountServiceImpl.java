@@ -5,8 +5,8 @@ import elxrojo.account_service.exception.CustomException;
 import elxrojo.account_service.model.Account;
 import elxrojo.account_service.model.DTO.AccountDTO;
 import elxrojo.account_service.model.DTO.TransactionDTO;
+import elxrojo.account_service.repository.IAccountMapper;
 import elxrojo.account_service.repository.IAccountRepository;
-import elxrojo.account_service.repository.IFeignTransactionRepository;
 import elxrojo.account_service.repository.TransactionRepository;
 import elxrojo.account_service.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,9 @@ public class AccountServiceImpl implements IAccountService {
 
     @Autowired
     private TransactionRepository transactionRepository;
+
+    @Autowired
+    private IAccountMapper accountMapper;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -54,8 +57,26 @@ public class AccountServiceImpl implements IAccountService {
         }
     }
 
+
     @Override
-    public List<TransactionDTO> getTransactionById(Long id, Integer limit){
+    public AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated) {
+        try {
+            Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
+            accountMapper.updateAccount(accountUpdated, account);
+            accountRepository.save(account);
+            AccountDTO accountDTO = mapper.convertValue(account, AccountDTO.class);
+            return accountDTO;
+        } catch (CustomException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to get balance: " + e.getMessage());
+        }
+
+    }
+
+
+    @Override
+    public List<TransactionDTO> getTransactionById(Long id, Integer limit) {
         try {
             return transactionRepository.getTransactionByAccountId(id, limit);
         } catch (CustomException e) {

@@ -128,14 +128,16 @@
 		</dependency>
 
 
-		<!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct -->
+
+<!--		Mapper for make an easy patch-->
+
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
 			<version>1.6.2</version>
 		</dependency>
 
-		<!-- https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor -->
+
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct-processor</artifactId>

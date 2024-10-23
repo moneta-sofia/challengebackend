@@ -34,8 +34,16 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
+    @PatchMapping("/{accountId}")
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account){
+        return ResponseEntity.ok(accountService.updateAccount(accountId, account));
+    }
+
+
+
     @GetMapping("/{userId}/transactions")
-    public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable Long userId, @RequestParam(required = false) Integer limit){
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable Long userId,
+                                                                         @RequestParam(required = false) Integer limit){
         return ResponseEntity.ok(accountService.getTransactionById(userId, limit));
     }
 }

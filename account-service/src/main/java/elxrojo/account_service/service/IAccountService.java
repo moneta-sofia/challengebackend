@@ -10,4 +10,5 @@ public interface IAccountService {
     Long createAccount(String alias, String cvu, Long userId, String Name);
     AccountDTO getAccountByUser(Long userId);
     List<TransactionDTO> getTransactionById(Long id, Integer limit);
+    AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated);
 }
