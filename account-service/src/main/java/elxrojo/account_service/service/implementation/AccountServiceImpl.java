@@ -100,7 +100,7 @@ public class AccountServiceImpl implements IAccountService {
     public void createAccountCard(CardDTO card, Long accountId) {
         try {
             if (cardRepository.getCardByNumber(card.getNumber()).isPresent()) {
-                throw new CustomException("This card already exist! ", HttpStatus.BAD_REQUEST);
+                throw new CustomException("This card already exist! ", HttpStatus.CONFLICT);
             }
             Optional<Account> account =  accountRepository.findByUserId(accountId);
             card.setAccountId(account.get().getId());
@@ -109,8 +109,8 @@ public class AccountServiceImpl implements IAccountService {
             cardRepository.createCard(card);
         } catch (CustomException e) {
             throw e;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Failed to create card: " + e.getMessage());
+        } catch (Exception e) {
+            throw new CustomException("An unexpected error ocurred", HttpStatus.BAD_REQUEST);
         }
     }
 

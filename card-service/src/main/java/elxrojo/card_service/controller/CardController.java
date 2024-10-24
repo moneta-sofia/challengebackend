@@ -24,7 +24,7 @@ public class CardController {
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
-    @GetMapping("/{cardNumber}/number")
+    @GetMapping("/number/{cardNumber}")
     public ResponseEntity<Optional<CardDTO>> getCardByNumber(@PathVariable String cardNumber) {
         Optional<CardDTO> card = cardService.findCardByNumber(cardNumber);
         return ResponseEntity.ok(card);

@@ -15,7 +15,7 @@ public interface IFeignCardRepository {
     @PostMapping("/cards/")
     void createCard(@RequestBody CardDTO card);
 
-    @GetMapping("/cards/{cardNumber}/number")
+    @GetMapping("/cards/number/{cardNumber}")
     Optional<CardDTO> getCardByNumber(@PathVariable String cardNumber);
 
 }
