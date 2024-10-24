@@ -4,10 +4,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-.idea
-.env
-.run
-
 ### STS ###
 .apt_generated
 .classpath
