@@ -20,6 +20,7 @@
                     .authorizeExchange(exchanges -> exchanges
                             .pathMatchers("/users/{usersub}/accounts").authenticated()
                             .pathMatchers("/users/{usersub}/activities").authenticated()
+                            .pathMatchers("/users/{usersub}/cards").authenticated()
                             .pathMatchers("/users/**").permitAll()
                             .anyExchange().authenticated()
                     )

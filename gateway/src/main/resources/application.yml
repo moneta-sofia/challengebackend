@@ -16,8 +16,17 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/users/**
+
         - id: user-accounts-protected
           uri: http://localhost:8081
           predicates:
             - Path=/users/{userSub}/accounts
+        - id: user-activities-protected
+          uri: http://localhost:8081
+          predicates:
+            - Path=/users/{userSub}/activities
+        - id: user-cards-protected
+          uri: http://localhost:8081
+          predicates:
+            - Path=/users/{userSub}/cards
 
