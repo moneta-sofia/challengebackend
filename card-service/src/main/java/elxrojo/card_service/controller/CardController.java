@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -28,4 +29,10 @@ public class CardController {
         Optional<CardDTO> card = cardService.findCardByNumber(cardNumber);
         return ResponseEntity.ok(card);
     }
+
+    @GetMapping
+    public ResponseEntity<List<CardDTO>> getAllCards() {
+        return ResponseEntity.ok(cardService.getAllCards());
+    }
+
 }

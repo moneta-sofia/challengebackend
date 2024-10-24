@@ -7,10 +7,11 @@ import elxrojo.card_service.model.DTO.CardDTO;
 import elxrojo.card_service.repository.ICardRepository;
 import elxrojo.card_service.service.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CardServiceImpl implements ICardService {
@@ -43,6 +44,19 @@ public class CardServiceImpl implements ICardService {
             throw e;
         }
     }
+
+    @Override
+    public List<CardDTO> getAllCards(){
+        try {
+            List<Card> cards = cardRepository.findAll();
+            return cards.stream()
+                    .map(card -> mapper.convertValue(card, CardDTO.class))
+                    .toList();
+        } catch (RuntimeException e){
+            throw new RuntimeException("Cannot get all the cards :(");
+        }
+    }
+
 
 
 }
