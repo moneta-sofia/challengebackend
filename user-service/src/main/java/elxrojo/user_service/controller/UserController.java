@@ -8,6 +8,7 @@ import elxrojo.user_service.model.UserWithTokenResponse;
 import elxrojo.user_service.service.IUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,12 +64,10 @@ public class UserController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String,String>> logout(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring("Bearer ".length());
         userService.logout(token);
-        HashMap<String, String> response = new HashMap<String, String>();
-        response.put("response", "OK");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 
