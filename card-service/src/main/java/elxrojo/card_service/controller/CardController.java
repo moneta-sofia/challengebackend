@@ -16,9 +16,14 @@ public class CardController {
     ICardService cardService;
 
     @PostMapping("/")
-        public ResponseEntity<?> createCard(@RequestBody CardDTO card) {
-            cardService.createCard(card);
+    public ResponseEntity<?> createCard(@RequestBody CardDTO card) {
+        cardService.createCard(card);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
+    @GetMapping("/{cardNumber}/number")
+    public ResponseEntity<CardDTO> getCardByNumber(@PathVariable String cardNumber) {
+        CardDTO card = cardService.findCardByNumber(cardNumber);
+        return ResponseEntity.ok(card);
+    }
 }
