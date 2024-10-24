@@ -46,17 +46,28 @@ public class CardServiceImpl implements ICardService {
     }
 
     @Override
-    public List<CardDTO> getAllCards(){
+    public List<CardDTO> getAllCards() {
         try {
             List<Card> cards = cardRepository.findAll();
             return cards.stream()
                     .map(card -> mapper.convertValue(card, CardDTO.class))
                     .toList();
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             throw new RuntimeException("Cannot get all the cards :(");
         }
     }
 
+    @Override
+    public List<CardDTO> getAllCardsByAccount(Long accountId) {
+        try {
+            List<Card> cards = cardRepository.findCardByAccountId(accountId);
+            return cards.stream()
+                    .map( card -> mapper.convertValue(card, CardDTO.class))
+                    .toList();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Cannot find the cards now!");
+        }
+    }
 
 
 }

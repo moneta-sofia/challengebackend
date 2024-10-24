@@ -1,5 +1,6 @@
 package elxrojo.card_service.service;
 
+import elxrojo.card_service.model.Card;
 import elxrojo.card_service.model.DTO.CardDTO;
 
 import java.util.List;
@@ -11,4 +12,6 @@ public interface ICardService {
     Optional<CardDTO> findCardByNumber(String number);
 
     List<CardDTO> getAllCards();
+
+    List<CardDTO> getAllCardsByAccount(Long accountId);
 }

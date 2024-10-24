@@ -35,4 +35,11 @@ public class CardController {
         return ResponseEntity.ok(cardService.getAllCards());
     }
 
+
+    @GetMapping("/account/{accountId}")
+    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId){
+        return ResponseEntity.ok(cardService.getAllCardsByAccount(accountId));
+    }
+
+
 }
