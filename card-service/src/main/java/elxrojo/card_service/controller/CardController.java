@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/cards")
 public class CardController {
@@ -22,8 +24,8 @@ public class CardController {
     }
 
     @GetMapping("/{cardNumber}/number")
-    public ResponseEntity<CardDTO> getCardByNumber(@PathVariable String cardNumber) {
-        CardDTO card = cardService.findCardByNumber(cardNumber);
+    public ResponseEntity<Optional<CardDTO>> getCardByNumber(@PathVariable String cardNumber) {
+        Optional<CardDTO> card = cardService.findCardByNumber(cardNumber);
         return ResponseEntity.ok(card);
     }
 }

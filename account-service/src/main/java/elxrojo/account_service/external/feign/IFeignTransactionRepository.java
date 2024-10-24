@@ -1,4 +1,4 @@
-package elxrojo.account_service.repository;
+package elxrojo.account_service.external.feign;
 
 import elxrojo.account_service.model.DTO.TransactionDTO;
 import org.springframework.cloud.openfeign.FeignClient;

@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class CardServiceImpl implements ICardService {
 
@@ -29,15 +31,15 @@ public class CardServiceImpl implements ICardService {
     }
 
     @Override
-    public CardDTO findCardByNumber(String number) {
+    public Optional<CardDTO> findCardByNumber(String number) {
         try {
-            Card card = cardRepository.findCardByNumber(number);
-            if (card == null) {
-                throw new CustomException("Card not found", HttpStatus.NOT_FOUND);
+            Optional<Card> card = cardRepository.findCardByNumber(number);
+            if (card.isEmpty()) {
+                return Optional.empty();
             } else {
-                return mapper.convertValue(card, CardDTO.class);
+                return Optional.ofNullable(mapper.convertValue(card, CardDTO.class));
             }
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
         }
     }
