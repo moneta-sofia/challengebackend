@@ -97,11 +97,15 @@ public class AccountServiceImpl implements IAccountService {
 //    Card methods
 
     @Override
-    public void createAccountCard(CardDTO card) {
+    public void createAccountCard(CardDTO card, Long accountId) {
         try {
             if (cardRepository.getCardByNumber(card.getNumber()).isPresent()) {
                 throw new CustomException("This card already exist! ", HttpStatus.BAD_REQUEST);
             }
+            Optional<Account> account =  accountRepository.findByUserId(accountId);
+            card.setAccountId(account.get().getId());
+            card.setName(account.get().getName());
+
             cardRepository.createCard(card);
         } catch (CustomException e) {
             throw e;

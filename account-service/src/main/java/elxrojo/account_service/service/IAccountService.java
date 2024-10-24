@@ -15,5 +15,5 @@ public interface IAccountService {
     List<TransactionDTO> getTransactionById(Long id, Integer limit);
 
 
-    void createAccountCard(CardDTO card);
+    void createAccountCard(CardDTO card, Long accountId);
 }

@@ -1,6 +1,7 @@
 package elxrojo.user_service.controller;
 
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.CardDTO;
 import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
@@ -90,6 +91,15 @@ public class UserController {
     @GetMapping("/{userSub}/activities")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam(required = false)  Integer limit) {
         return ResponseEntity.ok(userService.getTransactionsByAccount(userSub, limit));
+    }
+
+
+//    Card endpoints
+
+    @PostMapping("/{userSub}/cards")
+    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable String userSub){
+        userService.createAccountCard(card,userSub);
+        return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
 }

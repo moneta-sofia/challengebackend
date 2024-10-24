@@ -42,6 +42,7 @@ public class AccountController {
         return ResponseEntity.ok(accountService.updateAccount(accountId, account));
     }
 
+
 //    Transaction endpoints
 
     @GetMapping("/{userId}/transactions")
@@ -52,9 +53,10 @@ public class AccountController {
 
 
 //    Card endpoints
-    @PostMapping("/card")
-    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card){
-        accountService.createAccountCard(card);
+
+    @PostMapping("/{accountId}/card")
+    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @RequestParam Long accountId){
+        accountService.createAccountCard(card, accountId);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 

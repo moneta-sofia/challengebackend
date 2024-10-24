@@ -1,6 +1,7 @@
 package elxrojo.user_service.service;
 
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.CardDTO;
 import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -21,5 +22,6 @@ public interface IUserService {
 
     List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit);
 
+    void createAccountCard(CardDTO cardDTO, String userSub);
 
 }

@@ -3,11 +3,12 @@ package elxrojo.user_service.service.Implementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.user_service.exception.CustomException;
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.CardDTO;
 import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
-import elxrojo.user_service.repository.AccountRepository;
+import elxrojo.user_service.external.repository.AccountRepository;
 import elxrojo.user_service.repository.IUserMapper;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
@@ -234,12 +235,22 @@ public class UserServiceImpl implements IUserService {
     }
 
 
+//    Card function
+
+    public void createAccountCard(CardDTO cardDTO, String userSub) {
+        try {
+            accountRepository.createAccountCard(cardDTO, getUserBySub(userSub).getAccountId());
+        } catch (CustomException e){
+            throw e;
+        }
+    }
+
+
 //    Other functions
 
     private User getUserBySub(String sub) {
         Optional<UserRepresentation> userKl = keycloakService.findInKeycloak(sub);
-        User user = userRepository.findByEmail(userKl.get().getEmail());
-        return user;
+        return userRepository.findByEmail(userKl.get().getEmail());
     }
 
     private String generateCVU() {

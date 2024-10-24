@@ -1,6 +1,8 @@
-package elxrojo.user_service.repository;
+package elxrojo.user_service.external.repository;
 
+import elxrojo.user_service.external.feign.IFeignAccountRepository;
 import elxrojo.user_service.model.DTO.AccountDTO;
+import elxrojo.user_service.model.DTO.CardDTO;
 import elxrojo.user_service.model.DTO.TransactionDTO;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +13,7 @@ import java.util.List;
 
 @Repository
 public class AccountRepository {
-    private  IFeignAccountRepository feignAccountRepository;
+    private IFeignAccountRepository feignAccountRepository;
 
     public AccountRepository(IFeignAccountRepository feignAccountRepository) {
         this.feignAccountRepository = feignAccountRepository;
@@ -37,5 +39,9 @@ public class AccountRepository {
         return feignAccountRepository.getTransactionsByAccount(userId, limit);
     }
 
+
+    public void createAccountCard(@RequestBody CardDTO card,Long accountId){
+        feignAccountRepository.createAccountCard(card, accountId);
+    }
 
 }
