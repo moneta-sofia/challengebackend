@@ -11,6 +11,8 @@ public interface ICardService {
 
     Optional<CardDTO> findCardByNumber(String number);
 
+    CardDTO findCardById(Long accountId, Long cardId);
+
     List<CardDTO> getAllCards();
 
     List<CardDTO> getAllCardsByAccount(Long accountId);

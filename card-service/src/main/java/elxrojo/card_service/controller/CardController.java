@@ -1,6 +1,7 @@
 package elxrojo.card_service.controller;
 
 
+import elxrojo.card_service.model.Card;
 import elxrojo.card_service.model.DTO.CardDTO;
 import elxrojo.card_service.service.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,11 @@ public class CardController {
     public ResponseEntity<?> createCard(@RequestBody CardDTO card) {
         cardService.createCard(card);
         return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{cardId}/account/{accountId}")
+    public ResponseEntity<CardDTO> getCardById(@PathVariable Long cardId, @PathVariable Long accountId ){
+        return ResponseEntity.ok(cardService.findCardById(accountId,cardId));
     }
 
     @GetMapping("/number/{cardNumber}")

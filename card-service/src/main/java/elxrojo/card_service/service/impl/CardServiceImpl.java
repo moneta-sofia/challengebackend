@@ -7,9 +7,12 @@ import elxrojo.card_service.model.DTO.CardDTO;
 import elxrojo.card_service.repository.ICardRepository;
 import elxrojo.card_service.service.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -28,6 +31,24 @@ public class CardServiceImpl implements ICardService {
             cardRepository.save(mapper.convertValue(card, Card.class));
         } catch (RuntimeException e) {
             throw new RuntimeException("Failed to create card: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public CardDTO findCardById(Long accountId, Long cardId){
+        try {
+            Optional<Card> cardFound = cardRepository.findById(cardId);
+
+            if (cardFound.isEmpty()){
+                throw new CustomException("Card not found!", HttpStatus.NOT_FOUND);
+            }
+            if (!Objects.equals(cardFound.get().getAccountId(), accountId)){
+                throw new CustomException("Without permission to view this card!", HttpStatus.UNAUTHORIZED);
+            }
+
+            return mapper.convertValue(cardFound, CardDTO.class);
+        }  catch (DataAccessException e) {
+            throw new CustomException("Database error occurred while trying to find the card! " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
