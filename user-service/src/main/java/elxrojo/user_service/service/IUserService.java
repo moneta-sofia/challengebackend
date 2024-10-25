@@ -23,6 +23,7 @@ public interface IUserService {
     List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit);
 
     void createAccountCard(CardDTO cardDTO, String userSub);
+    CardDTO getCardById(String userSub, Long cardId);
     List<CardDTO> getCardsByAccount(String userSub);
 
 }

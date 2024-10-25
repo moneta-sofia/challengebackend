@@ -102,6 +102,11 @@ public class UserController {
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
+    @GetMapping("/{userSub}/cards/{cardId}")
+    public ResponseEntity<CardDTO> getCardById(@PathVariable String userSub, @PathVariable Long cardId){
+        return ResponseEntity.ok(userService.getCardById(userSub,cardId));
+    }
+
     @GetMapping("/{userSub}/cards")
     public ResponseEntity<List<CardDTO>>  getCardsByAccount(@PathVariable String userSub){
         return ResponseEntity.ok(userService.getCardsByAccount(userSub));

@@ -50,4 +50,8 @@ public class AccountRepository {
         return feignAccountRepository.getCardsByAccount(accountId);
     }
 
+    public CardDTO getCardById(@PathVariable Long accountId,@PathVariable Long cardId){
+        return feignAccountRepository.getCardById(accountId, cardId);
+    }
+
 }

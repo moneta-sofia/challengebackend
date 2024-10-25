@@ -29,4 +29,9 @@ spring:
           uri: http://localhost:8081
           predicates:
             - Path=/users/{userSub}/cards
+        - id: user-cards-account-protected
+          uri: http://localhost:8081
+          predicates:
+            - Path=/users/{userSub}/cards/{cardId}
+
 

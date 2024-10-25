@@ -20,8 +20,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -241,6 +244,15 @@ public class UserServiceImpl implements IUserService {
     public void createAccountCard(CardDTO cardDTO, String userSub) {
         try {
             accountRepository.createAccountCard(cardDTO, getUserBySub(userSub).getAccountId());
+        } catch (CustomException e) {
+            throw e;
+        }
+    }
+
+    @Override
+    public CardDTO getCardById(String userSub, Long cardId){
+        try {
+            return accountRepository.getCardById(getUserBySub(userSub).getAccountId(), cardId);
         } catch (CustomException e) {
             throw e;
         }

@@ -4,7 +4,6 @@ import elxrojo.user_service.model.DTO.AccountDTO;
 import elxrojo.user_service.model.DTO.CardDTO;
 import elxrojo.user_service.model.DTO.TransactionDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,7 +26,10 @@ public interface IFeignAccountRepository {
     @PostMapping("/accounts/{accountId}/card")
     void createAccountCard(@RequestBody CardDTO card, @RequestParam Long accountId);
 
-    @GetMapping("accounts/{accountId}/card")
+    @GetMapping("/accounts/{accountId}/card")
     List<CardDTO> getCardsByAccount(@PathVariable Long accountId);
+
+    @GetMapping("/accounts/{accountId}/cards/{cardId}")
+    CardDTO getCardById(@PathVariable Long accountId,@PathVariable Long cardId);
 
 }
