@@ -4,7 +4,6 @@ import elxrojo.account_service.model.DTO.CardDTO;
 import elxrojo.account_service.external.feign.IFeignCardRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -23,7 +22,7 @@ public class CardRepository {
         cardRepository.createCard(card);
     }
 
-    public CardDTO getCardById(@PathVariable Long accountId, @PathVariable Long cardId){
+    public CardDTO getCardById(@PathVariable Long accountId, @PathVariable Long cardId) {
         return cardRepository.getCardById(accountId, cardId);
     }
 
@@ -31,9 +30,12 @@ public class CardRepository {
         return cardRepository.getCardByNumber(cardNumber);
     }
 
-    public List<CardDTO> getCardsByAccount(@PathVariable Long accountId){
+    public List<CardDTO> getCardsByAccount(@PathVariable Long accountId) {
         return cardRepository.getCardsByAccount(accountId);
     }
 
+    public void deleteCard(@PathVariable Long accountId, @PathVariable Long cardId) {
+        cardRepository.deleteCard(accountId, cardId);
+    }
 
 }

@@ -21,10 +21,10 @@ public class AccountController {
     IAccountService accountService;
 
     @PostMapping("/")
-    public ResponseEntity<Long> createAccount(@RequestBody AccountDTO account ){
+    public ResponseEntity<Long> createAccount(@RequestBody AccountDTO account) {
         Long idAccountCreated = accountService.createAccount(
                 account.getAlias(),
-                account.getCvu() ,
+                account.getCvu(),
                 account.getUserId(),
                 account.getName()
         );
@@ -33,13 +33,13 @@ public class AccountController {
 
 
     @GetMapping("/{userId}")
-    public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable Long userId){
+    public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable Long userId) {
         AccountDTO account = accountService.getAccountByUser(userId);
         return ResponseEntity.ok(account);
     }
 
     @PutMapping("/{accountId}")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account){
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account) {
         return ResponseEntity.ok(accountService.updateAccount(accountId, account));
     }
 
@@ -48,7 +48,7 @@ public class AccountController {
 
     @GetMapping("/{userId}/transactions")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable Long userId,
-                                                                         @RequestParam(required = false) Integer limit){
+                                                                         @RequestParam(required = false) Integer limit) {
         return ResponseEntity.ok(accountService.getTransactionById(userId, limit));
     }
 
@@ -56,20 +56,26 @@ public class AccountController {
 //    Card endpoints
 
     @PostMapping("/{accountId}/card")
-    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable Long accountId){
+    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable Long accountId) {
         accountService.createAccountCard(card, accountId);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
     @GetMapping("/{accountId}/cards/{cardId}")
-    public ResponseEntity<CardDTO> getCardById(@PathVariable Long accountId,@PathVariable Long cardId){
+    public ResponseEntity<CardDTO> getCardById(@PathVariable Long accountId, @PathVariable Long cardId) {
         return ResponseEntity.ok(accountService.getCardById(accountId, cardId));
     }
 
 
     @GetMapping("/{accountId}/card")
-    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId){
+    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId) {
         return ResponseEntity.ok(accountService.getCardsByAccount(accountId));
+    }
+
+    @DeleteMapping("/{accountId}/cards/{cardId}")
+    public ResponseEntity<?> deleteCard(@PathVariable Long accountId, @PathVariable Long cardId) {
+        accountService.deleteCard(accountId, cardId);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 }

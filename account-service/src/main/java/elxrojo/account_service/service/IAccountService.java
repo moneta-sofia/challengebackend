@@ -19,5 +19,6 @@ public interface IAccountService {
     void createAccountCard(CardDTO card, Long accountId);
     List<CardDTO> getCardsByAccount(Long accountId);
     CardDTO getCardById(Long cardId, Long accountId);
+    void deleteCard(Long accountId, Long cardId);
 
 }

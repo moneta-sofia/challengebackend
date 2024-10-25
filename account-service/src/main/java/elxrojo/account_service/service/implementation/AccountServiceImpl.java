@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -119,10 +121,10 @@ public class AccountServiceImpl implements IAccountService {
     public CardDTO getCardById(Long accountId, Long cardId) {
         try {
             Optional<Account> account = accountRepository.findById(accountId);
-            if (account.isEmpty()){
+            if (account.isEmpty()) {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
-            if (cardRepository.getCardsByAccount(accountId).isEmpty()){
+            if (cardRepository.getCardsByAccount(accountId).isEmpty()) {
                 return new CardDTO();
             } else {
                 return cardRepository.getCardById(accountId, cardId);
@@ -131,7 +133,7 @@ public class AccountServiceImpl implements IAccountService {
             throw e;
         } catch (DataAccessException e) {
             throw new CustomException("Database error occurred while trying to find the card!", HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new CustomException("An unexpected error occurred " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -142,6 +144,19 @@ public class AccountServiceImpl implements IAccountService {
             return cardRepository.getCardsByAccount(accountId);
         } catch (Exception e) {
             throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    public void deleteCard(Long accountId, Long cardId) {
+        try {
+            Optional<Account> account = accountRepository.findById(accountId);
+            if (account.isEmpty()) {
+                throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
+            }
+            cardRepository.deleteCard(accountId, cardId);
+        } catch (CustomException e) {
+            throw e;
         }
     }
 
