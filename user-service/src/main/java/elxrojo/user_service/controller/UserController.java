@@ -102,4 +102,9 @@ public class UserController {
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
+    @GetMapping("/{userSub}/cards")
+    public ResponseEntity<List<CardDTO>>  getCardsByAccount(@PathVariable String userSub){
+        return ResponseEntity.ok(userService.getCardsByAccount(userSub));
+    }
+
 }

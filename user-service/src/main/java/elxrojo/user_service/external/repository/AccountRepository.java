@@ -4,7 +4,9 @@ import elxrojo.user_service.external.feign.IFeignAccountRepository;
 import elxrojo.user_service.model.DTO.AccountDTO;
 import elxrojo.user_service.model.DTO.CardDTO;
 import elxrojo.user_service.model.DTO.TransactionDTO;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +44,10 @@ public class AccountRepository {
 
     public void createAccountCard(@RequestBody CardDTO card,Long accountId){
         feignAccountRepository.createAccountCard(card, accountId);
+    }
+
+    public List<CardDTO> getCardsByAccount(@PathVariable Long accountId){
+        return feignAccountRepository.getCardsByAccount(accountId);
     }
 
 }

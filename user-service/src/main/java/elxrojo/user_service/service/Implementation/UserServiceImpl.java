@@ -237,11 +237,21 @@ public class UserServiceImpl implements IUserService {
 
 //    Card function
 
+    @Override
     public void createAccountCard(CardDTO cardDTO, String userSub) {
         try {
             accountRepository.createAccountCard(cardDTO, getUserBySub(userSub).getAccountId());
-        } catch (CustomException e){
+        } catch (CustomException e) {
             throw e;
+        }
+    }
+
+    @Override
+    public List<CardDTO> getCardsByAccount(String userSub) {
+        try {
+            return accountRepository.getCardsByAccount(getUserBySub(userSub).getAccountId());
+        } catch (Exception e) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -250,6 +260,9 @@ public class UserServiceImpl implements IUserService {
 
     private User getUserBySub(String sub) {
         Optional<UserRepresentation> userKl = keycloakService.findInKeycloak(sub);
+        if (userKl.isEmpty()){
+            throw new CustomException("User not found ", HttpStatus.NOT_FOUND);
+        }
         return userRepository.findByEmail(userKl.get().getEmail());
     }
 

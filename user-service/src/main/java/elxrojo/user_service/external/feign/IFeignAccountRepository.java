@@ -27,4 +27,7 @@ public interface IFeignAccountRepository {
     @PostMapping("/accounts/{accountId}/card")
     void createAccountCard(@RequestBody CardDTO card, @RequestParam Long accountId);
 
+    @GetMapping("accounts/{accountId}/card")
+    List<CardDTO> getCardsByAccount(@PathVariable Long accountId);
+
 }
