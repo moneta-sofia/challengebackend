@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,4 +24,9 @@ public class CardRepository {
     public Optional<CardDTO> getCardByNumber(@PathVariable String cardNumber) {
         return cardRepository.getCardByNumber(cardNumber);
     }
+
+    public List<CardDTO> getCardsByAccount(@PathVariable Long accountId){
+        return cardRepository.getCardsByAccount(accountId);
+    }
+
 }

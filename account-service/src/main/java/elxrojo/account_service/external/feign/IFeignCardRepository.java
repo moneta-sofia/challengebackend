@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.List;
 import java.util.Optional;
 
 @FeignClient(name = "card-service", url = "http://localhost:8087")
@@ -17,5 +18,8 @@ public interface IFeignCardRepository {
 
     @GetMapping("/cards/number/{cardNumber}")
     Optional<CardDTO> getCardByNumber(@PathVariable String cardNumber);
+
+    @GetMapping("/cards/account/{accountId}")
+    List<CardDTO> getCardsByAccount(@PathVariable Long accountId);
 
 }

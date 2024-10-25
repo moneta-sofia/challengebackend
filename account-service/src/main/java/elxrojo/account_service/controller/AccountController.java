@@ -55,9 +55,14 @@ public class AccountController {
 //    Card endpoints
 
     @PostMapping("/{accountId}/card")
-    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @RequestParam Long accountId){
+    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable Long accountId){
         accountService.createAccountCard(card, accountId);
         return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{accountId}/card")
+    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId){
+        return ResponseEntity.ok(accountService.getCardsByAccount(accountId));
     }
 
 }

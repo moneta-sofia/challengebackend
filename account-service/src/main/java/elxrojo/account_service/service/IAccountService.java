@@ -16,4 +16,5 @@ public interface IAccountService {
 
 
     void createAccountCard(CardDTO card, Long accountId);
+    List<CardDTO> getCardsByAccount(Long accountId);
 }

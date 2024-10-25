@@ -110,9 +110,17 @@ public class AccountServiceImpl implements IAccountService {
         } catch (CustomException e) {
             throw e;
         } catch (Exception e) {
-            throw new CustomException("An unexpected error ocurred", HttpStatus.BAD_REQUEST);
+            throw new CustomException("An unexpected error occurred", HttpStatus.BAD_REQUEST);
         }
     }
 
+    @Override
+    public List<CardDTO> getCardsByAccount(Long accountId){
+        try {
+            return cardRepository.getCardsByAccount(accountId);
+        } catch (Exception e) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }
