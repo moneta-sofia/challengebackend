@@ -35,20 +35,24 @@ public class CardServiceImpl implements ICardService {
     }
 
     @Override
-    public CardDTO findCardById(Long accountId, Long cardId){
+    public CardDTO findCardById(Long accountId, Long cardId) {
         try {
             Optional<Card> cardFound = cardRepository.findById(cardId);
 
-            if (cardFound.isEmpty()){
+            if (cardFound.isEmpty()) {
                 throw new CustomException("Card not found!", HttpStatus.NOT_FOUND);
             }
-            if (!Objects.equals(cardFound.get().getAccountId(), accountId)){
+
+            if (!Objects.equals(cardFound.get().getAccountId(), accountId)) {
                 throw new CustomException("Without permission to view this card!", HttpStatus.UNAUTHORIZED);
             }
-
             return mapper.convertValue(cardFound, CardDTO.class);
-        }  catch (DataAccessException e) {
+        } catch (CustomException e) {
+            throw e;
+        } catch (DataAccessException e) {
             throw new CustomException("Database error occurred while trying to find the card! " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            throw new CustomException("An unexpected error occurred!", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -83,7 +87,7 @@ public class CardServiceImpl implements ICardService {
         try {
             List<Card> cards = cardRepository.findCardByAccountId(accountId);
             return cards.stream()
-                    .map( card -> mapper.convertValue(card, CardDTO.class))
+                    .map(card -> mapper.convertValue(card, CardDTO.class))
                     .toList();
         } catch (RuntimeException e) {
             throw new RuntimeException("Cannot find the cards now!");

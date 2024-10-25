@@ -12,7 +12,7 @@ import java.util.List;
 @FeignClient(name = "account-service", url = "http://localhost:8085")
 public interface IFeignAccountRepository {
 
-    @PostMapping("/accounts/create")
+    @PostMapping("/accounts/")
     Long createAccount(@RequestBody AccountDTO accountDTO);
 
     @GetMapping("/accounts/{userId}")

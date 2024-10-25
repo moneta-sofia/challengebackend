@@ -26,8 +26,8 @@ public class CardController {
     }
 
     @GetMapping("/{cardId}/account/{accountId}")
-    public ResponseEntity<CardDTO> getCardById(@PathVariable Long cardId, @PathVariable Long accountId ){
-        return ResponseEntity.ok(cardService.findCardById(accountId,cardId));
+    public ResponseEntity<CardDTO> getCardById(@PathVariable Long accountId,@PathVariable Long cardId) {
+        return ResponseEntity.ok(cardService.findCardById(accountId, cardId));
     }
 
     @GetMapping("/number/{cardNumber}")
@@ -43,7 +43,7 @@ public class CardController {
 
 
     @GetMapping("/account/{accountId}")
-    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId){
+    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId) {
         return ResponseEntity.ok(cardService.getAllCardsByAccount(accountId));
     }
 

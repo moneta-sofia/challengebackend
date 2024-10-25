@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/accounts")
@@ -59,6 +60,12 @@ public class AccountController {
         accountService.createAccountCard(card, accountId);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
+
+    @GetMapping("/{accountId}/cards/{cardId}")
+    public ResponseEntity<CardDTO> getCardById(@PathVariable Long accountId,@PathVariable Long cardId){
+        return ResponseEntity.ok(accountService.getCardById(accountId, cardId));
+    }
+
 
     @GetMapping("/{accountId}/card")
     public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId){

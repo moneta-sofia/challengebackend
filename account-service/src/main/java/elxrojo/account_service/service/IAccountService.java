@@ -6,6 +6,7 @@ import elxrojo.account_service.model.DTO.CardDTO;
 import elxrojo.account_service.model.DTO.TransactionDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IAccountService {
     Long createAccount(String alias, String cvu, Long userId, String Name);
@@ -17,4 +18,6 @@ public interface IAccountService {
 
     void createAccountCard(CardDTO card, Long accountId);
     List<CardDTO> getCardsByAccount(Long accountId);
+    CardDTO getCardById(Long cardId, Long accountId);
+
 }

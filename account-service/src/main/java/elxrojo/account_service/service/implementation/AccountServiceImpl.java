@@ -12,10 +12,9 @@ import elxrojo.account_service.repository.IAccountRepository;
 import elxrojo.account_service.external.repository.TransactionRepository;
 import elxrojo.account_service.service.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -84,6 +83,8 @@ public class AccountServiceImpl implements IAccountService {
     }
 
 
+    //    Transaction method
+
     @Override
     public List<TransactionDTO> getTransactionById(Long id, Integer limit) {
         try {
@@ -94,7 +95,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
 
-//    Card methods
+    //    Card methods
 
     @Override
     public void createAccountCard(CardDTO card, Long accountId) {
@@ -102,7 +103,7 @@ public class AccountServiceImpl implements IAccountService {
             if (cardRepository.getCardByNumber(card.getNumber()).isPresent()) {
                 throw new CustomException("This card already exist! ", HttpStatus.CONFLICT);
             }
-            Optional<Account> account =  accountRepository.findByUserId(accountId);
+            Optional<Account> account = accountRepository.findByUserId(accountId);
             card.setAccountId(account.get().getId());
             card.setName(account.get().getName());
 
@@ -115,7 +116,28 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<CardDTO> getCardsByAccount(Long accountId){
+    public CardDTO getCardById(Long accountId, Long cardId) {
+        try {
+            Optional<Account> account = accountRepository.findById(accountId);
+            if (account.isEmpty()){
+                throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
+            }
+            if (cardRepository.getCardsByAccount(accountId).isEmpty()){
+                return new CardDTO();
+            } else {
+                return cardRepository.getCardById(accountId, cardId);
+            }
+        } catch (CustomException e) {
+            throw e;
+        } catch (DataAccessException e) {
+            throw new CustomException("Database error occurred while trying to find the card!", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e){
+            throw new CustomException("An unexpected error occurred " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public List<CardDTO> getCardsByAccount(Long accountId) {
         try {
             return cardRepository.getCardsByAccount(accountId);
         } catch (Exception e) {
