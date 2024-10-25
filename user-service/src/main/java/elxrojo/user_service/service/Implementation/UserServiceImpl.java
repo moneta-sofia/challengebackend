@@ -267,6 +267,15 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    @Override
+    public void deleteCard(String userSub, Long cardId){
+        try {
+            accountRepository.deleteCard(getUserBySub(userSub).getAccountId(), cardId);
+        } catch ( CustomException e ) {
+            throw e;
+        }
+    }
+
 
 //    Other functions
 

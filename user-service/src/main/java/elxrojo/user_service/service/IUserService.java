@@ -25,5 +25,6 @@ public interface IUserService {
     void createAccountCard(CardDTO cardDTO, String userSub);
     CardDTO getCardById(String userSub, Long cardId);
     List<CardDTO> getCardsByAccount(String userSub);
+    void deleteCard(String userSub, Long cardId);
 
 }

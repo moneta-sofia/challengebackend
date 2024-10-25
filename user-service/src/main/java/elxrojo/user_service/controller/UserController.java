@@ -25,6 +25,7 @@ public class UserController {
     @Autowired
     IUserService userService;
 
+
 //    User endpoints
 
     @PostMapping("/register")
@@ -110,6 +111,12 @@ public class UserController {
     @GetMapping("/{userSub}/cards")
     public ResponseEntity<List<CardDTO>>  getCardsByAccount(@PathVariable String userSub){
         return ResponseEntity.ok(userService.getCardsByAccount(userSub));
+    }
+
+    @DeleteMapping("/{userSub}/cards/{cardId}")
+    public ResponseEntity<?> deleteCard(@PathVariable String userSub, @PathVariable Long cardId){
+        userService.deleteCard(userSub,cardId);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
 }
