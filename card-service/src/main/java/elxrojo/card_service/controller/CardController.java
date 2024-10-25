@@ -36,16 +36,20 @@ public class CardController {
         return ResponseEntity.ok(card);
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<CardDTO>> getAllCards() {
         return ResponseEntity.ok(cardService.getAllCards());
     }
-
 
     @GetMapping("/account/{accountId}")
     public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId) {
         return ResponseEntity.ok(cardService.getAllCardsByAccount(accountId));
     }
 
+    @DeleteMapping("/{cardId}/account/{accountId}")
+    public ResponseEntity<?> deleteCard(@PathVariable Long accountId,@PathVariable Long cardId){
+        cardService.deleteCard(accountId,cardId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
 }

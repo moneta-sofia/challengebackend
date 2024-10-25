@@ -94,5 +94,21 @@ public class CardServiceImpl implements ICardService {
         }
     }
 
+    @Override
+    public void deleteCard(Long accountId, Long cardId){
+        try {
+            Optional<Card> cardFound = cardRepository.findById(cardId);
+
+            if (cardFound.isEmpty()) {
+                throw new CustomException("Card not found!", HttpStatus.NOT_FOUND);
+            }
+            if (!Objects.equals(cardFound.get().getAccountId(), accountId)) {
+                throw new CustomException("Without permission to delete this card!", HttpStatus.UNAUTHORIZED);
+            }
+            cardRepository.deleteById(cardId);
+        } catch (CustomException e) {
+            throw e;
+        }
+    }
 
 }

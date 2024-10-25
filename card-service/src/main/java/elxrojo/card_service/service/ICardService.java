@@ -16,4 +16,6 @@ public interface ICardService {
     List<CardDTO> getAllCards();
 
     List<CardDTO> getAllCardsByAccount(Long accountId);
+
+    void deleteCard(Long accountId, Long cardId);
 }
