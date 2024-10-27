@@ -1,6 +1,5 @@
 package elxrojo.account_service.exception;
 
-
 import org.springframework.http.HttpStatus;
 
 public class CustomException extends RuntimeException{

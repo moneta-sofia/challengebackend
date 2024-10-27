@@ -12,6 +12,9 @@ import elxrojo.user_service.external.repository.AccountRepository;
 import elxrojo.user_service.repository.IUserMapper;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
+import feign.FeignException;
+import jakarta.persistence.EntityNotFoundException;
+import org.hibernate.service.spi.ServiceException;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -250,7 +253,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public CardDTO getCardById(String userSub, Long cardId){
+    public CardDTO getCardById(String userSub, Long cardId) {
         try {
             return accountRepository.getCardById(getUserBySub(userSub).getAccountId(), cardId);
         } catch (CustomException e) {
@@ -268,11 +271,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public void deleteCard(String userSub, Long cardId){
+    public void deleteCard(String userSub, Long cardId) {
         try {
             accountRepository.deleteCard(getUserBySub(userSub).getAccountId(), cardId);
-        } catch ( CustomException e ) {
-            throw e;
+        } catch (FeignException.NotFound ex) {
+            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
+        } catch (FeignException.Unauthorized ex) {
+            throw new CustomException("Without permission to delete this card!", HttpStatus.UNAUTHORIZED);
+        } catch (FeignException ex) {
+            throw new CustomException("Error calling card-service", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -281,7 +288,7 @@ public class UserServiceImpl implements IUserService {
 
     private User getUserBySub(String sub) {
         Optional<UserRepresentation> userKl = keycloakService.findInKeycloak(sub);
-        if (userKl.isEmpty()){
+        if (userKl.isEmpty()) {
             throw new CustomException("User not found ", HttpStatus.NOT_FOUND);
         }
         return userRepository.findByEmail(userKl.get().getEmail());

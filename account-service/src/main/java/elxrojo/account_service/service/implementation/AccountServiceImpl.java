@@ -11,6 +11,9 @@ import elxrojo.account_service.repository.IAccountMapper;
 import elxrojo.account_service.repository.IAccountRepository;
 import elxrojo.account_service.external.repository.TransactionRepository;
 import elxrojo.account_service.service.IAccountService;
+import feign.FeignException;
+import jakarta.persistence.EntityNotFoundException;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -147,7 +150,7 @@ public class AccountServiceImpl implements IAccountService {
         }
     }
 
-
+    @Override
     public void deleteCard(Long accountId, Long cardId) {
         try {
             Optional<Account> account = accountRepository.findById(accountId);
@@ -155,8 +158,12 @@ public class AccountServiceImpl implements IAccountService {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
             cardRepository.deleteCard(accountId, cardId);
-        } catch (CustomException e) {
-            throw e;
+        }  catch (FeignException.NotFound ex) {
+            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
+        }  catch (FeignException.Unauthorized ex) {
+            throw new CustomException("Without permission to delete this card!", HttpStatus.UNAUTHORIZED);
+        } catch (FeignException ex) {
+            throw new CustomException("Error calling card-service", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
