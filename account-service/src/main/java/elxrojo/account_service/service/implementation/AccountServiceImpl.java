@@ -52,39 +52,26 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public AccountDTO getAccountByUser(Long userId) {
-        try {
             Optional<Account> account = accountRepository.findByUserId(userId);
             if (account.isPresent()) {
                 return mapper.convertValue(account.get(), AccountDTO.class);
             } else {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
-
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get balance: " + e.getMessage());
-        }
     }
 
 
     @Override
     public AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated) {
-        try {
-            Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
+        Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
 
-            if ((!Objects.equals(account.getId(), accountUpdated.getId())) || (!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
-                throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
-            }
-
-            accountMapper.updateAccount(accountUpdated, account);
-            accountRepository.save(account);
-            return mapper.convertValue(account, AccountDTO.class);
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to get balance: " + e.getMessage());
+        if ((!Objects.equals(account.getId(), accountUpdated.getId())) || (!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
+            throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
         }
+
+        accountMapper.updateAccount(accountUpdated, account);
+        accountRepository.save(account);
+        return mapper.convertValue(account, AccountDTO.class);
     }
 
 
@@ -94,8 +81,8 @@ public class AccountServiceImpl implements IAccountService {
     public List<TransactionDTO> getTransactionById(Long id, Integer limit) {
         try {
             return transactionRepository.getTransactionByAccountId(id, limit);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Failed to get transaction " + e.getMessage());
+        } catch (FeignException ex) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -105,18 +92,14 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public void createAccountCard(CardDTO card, Long accountId) {
         try {
-            if (cardRepository.getCardByNumber(card.getNumber()).isPresent()) {
-                throw new CustomException("This card already exist! ", HttpStatus.CONFLICT);
-            }
             Optional<Account> account = accountRepository.findByUserId(accountId);
             card.setAccountId(account.get().getId());
             card.setName(account.get().getName());
-
             cardRepository.createCard(card);
-        } catch (CustomException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new CustomException("An unexpected error occurred", HttpStatus.BAD_REQUEST);
+        } catch (FeignException.BadRequest ex) {
+            throw new CustomException("Card already in use", HttpStatus.NOT_FOUND);
+        } catch (FeignException e) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -132,12 +115,12 @@ public class AccountServiceImpl implements IAccountService {
             } else {
                 return cardRepository.getCardById(accountId, cardId);
             }
-        } catch (CustomException e) {
-            throw e;
-        } catch (DataAccessException e) {
-            throw new CustomException("Database error occurred while trying to find the card!", HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            throw new CustomException("An unexpected error occurred " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (FeignException.NotFound ex) {
+            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
+        } catch (FeignException.Unauthorized ex) {
+            throw new CustomException("Without permission to get this card!", HttpStatus.UNAUTHORIZED);
+        } catch (FeignException ex) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -145,7 +128,7 @@ public class AccountServiceImpl implements IAccountService {
     public List<CardDTO> getCardsByAccount(Long accountId) {
         try {
             return cardRepository.getCardsByAccount(accountId);
-        } catch (Exception e) {
+        } catch (FeignException ex) {
             throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -158,13 +141,14 @@ public class AccountServiceImpl implements IAccountService {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
             cardRepository.deleteCard(accountId, cardId);
-        }  catch (FeignException.NotFound ex) {
+        } catch (FeignException.NotFound ex) {
             throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
-        }  catch (FeignException.Unauthorized ex) {
+        } catch (FeignException.Unauthorized ex) {
             throw new CustomException("Without permission to delete this card!", HttpStatus.UNAUTHORIZED);
         } catch (FeignException ex) {
-            throw new CustomException("Error calling card-service", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
 }
+
