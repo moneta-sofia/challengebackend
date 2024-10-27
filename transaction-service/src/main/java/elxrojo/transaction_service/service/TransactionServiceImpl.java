@@ -27,31 +27,23 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public void createTransaction(Float amount, int transactionType, String origin, String name, String destination, Long accountId) {
-        try {
-            Transaction transaction = new Transaction(
-                    amount,
-                    (transactionType == 1 ? TransactionType.deposit : TransactionType.transfer),
-                    origin,
-                    name,
-                    destination,
-                    LocalDateTime.now(),
-                    accountId);
-            transactionRepository.save(transaction);
-        } catch (CustomException e) {
-            throw e;
-        }
+        Transaction transaction = new Transaction(
+                amount,
+                (transactionType == 1 ? TransactionType.deposit : TransactionType.transfer),
+                origin,
+                name,
+                destination,
+                LocalDateTime.now(),
+                accountId);
+        transactionRepository.save(transaction);
     }
 
     @Override
     public List<TransactionDTO> getTransactionsByAccount(Long accountId, int limit) {
-        try {
-            Pageable pageable = PageRequest.of(0, limit, Sort.by("dated").descending());
-            List<Transaction> transactions = transactionRepository.findByAccountIdOrderByDatedDesc(accountId, pageable);
-            return transactions.stream()
-                    .map(transaction -> mapper.convertValue(transaction, TransactionDTO.class))
-                    .collect(Collectors.toList());
-        } catch (CustomException e) {
-            throw e;
-        }
+        Pageable pageable = PageRequest.of(0, limit, Sort.by("dated").descending());
+        List<Transaction> transactions = transactionRepository.findByAccountIdOrderByDatedDesc(accountId, pageable);
+        return transactions.stream()
+                .map(transaction -> mapper.convertValue(transaction, TransactionDTO.class))
+                .collect(Collectors.toList());
     }
 }
