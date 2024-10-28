@@ -65,143 +65,115 @@ public class UserServiceImpl implements IUserService {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    //Add camps validations to all post requests
+    //Add validation comparison  with the ids and the token's ids
+
 
 //    User functions
 
     @Override
     public UserWithTokenResponse signup(UserDTO userDTO) throws IOException {
-
         String token;
+        //        Validations
 
-        try {
-            //        Validations
-
-            if (userRepository.existsByEmail(userDTO.getEmail())) {
-                throw new CustomException("This email already exists!", HttpStatus.BAD_REQUEST);
-            }
-            if (userRepository.existsByDni(userDTO.getDni())) {
-                throw new CustomException("This DNI already exists!", HttpStatus.BAD_REQUEST);
-            }
-            if (userRepository.existsByPhone(userDTO.getPhone())) {
-                throw new CustomException("This phone already exists!", HttpStatus.BAD_REQUEST);
-            }
-
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new CustomException("This email already exists!", HttpStatus.BAD_REQUEST);
+        }
+        if (userRepository.existsByDni(userDTO.getDni())) {
+            throw new CustomException("This DNI already exists!", HttpStatus.BAD_REQUEST);
+        }
+        if (userRepository.existsByPhone(userDTO.getPhone())) {
+            throw new CustomException("This phone already exists!", HttpStatus.BAD_REQUEST);
+        }
 //                    Generating Alias and CVU
-            String cvu = generateCVU();
+        String cvu = generateCVU();
 //            while (userRepository.existsByCvu(cvu)) {
 //                cvu = generateCVU();
 //            }
-
-            String alias = generateAlias();
+        String alias = generateAlias();
 //            while (userRepository.existsByAlias(alias)) {
 //                alias = generateAlias();
 //            }
 
-            AccountDTO newAccount = new AccountDTO(null, alias, cvu, null);
+        AccountDTO newAccount = new AccountDTO(null, alias, cvu, null);
 
+        int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
+        token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
 
-            int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
+        userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
+        if (UserCreatedKL == 201) {
 
-            token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
+            User user = mapper.convertValue(userDTO, User.class);
+            Long idGenerated = userRepository.save(user).getId();
 
-            userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            newAccount.setName(user.getFirstName() + " " + user.getLastName());
+            newAccount.setUserId(idGenerated);
+            Long accountId = accountRepository.createAccount(newAccount);
 
-            if (UserCreatedKL == 201) {
+            user.setAccountId(accountId);
+            userRepository.save(user);
 
-                User user = mapper.convertValue(userDTO, User.class);
-                Long idGenerated = userRepository.save(user).getId();
-
-                newAccount.setName(user.getFirstName() + " " + user.getLastName());
-                newAccount.setUserId(idGenerated);
-                Long accountId = accountRepository.createAccount(newAccount);
-
-                user.setAccountId(accountId);
-                userRepository.save(user);
-
-            }
-            return new UserWithTokenResponse(userDTO, token);
-        } catch (CustomException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("An error occurred during sign up!" + e.getMessage(), e);
         }
+
+        return new UserWithTokenResponse(userDTO, token);
     }
 
     @Override
     public String login(String email, String password) {
-        try {
+        String passwordFound = userRepository.findPasswordByEmail(email);
+        System.out.println(passwordFound);
 
-            String passwordFound = userRepository.findPasswordByEmail(email);
-            System.out.println(passwordFound);
-
-            if (email.isBlank() || password.isBlank()) {
-                throw new CustomException("Incomplete login information", HttpStatus.BAD_REQUEST);
-            } else if (!userRepository.existsByEmail(email)) {
-                throw new CustomException("Non-existent user :/", HttpStatus.NOT_FOUND);
-            } else if (!passwordEncoder.matches(password, passwordFound)) {
-                throw new CustomException("Incorrect password :/", HttpStatus.UNAUTHORIZED);
-            }
-
-            return keycloakService.getToken(email, password);
-        } catch (CustomException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Failed login: " + e.getMessage());
+        if (email == null || password == null || email.isEmpty() || password.isEmpty() ) {
+            throw new CustomException("Incomplete login information", HttpStatus.BAD_REQUEST);
+        } else if (!userRepository.existsByEmail(email)) {
+            throw new CustomException("Non-existent user :/", HttpStatus.NOT_FOUND);
+        } else if (!passwordEncoder.matches(password, passwordFound)) {
+            throw new CustomException("Incorrect password :/", HttpStatus.UNAUTHORIZED);
         }
+
+        return keycloakService.getToken(email, password);
     }
 
     public void logout(String token) {
-        try {
-            keycloakService.logoutInKeycloak(token);
-        } catch (RuntimeException e) {
-            throw new RuntimeException("Failed to logout: " + e.getMessage());
-        }
+        keycloakService.logoutInKeycloak(token);
     }
 
     @Override
     public UserDTO getUserById(String id) {
-        try {
-            Optional<UserRepresentation> user = keycloakService.findInKeycloak(id);
-            if (user.isPresent()) {
-                Map<String, List<String>> attributes = user.get().getAttributes();
-                UserDTO userDTO = new UserDTO();
-                userDTO.setEmail(user.get().getEmail());
-                userDTO.setFirstName(user.get().getFirstName());
-                userDTO.setLastName(user.get().getLastName());
-                userDTO.setDni(Long.parseLong(attributes.get("dni").get(0)));
-                userDTO.setPhone(Long.parseLong(attributes.get("phone").get(0)));
-                String idKl = user.get().getId();
+        Optional<UserRepresentation> user = keycloakService.findInKeycloak(id);
+        if (user.isPresent()) {
+            Map<String, List<String>> attributes = user.get().getAttributes();
+            UserDTO userDTO = new UserDTO();
+            userDTO.setEmail(user.get().getEmail());
+            userDTO.setFirstName(user.get().getFirstName());
+            userDTO.setLastName(user.get().getLastName());
+            userDTO.setDni(Long.parseLong(attributes.get("dni").get(0)));
+            userDTO.setPhone(Long.parseLong(attributes.get("phone").get(0)));
+            String idKl = user.get().getId();
 
-                System.out.println(idKl);
-                System.out.println(idKl);
-                System.out.println(idKl);
-                System.out.println(idKl);
-                System.out.println(idKl);
-                userDTO.setId(idKl);
+            System.out.println(idKl);
+            System.out.println(idKl);
+            System.out.println(idKl);
+            System.out.println(idKl);
+            System.out.println(idKl);
+            userDTO.setId(idKl);
 
-                return userDTO;
-            }
-            return null;
-        } catch (Exception e) {
-            throw new RuntimeException("Error converting user");
+            return userDTO;
         }
+        return null;
     }
 
     @Override
     public UserDTO updateUser(UserDTO userUpdated, String sub) {
-        try {
-            if (userUpdated.getPassword() != null) {
-                throw new CustomException("You cannot update the password here ", HttpStatus.BAD_REQUEST);
-            }
-            User user = getUserBySub(sub);
-            keycloakService.updateUser(userUpdated, sub);
-            userMapper.updateUser(userUpdated, user);
-            userRepository.save(user);
-            return mapper.convertValue(user, UserDTO.class);
-        } catch (CustomException e) {
-            throw new CustomException("User cannot be updated!", HttpStatus.INTERNAL_SERVER_ERROR);
+        if (userUpdated.getPassword() != null) {
+            throw new CustomException("You cannot update the password here ", HttpStatus.BAD_REQUEST);
         }
+        User user = getUserBySub(sub);
+        keycloakService.updateUser(userUpdated, sub);
+        userMapper.updateUser(userUpdated, user);
+        userRepository.save(user);
+        return mapper.convertValue(user, UserDTO.class);
     }
 
 
@@ -212,8 +184,10 @@ public class UserServiceImpl implements IUserService {
         try {
             Long userId = getUserBySub(userSub).getId();
             return accountRepository.getAccountByUser(userId);
-        } catch (CustomException e) {
-            throw new CustomException("Failed to get balance ", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (FeignException.NotFound ex) {
+            throw new CustomException("Account not found", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (FeignException ex) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -221,10 +195,12 @@ public class UserServiceImpl implements IUserService {
     public AccountDTO updateAccount(String userSub, AccountDTO account) {
         try {
             return accountRepository.updateAccount(getUserBySub(userSub).getAccountId(), account);
-        } catch (CustomException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw new RuntimeException("An error occurred during account update!" + e.getMessage());
+        } catch (FeignException.NotFound ex) {
+            throw new CustomException("Account not found with that id", HttpStatus.NOT_FOUND);
+        } catch (FeignException.BadRequest ex) {
+            throw new CustomException("Cannot change IDs", HttpStatus.BAD_REQUEST);
+        } catch (FeignException ex) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -235,8 +211,8 @@ public class UserServiceImpl implements IUserService {
     public List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit) {
         try {
             return accountRepository.getTransactionsByAccount(getUserBySub(sub).getAccountId(), limit);
-        } catch (CustomException e) {
-            throw new CustomException("Failed to get transactions ", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (FeignException ex) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -247,8 +223,10 @@ public class UserServiceImpl implements IUserService {
     public void createAccountCard(CardDTO cardDTO, String userSub) {
         try {
             accountRepository.createAccountCard(cardDTO, getUserBySub(userSub).getAccountId());
-        } catch (CustomException e) {
-            throw e;
+        } catch (FeignException.BadRequest ex) {
+            throw new CustomException("Card already in use", HttpStatus.BAD_REQUEST);
+        } catch (FeignException e) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -256,8 +234,12 @@ public class UserServiceImpl implements IUserService {
     public CardDTO getCardById(String userSub, Long cardId) {
         try {
             return accountRepository.getCardById(getUserBySub(userSub).getAccountId(), cardId);
-        } catch (CustomException e) {
-            throw e;
+        } catch (FeignException.NotFound ex) {
+            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
+        } catch (FeignException.Unauthorized ex) {
+            throw new CustomException("Without permission to get this card!", HttpStatus.UNAUTHORIZED);
+        } catch (FeignException ex) {
+            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -265,7 +247,7 @@ public class UserServiceImpl implements IUserService {
     public List<CardDTO> getCardsByAccount(String userSub) {
         try {
             return accountRepository.getCardsByAccount(getUserBySub(userSub).getAccountId());
-        } catch (Exception e) {
+        } catch (FeignException ex) {
             throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

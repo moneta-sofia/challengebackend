@@ -12,13 +12,10 @@ import elxrojo.account_service.repository.IAccountRepository;
 import elxrojo.account_service.external.repository.TransactionRepository;
 import elxrojo.account_service.service.IAccountService;
 import feign.FeignException;
-import jakarta.persistence.EntityNotFoundException;
-import org.hibernate.service.spi.ServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+
 
 import java.util.List;
 import java.util.Objects;
@@ -65,7 +62,21 @@ public class AccountServiceImpl implements IAccountService {
     public AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
 
-        if ((!Objects.equals(account.getId(), accountUpdated.getId())) || (!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
+        System.out.println(Objects.equals(account.getId(), accountUpdated.getId()));
+        System.out.println(account.getId());
+        System.out.println(accountUpdated.getId());
+        System.out.println(Objects.equals(account.getUserId(), accountUpdated.getUserId()));
+        System.out.println(account.getUserId());
+        System.out.println(accountUpdated.getUserId());
+
+
+
+
+        if (accountUpdated.getId() != null && (!Objects.equals(account.getId(), accountUpdated.getId())) ){
+            throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
+        }
+
+        if ((!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
             throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
         }
 

@@ -42,7 +42,7 @@ public class KeycloakService {
     private static final Logger log = LoggerFactory.getLogger(KeycloakService.class);
 
 
-    private Keycloak UserInstance(String user, String password){
+    private Keycloak UserInstance(String user, String password) {
         try {
             return KeycloakBuilder.builder()
                     .serverUrl(SERVER_URL)
@@ -52,7 +52,7 @@ public class KeycloakService {
                     .username((user != null) ? user : ADMIN_USERNAME)
                     .password((password != null) ? password : ADMIN_PASSWORD)
                     .build();
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error creating Keycloak instance: ", e);
             throw new RuntimeException("Failed to create Keycloak instance: " + e.getMessage());
         }
@@ -99,67 +99,63 @@ public class KeycloakService {
             instance.close();
             return response.getStatus();
         } catch (Exception e) {
-            log.error("Error creating user in Keycloak: ", e);
-            throw new RuntimeException("Failed to create user in Keycloak: " + e.getMessage());
+            log.error(e.getMessage());
+            throw new RuntimeException("Failed to create user in Keycloak");
         }
     }
 
 
-    public Optional<UserRepresentation> findInKeycloak(String sub){
+    public Optional<UserRepresentation> findInKeycloak(String sub) {
         try {
             Keycloak instance = UserInstance(null, null);
             UserRepresentation userFound = instance.realm(REALM).users().get(sub).toRepresentation();
             instance.close();
-            return Optional.ofNullable(userFound) ;
+            return Optional.ofNullable(userFound);
         } catch (Exception e) {
-            log.error("Error finding user in Keycloak: ", e);
-            throw new RuntimeException("Failed to find user in Keycloak: " + e.getMessage());
+            log.error(e.getMessage());
+            throw new RuntimeException("Failed to find user in Keycloak");
         }
     }
 
 
-    public void updateUser(UserDTO userDTO, String sub){
-        try {
-            Keycloak instance = UserInstance(null,null);
-            UserRepresentation existingUser = instance.realm(REALM).users().get(sub).toRepresentation();
+    public void updateUser(UserDTO userDTO, String sub) {
+        Keycloak instance = UserInstance(null, null);
+        UserRepresentation existingUser = instance.realm(REALM).users().get(sub).toRepresentation();
 
-            if(existingUser == null){
-                throw new CustomException("User not found", HttpStatus.NOT_FOUND);
-            }
-
-            if (userDTO.getFirstName() != null) {
-                existingUser.setFirstName(userDTO.getFirstName());
-            }
-            if (userDTO.getLastName() != null) {
-                existingUser.setLastName(userDTO.getLastName());
-            }
-            if (userDTO.getEmail() != null) {
-                existingUser.setEmail(userDTO.getEmail());
-                existingUser.setUsername(userDTO.getEmail());
-            }
-
-            Map<String, List<String>> attributes = existingUser.getAttributes();
-            if (attributes == null) {
-                attributes = new HashMap<>();
-            }
-
-            if (userDTO.getPhone() != null) {
-                attributes.put("phone", Collections.singletonList(userDTO.getPhone().toString()));
-            }
-            if (userDTO.getDni() != null) {
-                attributes.put("dni", Collections.singletonList(userDTO.getDni().toString()));
-            }
-
-            existingUser.setAttributes(attributes);
-            // Enviar la actualización a Keycloak
-
-            instance.realm(REALM).users().get(sub).update(existingUser);
-
-            instance.close();
-
-        }catch (CustomException e){
-            throw  e;
+        if (existingUser == null) {
+            throw new CustomException("User not found", HttpStatus.NOT_FOUND);
         }
+
+        if (userDTO.getFirstName() != null) {
+            existingUser.setFirstName(userDTO.getFirstName());
+        }
+        if (userDTO.getLastName() != null) {
+            existingUser.setLastName(userDTO.getLastName());
+        }
+        if (userDTO.getEmail() != null) {
+            existingUser.setEmail(userDTO.getEmail());
+            existingUser.setUsername(userDTO.getEmail());
+        }
+
+        Map<String, List<String>> attributes = existingUser.getAttributes();
+        if (attributes == null) {
+            attributes = new HashMap<>();
+        }
+
+        if (userDTO.getPhone() != null) {
+            attributes.put("phone", Collections.singletonList(userDTO.getPhone().toString()));
+        }
+        if (userDTO.getDni() != null) {
+            attributes.put("dni", Collections.singletonList(userDTO.getDni().toString()));
+        }
+
+        existingUser.setAttributes(attributes);
+        // Enviar la actualización a Keycloak
+
+        instance.realm(REALM).users().get(sub).update(existingUser);
+
+        instance.close();
+
     }
 
 
@@ -171,12 +167,12 @@ public class KeycloakService {
             return token;
         } catch (Exception e) {
             log.error("Error getting token: ", e);
-            throw new RuntimeException("Failed to get token: " + e.getMessage());
+            throw new RuntimeException("Failed to get token");
         }
     }
 
 
-    public void logoutInKeycloak(String token){
+    public void logoutInKeycloak(String token) {
         try {
             Keycloak instance = UserInstance(null, null);
             DecodedJWT jwt = JWT.decode(token);
@@ -187,10 +183,11 @@ public class KeycloakService {
             }
             instance.realm(REALM).users().get(sub).logout();
             instance.close();
-        }catch (CustomException e) {
+        } catch (CustomException e) {
             throw e;
-        }catch (Exception e) {
-            throw new RuntimeException("Failed logout" + e.getMessage());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new RuntimeException("Failed logout");
         }
     }
 
