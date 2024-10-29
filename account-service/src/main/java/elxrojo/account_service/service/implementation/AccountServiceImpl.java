@@ -61,17 +61,6 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
-
-        System.out.println(Objects.equals(account.getId(), accountUpdated.getId()));
-        System.out.println(account.getId());
-        System.out.println(accountUpdated.getId());
-        System.out.println(Objects.equals(account.getUserId(), accountUpdated.getUserId()));
-        System.out.println(account.getUserId());
-        System.out.println(accountUpdated.getUserId());
-
-
-
-
         if (accountUpdated.getId() != null && (!Objects.equals(account.getId(), accountUpdated.getId())) ){
             throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
         }
