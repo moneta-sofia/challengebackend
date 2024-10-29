@@ -13,5 +13,5 @@ public class AccountDTO {
     private Float balance;
     private String alias;
     private String cvu;
-    private Long userId;
+    private String userId;
 }

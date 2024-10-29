@@ -1,8 +1,6 @@
 package elxrojo.user_service.controller;
 
 import elxrojo.user_service.model.DTO.AccountDTO;
-import elxrojo.user_service.model.DTO.CardDTO;
-import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -72,51 +70,51 @@ public class UserController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-
-//    Accounts endpoints
-
-    @GetMapping("/{userSub}/accounts")
-    public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable String userSub) {
-        return ResponseEntity.ok(userService.getAccountByUser(userSub));
-    }
-
-    @PutMapping("/{userSub}/accounts")
-    public ResponseEntity<AccountDTO> updateAccountByUser(@RequestBody AccountDTO accountDTO, @PathVariable String userSub){
-        AccountDTO accountUpdated = userService.updateAccount(userSub, accountDTO);
-        return ResponseEntity.ok(accountUpdated);
-    }
-
-
-//    Transaction endpoints
-
-    @GetMapping("/{userSub}/activities")
-    public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam(required = false)  Integer limit) {
-        return ResponseEntity.ok(userService.getTransactionsByAccount(userSub, limit));
-    }
-
-
-//    Card endpoints
-
-    @PostMapping("/{userSub}/cards")
-    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable String userSub){
-        userService.createAccountCard(card,userSub);
-        return ResponseEntity.ok(HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{userSub}/cards/{cardId}")
-    public ResponseEntity<CardDTO> getCardById(@PathVariable String userSub, @PathVariable Long cardId){
-        return ResponseEntity.ok(userService.getCardById(userSub,cardId));
-    }
-
-    @GetMapping("/{userSub}/cards")
-    public ResponseEntity<List<CardDTO>>  getCardsByAccount(@PathVariable String userSub){
-        return ResponseEntity.ok(userService.getCardsByAccount(userSub));
-    }
-
-    @DeleteMapping("/{userSub}/cards/{cardId}")
-    public ResponseEntity<?> deleteCard(@PathVariable String userSub, @PathVariable Long cardId){
-        userService.deleteCard(userSub,cardId);
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
+//
+////    Accounts endpoints
+//
+//    @GetMapping("/{userSub}/accounts")
+//    public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable String userSub) {
+//        return ResponseEntity.ok(userService.getAccountByUser(userSub));
+//    }
+//
+//    @PutMapping("/{userSub}/accounts")
+//    public ResponseEntity<AccountDTO> updateAccountByUser(@RequestBody AccountDTO accountDTO, @PathVariable String userSub){
+//        AccountDTO accountUpdated = userService.updateAccount(userSub, accountDTO);
+//        return ResponseEntity.ok(accountUpdated);
+//    }
+//
+//
+////    Transaction endpoints
+//
+//    @GetMapping("/{userSub}/activities")
+//    public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam(required = false)  Integer limit) {
+//        return ResponseEntity.ok(userService.getTransactionsByAccount(userSub, limit));
+//    }
+//
+//
+////    Card endpoints
+//
+//    @PostMapping("/{userSub}/cards")
+//    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable String userSub){
+//        userService.createAccountCard(card,userSub);
+//        return ResponseEntity.ok(HttpStatus.CREATED);
+//    }
+//
+//    @GetMapping("/{userSub}/cards/{cardId}")
+//    public ResponseEntity<CardDTO> getCardById(@PathVariable String userSub, @PathVariable Long cardId){
+//        return ResponseEntity.ok(userService.getCardById(userSub,cardId));
+//    }
+//
+//    @GetMapping("/{userSub}/cards")
+//    public ResponseEntity<List<CardDTO>>  getCardsByAccount(@PathVariable String userSub){
+//        return ResponseEntity.ok(userService.getCardsByAccount(userSub));
+//    }
+//
+//    @DeleteMapping("/{userSub}/cards/{cardId}")
+//    public ResponseEntity<?> deleteCard(@PathVariable String userSub, @PathVariable Long cardId){
+//        userService.deleteCard(userSub,cardId);
+//        return ResponseEntity.ok(HttpStatus.OK);
+//    }
 
 }

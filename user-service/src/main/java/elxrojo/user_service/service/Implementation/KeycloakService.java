@@ -59,8 +59,8 @@ public class KeycloakService {
     }
 
 
-    public int createUserInKeycloak(UserDTO userDTO) {
-        Response response = null;
+    public String createUserInKeycloak(UserDTO userDTO) {
+        String userId = null;
         try {
 
             Keycloak instance = UserInstance(null, null);
@@ -89,15 +89,24 @@ public class KeycloakService {
             userRepresentation.setCredentials(List.of(credential));
 
             // Enviar solicitud a Keycloak
-            response = instance.realm(REALM).users().create(userRepresentation);
+            Response response = instance.realm(REALM).users().create(userRepresentation);
 
             if (response.getStatus() != 201) {
                 String errorMessage = response.readEntity(String.class); // Captura el mensaje de error de Keycloak
                 throw new RuntimeException("Failed to create user in Keycloak: " + response.getStatus() + " - " + errorMessage);
+            } else {
+                // Obtener el `sub` del usuario creado
+                String location = response.getHeaderString("Location");
+                if (location == null) {
+                    throw new RuntimeException("Failed to retrieve user ID from Keycloak");
+                }
+
+                // Extraer el ID de la URL de ubicación
+                userId = location.substring(location.lastIndexOf('/') + 1);
             }
 
             instance.close();
-            return response.getStatus();
+            return userId;
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new RuntimeException("Failed to create user in Keycloak");

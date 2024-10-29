@@ -28,10 +28,10 @@ public class Account {
     private String cvu;
 
     @Column(name = "userId", nullable = false)
-    private Long userId;
+    private String userId;
 
 
-    public Account(Long id, String name, Float balance, String alias, String cvu, Long userId) {
+    public Account(Long id, String name, Float balance, String alias, String cvu, String userId) {
         this.id = id;
         this.name = name;
         this.balance = balance;
@@ -40,7 +40,7 @@ public class Account {
         this.userId = userId;
     }
 
-    public Account(String name, Float balance, String alias, String cvu, Long userId) {
+    public Account(String name, Float balance, String alias, String cvu, String userId) {
         this.name = name;
         this.balance = balance;
         this.alias = alias;

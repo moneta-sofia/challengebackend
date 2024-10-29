@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IAccountService {
-    Long createAccount(String alias, String cvu, Long userId, String Name);
-    AccountDTO getAccountByUser(Long userId);
+    Long createAccount(String alias, String cvu, String userId, String Name);
+    AccountDTO getAccountByUser(String userId);
     AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated);
 
     List<TransactionDTO> getTransactionById(Long id, Integer limit);

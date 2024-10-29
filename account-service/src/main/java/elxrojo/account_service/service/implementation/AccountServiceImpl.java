@@ -40,7 +40,7 @@ public class AccountServiceImpl implements IAccountService {
 
 
     @Override
-    public Long createAccount(String alias, String cvu, Long userId, String name) {
+    public Long createAccount(String alias, String cvu, String userId, String name) {
         Account account = accountRepository.save(new Account(name, 0.0F, alias, cvu, userId));
         Account savedAccount = accountRepository.save(account);
         return savedAccount.getId();
@@ -48,7 +48,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountDTO getAccountByUser(Long userId) {
+    public AccountDTO getAccountByUser(String userId) {
             Optional<Account> account = accountRepository.findByUserId(userId);
             if (account.isPresent()) {
                 return mapper.convertValue(account.get(), AccountDTO.class);
@@ -92,7 +92,7 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public void createAccountCard(CardDTO card, Long accountId) {
         try {
-            Optional<Account> account = accountRepository.findByUserId(accountId);
+            Optional<Account> account = accountRepository.findById(accountId);
             card.setAccountId(account.get().getId());
             card.setName(account.get().getName());
             cardRepository.createCard(card);

@@ -3,8 +3,6 @@ package elxrojo.user_service.service.Implementation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.user_service.exception.CustomException;
 import elxrojo.user_service.model.DTO.AccountDTO;
-import elxrojo.user_service.model.DTO.CardDTO;
-import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -12,9 +10,6 @@ import elxrojo.user_service.external.repository.AccountRepository;
 import elxrojo.user_service.repository.IUserMapper;
 import elxrojo.user_service.repository.IUserRepository;
 import elxrojo.user_service.service.IUserService;
-import feign.FeignException;
-import jakarta.persistence.EntityNotFoundException;
-import org.hibernate.service.spi.ServiceException;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +18,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -97,15 +89,16 @@ public class UserServiceImpl implements IUserService {
 
         AccountDTO newAccount = new AccountDTO(null, alias, cvu, null);
 
-        int UserCreatedKL = keycloakService.createUserInKeycloak(userDTO);
+        String userCreatedId = keycloakService.createUserInKeycloak(userDTO);
         token = keycloakService.getToken(userDTO.getEmail(), userDTO.getPassword());
 
         userDTO.setPassword(passwordEncoder.encode(userDTO.getPassword()));
 
-        if (UserCreatedKL == 201) {
+        if (userCreatedId != null) {
 
+            userDTO.setId(userCreatedId);
             User user = mapper.convertValue(userDTO, User.class);
-            Long idGenerated = userRepository.save(user).getId();
+            String idGenerated = userRepository.save(user).getId();
 
             newAccount.setName(user.getFirstName() + " " + user.getLastName());
             newAccount.setUserId(idGenerated);
@@ -124,7 +117,7 @@ public class UserServiceImpl implements IUserService {
         String passwordFound = userRepository.findPasswordByEmail(email);
         System.out.println(passwordFound);
 
-        if (email == null || password == null || email.isEmpty() || password.isEmpty() ) {
+        if (email == null || password == null || email.isEmpty() || password.isEmpty()) {
             throw new CustomException("Incomplete login information", HttpStatus.BAD_REQUEST);
         } else if (!userRepository.existsByEmail(email)) {
             throw new CustomException("Non-existent user :/", HttpStatus.NOT_FOUND);
@@ -179,91 +172,91 @@ public class UserServiceImpl implements IUserService {
 
 //    Account functions
 
-    @Override
-    public AccountDTO getAccountByUser(String userSub) {
-        try {
-            Long userId = getUserBySub(userSub).getId();
-            return accountRepository.getAccountByUser(userId);
-        } catch (FeignException.NotFound ex) {
-            throw new CustomException("Account not found", HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (FeignException ex) {
-            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public AccountDTO updateAccount(String userSub, AccountDTO account) {
-        try {
-            return accountRepository.updateAccount(getUserBySub(userSub).getAccountId(), account);
-        } catch (FeignException.NotFound ex) {
-            throw new CustomException("Account not found with that id", HttpStatus.NOT_FOUND);
-        } catch (FeignException.BadRequest ex) {
-            throw new CustomException("Cannot change IDs", HttpStatus.BAD_REQUEST);
-        } catch (FeignException ex) {
-            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
+//    @Override
+//    public AccountDTO getAccountByUser(String userSub) {
+//        try {
+//            Long userId = getUserBySub(userSub).getId();
+//            return accountRepository.getAccountByUser(userId);
+//        } catch (FeignException.NotFound ex) {
+//            throw new CustomException("Account not found", HttpStatus.INTERNAL_SERVER_ERROR);
+//        } catch (FeignException ex) {
+//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//    @Override
+//    public AccountDTO updateAccount(String userSub, AccountDTO account) {
+//        try {
+//            return accountRepository.updateAccount(getUserBySub(userSub).getAccountId(), account);
+//        } catch (FeignException.NotFound ex) {
+//            throw new CustomException("Account not found with that id", HttpStatus.NOT_FOUND);
+//        } catch (FeignException.BadRequest ex) {
+//            throw new CustomException("Cannot change IDs", HttpStatus.BAD_REQUEST);
+//        } catch (FeignException ex) {
+//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
 
 //    Transaction function
 
-    @Override
-    public List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit) {
-        try {
-            return accountRepository.getTransactionsByAccount(getUserBySub(sub).getAccountId(), limit);
-        } catch (FeignException ex) {
-            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @Override
+//    public List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit) {
+//        try {
+//            return accountRepository.getTransactionsByAccount(getUserBySub(sub).getAccountId(), limit);
+//        } catch (FeignException ex) {
+//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 
 //    Card function
 
-    @Override
-    public void createAccountCard(CardDTO cardDTO, String userSub) {
-        try {
-            accountRepository.createAccountCard(cardDTO, getUserBySub(userSub).getAccountId());
-        } catch (FeignException.BadRequest ex) {
-            throw new CustomException("Card already in use", HttpStatus.BAD_REQUEST);
-        } catch (FeignException e) {
-            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public CardDTO getCardById(String userSub, Long cardId) {
-        try {
-            return accountRepository.getCardById(getUserBySub(userSub).getAccountId(), cardId);
-        } catch (FeignException.NotFound ex) {
-            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
-        } catch (FeignException.Unauthorized ex) {
-            throw new CustomException("Without permission to get this card!", HttpStatus.UNAUTHORIZED);
-        } catch (FeignException ex) {
-            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public List<CardDTO> getCardsByAccount(String userSub) {
-        try {
-            return accountRepository.getCardsByAccount(getUserBySub(userSub).getAccountId());
-        } catch (FeignException ex) {
-            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public void deleteCard(String userSub, Long cardId) {
-        try {
-            accountRepository.deleteCard(getUserBySub(userSub).getAccountId(), cardId);
-        } catch (FeignException.NotFound ex) {
-            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
-        } catch (FeignException.Unauthorized ex) {
-            throw new CustomException("Without permission to delete this card!", HttpStatus.UNAUTHORIZED);
-        } catch (FeignException ex) {
-            throw new CustomException("Error calling card-service", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @Override
+//    public void createAccountCard(CardDTO cardDTO, String userSub) {
+//        try {
+//            accountRepository.createAccountCard(cardDTO, getUserBySub(userSub).getAccountId());
+//        } catch (FeignException.BadRequest ex) {
+//            throw new CustomException("Card already in use", HttpStatus.BAD_REQUEST);
+//        } catch (FeignException e) {
+//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//    @Override
+//    public CardDTO getCardById(String userSub, Long cardId) {
+//        try {
+//            return accountRepository.getCardById(getUserBySub(userSub).getAccountId(), cardId);
+//        } catch (FeignException.NotFound ex) {
+//            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
+//        } catch (FeignException.Unauthorized ex) {
+//            throw new CustomException("Without permission to get this card!", HttpStatus.UNAUTHORIZED);
+//        } catch (FeignException ex) {
+//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//    @Override
+//    public List<CardDTO> getCardsByAccount(String userSub) {
+//        try {
+//            return accountRepository.getCardsByAccount(getUserBySub(userSub).getAccountId());
+//        } catch (FeignException ex) {
+//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
+//    @Override
+//    public void deleteCard(String userSub, Long cardId) {
+//        try {
+//            accountRepository.deleteCard(getUserBySub(userSub).getAccountId(), cardId);
+//        } catch (FeignException.NotFound ex) {
+//            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
+//        } catch (FeignException.Unauthorized ex) {
+//            throw new CustomException("Without permission to delete this card!", HttpStatus.UNAUTHORIZED);
+//        } catch (FeignException ex) {
+//            throw new CustomException("Error calling card-service", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
 
 //    Other functions
