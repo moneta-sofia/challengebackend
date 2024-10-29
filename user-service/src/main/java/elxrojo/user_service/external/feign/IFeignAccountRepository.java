@@ -15,9 +15,9 @@ public interface IFeignAccountRepository {
 //    @GetMapping("/accounts/{userId}")
 //    AccountDTO getAccountByUser(@PathVariable Long userId);
 //
-//    @PutMapping("/accounts/{accountId}")
-//    AccountDTO updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account);
-//
+    @PutMapping("/accounts/{accountId}")
+    AccountDTO updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account);
+
 //    @GetMapping("/accounts/{userId}/transactions")
 //    List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId, @RequestParam(required = false) Integer limit);
 //

@@ -158,15 +158,20 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserDTO updateUser(UserDTO userUpdated, String sub) {
+    public UserDTO updateUser(UserDTO userUpdated, String id) {
         if (userUpdated.getPassword() != null) {
             throw new CustomException("You cannot update the password here ", HttpStatus.BAD_REQUEST);
         }
-        User user = getUserBySub(sub);
-        keycloakService.updateUser(userUpdated, sub);
-        userMapper.updateUser(userUpdated, user);
-        userRepository.save(user);
-        return mapper.convertValue(user, UserDTO.class);
+        Optional<User> user = userRepository.findById(id);
+        keycloakService.updateUser(userUpdated, id);
+        userMapper.updateUser(userUpdated, user.get());
+
+        accountRepository.updateAccount(
+                user.get().getAccountId(),
+                new AccountDTO(user.get().getAccountId(),user.get().getFirstName()  + " " + user.get().getLastName(), user.get().getId()));
+
+        userRepository.save(user.get());
+        return mapper.convertValue(user.get(), UserDTO.class);
     }
 
 
@@ -261,13 +266,6 @@ public class UserServiceImpl implements IUserService {
 
 //    Other functions
 
-    private User getUserBySub(String sub) {
-        Optional<UserRepresentation> userKl = keycloakService.findInKeycloak(sub);
-        if (userKl.isEmpty()) {
-            throw new CustomException("User not found ", HttpStatus.NOT_FOUND);
-        }
-        return userRepository.findByEmail(userKl.get().getEmail());
-    }
 
     private String generateCVU() {
         StringBuilder cvu = new StringBuilder();

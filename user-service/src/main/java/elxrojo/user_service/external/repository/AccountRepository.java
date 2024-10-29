@@ -24,10 +24,10 @@ public class AccountRepository {
 //        return feignAccountRepository.getAccountByUser(userId);
 //    }
 //
-//    public AccountDTO updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account) {
-//        return feignAccountRepository.updateAccount(accountId, account);
-//    }
-//
+    public AccountDTO updateAccount(@PathVariable Long accountId, @RequestBody AccountDTO account) {
+        return feignAccountRepository.updateAccount(accountId, account);
+    }
+
 //
 //    public List<TransactionDTO> getTransactionsByAccount(@PathVariable Long userId, @RequestParam(required = false) Integer limit) {
 //        return feignAccountRepository.getTransactionsByAccount(userId, limit);

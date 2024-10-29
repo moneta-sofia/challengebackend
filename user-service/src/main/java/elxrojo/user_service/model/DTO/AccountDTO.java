@@ -26,6 +26,12 @@ public class AccountDTO {
     public AccountDTO() {
     }
 
+    public AccountDTO(Long id, String name, String userId) {
+        this.id = id;
+        this.name = name;
+        this.userId = userId;
+    }
+
     public AccountDTO(Long id, String name, String alias, String cvu, String userId) {
         this.id = id;
         this.name = name;

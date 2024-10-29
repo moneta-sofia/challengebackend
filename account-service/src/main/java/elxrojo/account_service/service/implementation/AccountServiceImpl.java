@@ -62,11 +62,11 @@ public class AccountServiceImpl implements IAccountService {
     public AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
         if (accountUpdated.getId() != null && (!Objects.equals(account.getId(), accountUpdated.getId())) ){
-            throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Cannot change the account id!", HttpStatus.BAD_REQUEST);
         }
 
         if ((!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
-            throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Cannot change the user id!", HttpStatus.BAD_REQUEST);
         }
 
         accountMapper.updateAccount(accountUpdated, account);
