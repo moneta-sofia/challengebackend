@@ -30,11 +30,14 @@ public class UserController {
         String token = (String) results.getAccessToken();
 
         User userResponse = new User(
+                userCreated.getId(),
                 userCreated.getFirstName(),
                 userCreated.getLastName(),
                 userCreated.getDni(),
+                userCreated.getPhone(),
                 userCreated.getEmail(),
-                userCreated.getPhone());
+                userCreated.getAccountId()
+        );
 
         return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token));
     }

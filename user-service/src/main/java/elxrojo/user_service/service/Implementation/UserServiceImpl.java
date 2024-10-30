@@ -104,6 +104,13 @@ public class UserServiceImpl implements IUserService {
 
         }
 
+        System.out.println(userDTO.getId());
+        System.out.println(userDTO.getId());
+        System.out.println(userDTO.getId());
+        System.out.println(userDTO.getId());
+        System.out.println(userDTO.getId());
+        System.out.println(userDTO.getId());
+
         return new UserWithTokenResponse(userDTO, token);
     }
 
