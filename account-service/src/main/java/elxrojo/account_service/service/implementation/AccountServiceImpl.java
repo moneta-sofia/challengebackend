@@ -65,7 +65,7 @@ public class AccountServiceImpl implements IAccountService {
             throw new CustomException("Cannot change the account id!", HttpStatus.BAD_REQUEST);
         }
 
-        if ((!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
+        if (accountUpdated.getUserId() != null && (!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
             throw new CustomException("Cannot change the user id!", HttpStatus.BAD_REQUEST);
         }
 
