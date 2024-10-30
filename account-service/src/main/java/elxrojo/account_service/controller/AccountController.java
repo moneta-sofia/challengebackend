@@ -49,7 +49,12 @@ public class AccountController {
     @GetMapping("/{userId}/transactions")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable Long userId,
                                                                          @RequestParam(required = false) Integer limit) {
-        return ResponseEntity.ok(accountService.getTransactionById(userId, limit));
+        return ResponseEntity.ok(accountService.getTransactionsById(userId, limit));
+    }
+
+    @GetMapping("/{accountId}/activity/{transactionId}")
+    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId){
+        return ResponseEntity.ok(accountService.getTransactionById(accountId, transactionId));
     }
 
 

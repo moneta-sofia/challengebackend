@@ -13,8 +13,8 @@ public interface IAccountService {
     AccountDTO getAccountByUser(String userId);
     AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated);
 
-    List<TransactionDTO> getTransactionById(Long id, Integer limit);
-
+    List<TransactionDTO> getTransactionsById(Long id, Integer limit);
+    TransactionDTO getTransactionById(Long accountId, Long transactionId);
 
     void createAccountCard(CardDTO card, Long accountId);
     List<CardDTO> getCardsByAccount(Long accountId);

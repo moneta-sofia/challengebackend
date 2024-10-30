@@ -78,12 +78,30 @@ public class AccountServiceImpl implements IAccountService {
     //    Transaction method
 
     @Override
-    public List<TransactionDTO> getTransactionById(Long id, Integer limit) {
+    public List<TransactionDTO> getTransactionsById(Long id, Integer limit) {
         try {
-            return transactionRepository.getTransactionByAccountId(id, limit);
+            return transactionRepository.getTransactionsByAccount(id, limit);
         } catch (FeignException ex) {
             throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+
+    @Override
+    public TransactionDTO getTransactionById(Long accountId, Long transactionId){
+        try {
+            if (accountRepository.findById(accountId).isEmpty()){
+                throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
+            }
+            return transactionRepository.getTransactionByAccount(accountId, transactionId);
+        } catch (FeignException.NotFound ex) {
+            throw new CustomException("That activity doesn't exist!", HttpStatus.NOT_FOUND);
+        } catch (FeignException.Unauthorized ex) {
+            throw new CustomException("Without permission!", HttpStatus.UNAUTHORIZED);
+        } catch (FeignException ex) {
+            throw new CustomException("An unexpected error ocurred", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
 
