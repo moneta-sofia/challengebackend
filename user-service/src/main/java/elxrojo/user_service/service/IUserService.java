@@ -11,7 +11,7 @@ import java.util.List;
 public interface IUserService {
     UserWithTokenResponse signup(UserDTO user) throws IOException;
     String login(String email, String password);
-    UserWithTokenResponse getUserById(String id);
+    UserDTO getUserById(String id);
     void logout(String token);
     UserDTO updateUser(UserDTO userDTO, String id);
 }

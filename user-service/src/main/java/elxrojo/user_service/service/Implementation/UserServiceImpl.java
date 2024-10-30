@@ -129,7 +129,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserWithTokenResponse getUserById(String id) {
+    public UserDTO getUserById(String id) {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             UserDTO userDTO = new UserDTO(
@@ -140,11 +140,11 @@ public class UserServiceImpl implements IUserService {
                     user.get().getEmail(),
                     user.get().getPhone()
             );
+            return userDTO;
+        } else {
+            throw new CustomException("User not found!", HttpStatus.NOT_FOUND);
 
-            String token = keycloakService.getToken(user.get().getEmail(), user.get().getPassword());
-            return new UserWithTokenResponse(userDTO,);
         }
-        return null;
     }
 
     @Override
