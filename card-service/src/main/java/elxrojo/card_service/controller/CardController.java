@@ -1,7 +1,6 @@
 package elxrojo.card_service.controller;
 
 
-import elxrojo.card_service.model.Card;
 import elxrojo.card_service.model.DTO.CardDTO;
 import elxrojo.card_service.service.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +50,4 @@ public class CardController {
         cardService.deleteCard(accountId,cardId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-
-
-
 }
