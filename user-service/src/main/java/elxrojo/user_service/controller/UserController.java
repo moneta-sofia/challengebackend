@@ -44,7 +44,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PatchMapping("/{sub}")
+    @PatchMapping("/{userId}")
     public ResponseEntity<UserDTO> updateUserBySub(@RequestBody UserDTO userDTO, @PathVariable String userId) {
         UserDTO userUpdated = userService.updateUser(userDTO, userId);
         return ResponseEntity.ok(userUpdated);

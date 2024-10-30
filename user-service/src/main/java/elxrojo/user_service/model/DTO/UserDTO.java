@@ -25,6 +25,9 @@ public class UserDTO {
         this.email = email;
         this.phone = phone;
     }
+
+    public UserDTO() {
+    }
 }
 
 
