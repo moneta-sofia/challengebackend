@@ -1,8 +1,6 @@
 package elxrojo.user_service.controller;
 
 import elxrojo.user_service.model.DTO.AccountDTO;
-import elxrojo.user_service.model.DTO.CardDTO;
-import elxrojo.user_service.model.DTO.TransactionDTO;
 import elxrojo.user_service.model.DTO.UserDTO;
 import elxrojo.user_service.model.User;
 import elxrojo.user_service.model.UserWithTokenResponse;
@@ -25,34 +23,33 @@ public class UserController {
     @Autowired
     IUserService userService;
 
-
-//    User endpoints
-
-    @PostMapping("/register")
+    @PostMapping("/")
     public ResponseEntity<UserWithTokenResponse> RegisterUser(@RequestBody UserDTO userDTO, HttpServletRequest request) throws IOException {
         UserWithTokenResponse results = userService.signup(userDTO);
         UserDTO userCreated = results.getUserDTO();
         String token = (String) results.getAccessToken();
 
         User userResponse = new User(
+                userCreated.getId(),
                 userCreated.getFirstName(),
                 userCreated.getLastName(),
                 userCreated.getDni(),
+                userCreated.getPhone(),
                 userCreated.getEmail(),
-                userCreated.getPhone());
+                userCreated.getAccountId()
+        );
 
         return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserBySub(@PathVariable String id) {
-        UserDTO user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<UserDTO> getUserById(@PathVariable String id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PatchMapping("/{sub}")
-    public ResponseEntity<UserDTO> updateUserBySub(@RequestBody UserDTO userDTO, @PathVariable String sub){
-        UserDTO userUpdated = userService.updateUser(userDTO, sub);
+    @PatchMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateUserById(@RequestBody UserDTO userDTO, @PathVariable String userId) {
+        UserDTO userUpdated = userService.updateUser(userDTO, userId);
         return ResponseEntity.ok(userUpdated);
     }
 
@@ -62,7 +59,6 @@ public class UserController {
         HashMap<String, String> response = new HashMap<String, String>();
         response.put("token", token);
         return ResponseEntity.ok(response);
-
     }
 
     @PostMapping("/logout")
@@ -71,52 +67,4 @@ public class UserController {
         userService.logout(token);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
-
-//    Accounts endpoints
-
-    @GetMapping("/{userSub}/accounts")
-    public ResponseEntity<AccountDTO> getAccountByUser(@PathVariable String userSub) {
-        return ResponseEntity.ok(userService.getAccountByUser(userSub));
-    }
-
-    @PutMapping("/{userSub}/accounts")
-    public ResponseEntity<AccountDTO> updateAccountByUser(@RequestBody AccountDTO accountDTO, @PathVariable String userSub){
-        AccountDTO accountUpdated = userService.updateAccount(userSub, accountDTO);
-        return ResponseEntity.ok(accountUpdated);
-    }
-
-
-//    Transaction endpoints
-
-    @GetMapping("/{userSub}/activities")
-    public ResponseEntity<List<TransactionDTO>> getTransactionsByUser(@PathVariable String userSub, @RequestParam(required = false)  Integer limit) {
-        return ResponseEntity.ok(userService.getTransactionsByAccount(userSub, limit));
-    }
-
-
-//    Card endpoints
-
-    @PostMapping("/{userSub}/cards")
-    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable String userSub){
-        userService.createAccountCard(card,userSub);
-        return ResponseEntity.ok(HttpStatus.CREATED);
-    }
-
-    @GetMapping("/{userSub}/cards/{cardId}")
-    public ResponseEntity<CardDTO> getCardById(@PathVariable String userSub, @PathVariable Long cardId){
-        return ResponseEntity.ok(userService.getCardById(userSub,cardId));
-    }
-
-    @GetMapping("/{userSub}/cards")
-    public ResponseEntity<List<CardDTO>>  getCardsByAccount(@PathVariable String userSub){
-        return ResponseEntity.ok(userService.getCardsByAccount(userSub));
-    }
-
-    @DeleteMapping("/{userSub}/cards/{cardId}")
-    public ResponseEntity<?> deleteCard(@PathVariable String userSub, @PathVariable Long cardId){
-        userService.deleteCard(userSub,cardId);
-        return ResponseEntity.ok(HttpStatus.OK);
-    }
-
 }

@@ -16,4 +16,18 @@ public class UserDTO {
     private Long phone;
     private String password;
     private Long accountId;
+
+    public UserDTO(String id, String firstName, String lastName, Long dni, String email, Long phone) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dni = dni;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    public UserDTO() {
+    }
 }
+
+

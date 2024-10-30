@@ -18,11 +18,8 @@
             http
                     .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                     .authorizeExchange(exchanges -> exchanges
-                            .pathMatchers("/users/{usersub}/accounts").authenticated()
-                            .pathMatchers("/users/{usersub}/activities").authenticated()
-                            .pathMatchers("/users/{usersub}/cards").authenticated()
-                            .pathMatchers("/users/{usersub}/cards/{cardId}").authenticated()
-                            .pathMatchers("/users/**").permitAll()
+                            .pathMatchers("/users/login").permitAll()
+                            .pathMatchers("/users/").permitAll()
                             .anyExchange().authenticated()
                     )
                     .csrf(csrf -> csrf.disable())

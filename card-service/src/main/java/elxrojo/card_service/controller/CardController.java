@@ -1,7 +1,6 @@
 package elxrojo.card_service.controller;
 
 
-import elxrojo.card_service.model.Card;
 import elxrojo.card_service.model.DTO.CardDTO;
 import elxrojo.card_service.service.ICardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,11 @@ public class CardController {
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<List<CardDTO>> getAllCards() {
+        return ResponseEntity.ok(cardService.getAllCards());
+    }
+
     @GetMapping("/{cardId}/account/{accountId}")
     public ResponseEntity<CardDTO> getCardById(@PathVariable Long accountId,@PathVariable Long cardId) {
         return ResponseEntity.ok(cardService.findCardById(accountId, cardId));
@@ -34,11 +38,6 @@ public class CardController {
     public ResponseEntity<Optional<CardDTO>> getCardByNumber(@PathVariable String cardNumber) {
         Optional<CardDTO> card = cardService.findCardByNumber(cardNumber);
         return ResponseEntity.ok(card);
-    }
-
-    @GetMapping("/")
-    public ResponseEntity<List<CardDTO>> getAllCards() {
-        return ResponseEntity.ok(cardService.getAllCards());
     }
 
     @GetMapping("/account/{accountId}")
@@ -51,5 +50,4 @@ public class CardController {
         cardService.deleteCard(accountId,cardId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }

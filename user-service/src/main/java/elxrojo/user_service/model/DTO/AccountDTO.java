@@ -14,9 +14,9 @@ public class AccountDTO {
     private Float balance;
     private String alias;
     private String cvu;
-    private Long userId;
+    private String userId;
 
-    public AccountDTO(String name, String alias, String cvu, Long userId) {
+    public AccountDTO(String name, String alias, String cvu, String userId) {
         this.name = name;
         this.alias = alias;
         this.cvu = cvu;
@@ -26,7 +26,13 @@ public class AccountDTO {
     public AccountDTO() {
     }
 
-    public AccountDTO(Long id, String name, String alias, String cvu, Long userId) {
+    public AccountDTO(Long id, String name, String userId) {
+        this.id = id;
+        this.name = name;
+        this.userId = userId;
+    }
+
+    public AccountDTO(Long id, String name, String alias, String cvu, String userId) {
         this.id = id;
         this.name = name;
         this.alias = alias;

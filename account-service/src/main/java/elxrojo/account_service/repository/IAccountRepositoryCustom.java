@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface IAccountRepositoryCustom {
 
-    Optional<Account> findByUserId(Long userId);
+    Optional<Account> findByUserId(String userId);
 }

@@ -40,7 +40,7 @@ public class AccountServiceImpl implements IAccountService {
 
 
     @Override
-    public Long createAccount(String alias, String cvu, Long userId, String name) {
+    public Long createAccount(String alias, String cvu, String userId, String name) {
         Account account = accountRepository.save(new Account(name, 0.0F, alias, cvu, userId));
         Account savedAccount = accountRepository.save(account);
         return savedAccount.getId();
@@ -48,7 +48,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public AccountDTO getAccountByUser(Long userId) {
+    public AccountDTO getAccountByUser(String userId) {
             Optional<Account> account = accountRepository.findByUserId(userId);
             if (account.isPresent()) {
                 return mapper.convertValue(account.get(), AccountDTO.class);
@@ -61,23 +61,12 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
-
-        System.out.println(Objects.equals(account.getId(), accountUpdated.getId()));
-        System.out.println(account.getId());
-        System.out.println(accountUpdated.getId());
-        System.out.println(Objects.equals(account.getUserId(), accountUpdated.getUserId()));
-        System.out.println(account.getUserId());
-        System.out.println(accountUpdated.getUserId());
-
-
-
-
         if (accountUpdated.getId() != null && (!Objects.equals(account.getId(), accountUpdated.getId())) ){
-            throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
+            throw new CustomException("Cannot change the account id!", HttpStatus.BAD_REQUEST);
         }
 
-        if ((!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
-            throw new CustomException("Changing the ids is not allowed!", HttpStatus.BAD_REQUEST);
+        if (accountUpdated.getUserId() != null && (!Objects.equals(account.getUserId(), accountUpdated.getUserId()))) {
+            throw new CustomException("Cannot change the user id!", HttpStatus.BAD_REQUEST);
         }
 
         accountMapper.updateAccount(accountUpdated, account);
@@ -103,7 +92,7 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public void createAccountCard(CardDTO card, Long accountId) {
         try {
-            Optional<Account> account = accountRepository.findByUserId(accountId);
+            Optional<Account> account = accountRepository.findById(accountId);
             card.setAccountId(account.get().getId());
             card.setName(account.get().getName());
             cardRepository.createCard(card);
