@@ -57,11 +57,6 @@ public class UserServiceImpl implements IUserService {
 
     ObjectMapper mapper = new ObjectMapper();
 
-    //Add camps validations to all post requests
-    //Add validation comparison  with the ids and the token's ids
-
-
-//    User functions
 
     @Override
     public UserWithTokenResponse signup(UserDTO userDTO) throws IOException {
@@ -128,31 +123,26 @@ public class UserServiceImpl implements IUserService {
         return keycloakService.getToken(email, password);
     }
 
+    @Override
     public void logout(String token) {
         keycloakService.logoutInKeycloak(token);
     }
 
     @Override
-    public UserDTO getUserById(String id) {
-        Optional<UserRepresentation> user = keycloakService.findInKeycloak(id);
+    public UserWithTokenResponse getUserById(String id) {
+        Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            Map<String, List<String>> attributes = user.get().getAttributes();
-            UserDTO userDTO = new UserDTO();
-            userDTO.setEmail(user.get().getEmail());
-            userDTO.setFirstName(user.get().getFirstName());
-            userDTO.setLastName(user.get().getLastName());
-            userDTO.setDni(Long.parseLong(attributes.get("dni").get(0)));
-            userDTO.setPhone(Long.parseLong(attributes.get("phone").get(0)));
-            String idKl = user.get().getId();
+            UserDTO userDTO = new UserDTO(
+                    user.get().getId(),
+                    user.get().getFirstName(),
+                    user.get().getLastName(),
+                    user.get().getDni(),
+                    user.get().getEmail(),
+                    user.get().getPhone()
+            );
 
-            System.out.println(idKl);
-            System.out.println(idKl);
-            System.out.println(idKl);
-            System.out.println(idKl);
-            System.out.println(idKl);
-            userDTO.setId(idKl);
-
-            return userDTO;
+            String token = keycloakService.getToken(user.get().getEmail(), user.get().getPassword());
+            return new UserWithTokenResponse(userDTO,);
         }
         return null;
     }
@@ -175,97 +165,7 @@ public class UserServiceImpl implements IUserService {
     }
 
 
-//    Account functions
-
-//    @Override
-//    public AccountDTO getAccountByUser(String userSub) {
-//        try {
-//            Long userId = getUserBySub(userSub).getId();
-//            return accountRepository.getAccountByUser(userId);
-//        } catch (FeignException.NotFound ex) {
-//            throw new CustomException("Account not found", HttpStatus.INTERNAL_SERVER_ERROR);
-//        } catch (FeignException ex) {
-//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @Override
-//    public AccountDTO updateAccount(String userSub, AccountDTO account) {
-//        try {
-//            return accountRepository.updateAccount(getUserBySub(userSub).getAccountId(), account);
-//        } catch (FeignException.NotFound ex) {
-//            throw new CustomException("Account not found with that id", HttpStatus.NOT_FOUND);
-//        } catch (FeignException.BadRequest ex) {
-//            throw new CustomException("Cannot change IDs", HttpStatus.BAD_REQUEST);
-//        } catch (FeignException ex) {
-//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-
-//    Transaction function
-
-//    @Override
-//    public List<TransactionDTO> getTransactionsByAccount(String sub, Integer limit) {
-//        try {
-//            return accountRepository.getTransactionsByAccount(getUserBySub(sub).getAccountId(), limit);
-//        } catch (FeignException ex) {
-//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-
-//    Card function
-
-//    @Override
-//    public void createAccountCard(CardDTO cardDTO, String userSub) {
-//        try {
-//            accountRepository.createAccountCard(cardDTO, getUserBySub(userSub).getAccountId());
-//        } catch (FeignException.BadRequest ex) {
-//            throw new CustomException("Card already in use", HttpStatus.BAD_REQUEST);
-//        } catch (FeignException e) {
-//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @Override
-//    public CardDTO getCardById(String userSub, Long cardId) {
-//        try {
-//            return accountRepository.getCardById(getUserBySub(userSub).getAccountId(), cardId);
-//        } catch (FeignException.NotFound ex) {
-//            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
-//        } catch (FeignException.Unauthorized ex) {
-//            throw new CustomException("Without permission to get this card!", HttpStatus.UNAUTHORIZED);
-//        } catch (FeignException ex) {
-//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @Override
-//    public List<CardDTO> getCardsByAccount(String userSub) {
-//        try {
-//            return accountRepository.getCardsByAccount(getUserBySub(userSub).getAccountId());
-//        } catch (FeignException ex) {
-//            throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @Override
-//    public void deleteCard(String userSub, Long cardId) {
-//        try {
-//            accountRepository.deleteCard(getUserBySub(userSub).getAccountId(), cardId);
-//        } catch (FeignException.NotFound ex) {
-//            throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
-//        } catch (FeignException.Unauthorized ex) {
-//            throw new CustomException("Without permission to delete this card!", HttpStatus.UNAUTHORIZED);
-//        } catch (FeignException ex) {
-//            throw new CustomException("Error calling card-service", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-
-
 //    Other functions
-
 
     private String generateCVU() {
         StringBuilder cvu = new StringBuilder();
