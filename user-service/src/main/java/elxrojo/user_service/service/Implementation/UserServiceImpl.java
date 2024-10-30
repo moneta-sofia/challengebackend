@@ -143,7 +143,6 @@ public class UserServiceImpl implements IUserService {
             return userDTO;
         } else {
             throw new CustomException("User not found!", HttpStatus.NOT_FOUND);
-
         }
     }
 
