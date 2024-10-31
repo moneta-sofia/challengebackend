@@ -43,6 +43,10 @@ public class TransactionServiceImpl implements ITransactionService {
 
     @Override
     public List<TransactionDTO> getTransactionsByAccount(Long accountId, int limit) {
+        if (accountId == null || accountId <= 0) {
+            throw new CustomException("Invalid account ID!", HttpStatus.BAD_REQUEST);
+        }
+
         Pageable pageable = PageRequest.of(0, limit, Sort.by("dated").descending());
         List<Transaction> transactions = transactionRepository.findByAccountIdOrderByDatedDesc(accountId, pageable);
         return transactions.stream()
