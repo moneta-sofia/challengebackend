@@ -18,7 +18,7 @@ public class TransactionController {
     ITransactionService transactionService;
 
     @PostMapping("/create")
-    public ResponseEntity<Void> create(@RequestParam Float amount,
+    public ResponseEntity<?> create(@RequestParam Float amount,
                                    @RequestParam int transactionType,
                                    @RequestParam String origin,
                                    @RequestParam String name,

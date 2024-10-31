@@ -14,7 +14,9 @@ import elxrojo.account_service.service.IAccountService;
 import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 import java.util.List;
@@ -77,6 +79,28 @@ public class AccountServiceImpl implements IAccountService {
 
 
     //    Transaction method
+
+    @Override
+    public void createTransaction(Float amount, int transactionType, String destination, String userId){
+
+        Optional<Account> account = accountRepository.findByUserId(userId);
+
+        if (account.isEmpty()){
+            throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
+        }
+
+        ResponseEntity<?> response = transactionRepository.create(amount,
+                transactionType,
+                account.get().getCvu(),
+                account.get().getName(),
+                destination,
+                account.get().getId());
+
+        if (response.getStatusCode() == HttpStatus.CREATED){
+            account.get().setBalance(account.get().getBalance() + amount);
+            accountRepository.save(account.get());
+        }
+    }
 
     @Override
     public List<TransactionDTO> getTransactionsById(String userID, Integer limit) {

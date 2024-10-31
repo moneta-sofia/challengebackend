@@ -2,6 +2,7 @@ package elxrojo.account_service.external.repository;
 
 import elxrojo.account_service.model.DTO.TransactionDTO;
 import elxrojo.account_service.external.feign.IFeignTransactionRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +22,16 @@ public class TransactionRepository {
         return transactionRepository.getTransactionsByAccount(accountId, limit);
     }
 
-    public TransactionDTO getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId){
+    public TransactionDTO getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId) {
         return transactionRepository.getTransactionByAccount(accountId, transactionId);
+    }
+
+    public ResponseEntity<?> create(@RequestParam Float amount,
+                                 @RequestParam int transactionType,
+                                 @RequestParam String origin,
+                                 @RequestParam String name,
+                                 @RequestParam String destination,
+                                 @RequestParam Long accountId) {
+        return transactionRepository.create(amount,transactionType,origin,name,destination,accountId);
     }
 }

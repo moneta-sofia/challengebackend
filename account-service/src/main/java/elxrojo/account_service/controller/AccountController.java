@@ -49,6 +49,22 @@ public class AccountController {
 
 //    Transaction endpoints
 
+    @PostMapping("{userId}/transferences")
+    public ResponseEntity<?> createTranference(@PathVariable String userId,
+                                               @RequestParam Float amount,
+                                               @RequestParam int transactionType,
+                                               @RequestParam String destination,
+                                               @RequestHeader("Authorization") String barerToken){
+
+        String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
+        if (!idFromToken.equals(userId)){
+            throw new CustomException("Without permission to do this action", HttpStatus.FORBIDDEN);
+        }
+        accountService.createTransaction(amount,transactionType,destination,userId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+
     @GetMapping("/{userId}/activity")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable String userId,
                                                                          @RequestParam(required = false) Integer limit,
