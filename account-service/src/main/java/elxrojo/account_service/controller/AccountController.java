@@ -1,10 +1,12 @@
 package elxrojo.account_service.controller;
 
+import com.auth0.jwt.JWT;
 import elxrojo.account_service.exception.CustomException;
 import elxrojo.account_service.model.DTO.AccountDTO;
 import elxrojo.account_service.model.DTO.CardDTO;
 import elxrojo.account_service.model.DTO.TransactionDTO;
 import elxrojo.account_service.service.IAccountService;
+import feign.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -47,9 +49,18 @@ public class AccountController {
 
 //    Transaction endpoints
 
-    @GetMapping("/{userId}/transactions")
-    public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable Long userId,
-                                                                         @RequestParam(required = false) Integer limit) {
+    @GetMapping("/{userId}/activity")
+    public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable String userId,
+                                                                         @RequestParam(required = false) Integer limit,
+                                                                         @RequestHeader("Authorization") String barerToken) {
+        if (userId == null) {
+            throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
+        }
+        String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
+        if (!idFromToken.equals(userId)){
+            throw new CustomException("Without permission to see this info", HttpStatus.FORBIDDEN);
+        }
+
         return ResponseEntity.ok(accountService.getTransactionsById(userId, limit));
     }
 
