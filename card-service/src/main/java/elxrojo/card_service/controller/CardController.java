@@ -21,7 +21,7 @@ public class CardController {
     @PostMapping("/")
     public ResponseEntity<?> createCard(@RequestBody CardDTO card) {
         cardService.createCard(card);
-        return ResponseEntity.ok(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/")
@@ -48,6 +48,6 @@ public class CardController {
     @DeleteMapping("/{cardId}/account/{accountId}")
     public ResponseEntity<?> deleteCard(@PathVariable Long accountId,@PathVariable Long cardId){
         cardService.deleteCard(accountId,cardId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

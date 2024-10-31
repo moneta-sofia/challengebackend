@@ -39,7 +39,7 @@ public class UserController {
                 userCreated.getAccountId()
         );
 
-        return ResponseEntity.ok(new UserWithTokenResponse(userResponse, token));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserWithTokenResponse(userResponse, token));
     }
 
     @GetMapping("/{id}")
@@ -58,13 +58,13 @@ public class UserController {
         String token = userService.login(loginData.get("email"), loginData.get("password"));
         HashMap<String, String> response = new HashMap<String, String>();
         response.put("token", token);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestHeader("Authorization") String authorizationHeader) {
         String token = authorizationHeader.substring("Bearer ".length());
         userService.logout(token);
-        return ResponseEntity.ok(HttpStatus.OK);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }

@@ -31,7 +31,7 @@ public class AccountController {
                 account.getUserId(),
                 account.getName()
         );
-        return ResponseEntity.ok(idAccountCreated);
+        return ResponseEntity.status(HttpStatus.CREATED).body(idAccountCreated);
     }
 
 
@@ -83,7 +83,7 @@ public class AccountController {
     @PostMapping("/{accountId}/card")
     public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable Long accountId) {
         accountService.createAccountCard(card, accountId);
-        return ResponseEntity.ok(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{accountId}/cards/{cardId}")

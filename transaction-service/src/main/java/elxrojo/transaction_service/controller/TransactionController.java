@@ -25,7 +25,7 @@ public class TransactionController {
                                    @RequestParam String destination,
                                    @RequestParam Long accountId) {
         transactionService.createTransaction(amount, transactionType, origin, name, destination, accountId);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @GetMapping("/{accountId}")
