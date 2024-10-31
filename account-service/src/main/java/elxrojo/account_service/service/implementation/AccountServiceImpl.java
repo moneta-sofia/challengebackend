@@ -117,12 +117,13 @@ public class AccountServiceImpl implements IAccountService {
 
 
     @Override
-    public TransactionDTO getTransactionById(Long accountId, Long transactionId){
+    public TransactionDTO getTransactionById(String userId, Long transactionId){
         try {
-            if (accountRepository.findById(accountId).isEmpty()){
+            Optional<Account> accountfound = accountRepository.findByUserId(userId);
+            if (accountfound.isEmpty()){
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
-            return transactionRepository.getTransactionByAccount(accountId, transactionId);
+            return transactionRepository.getTransactionByAccount(accountfound.get().getId(), transactionId);
         } catch (FeignException.NotFound ex) {
             throw new CustomException("That activity doesn't exist!", HttpStatus.NOT_FOUND);
         } catch (FeignException.Unauthorized ex) {
