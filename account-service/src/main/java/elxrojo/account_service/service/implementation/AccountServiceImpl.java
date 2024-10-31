@@ -114,9 +114,9 @@ public class AccountServiceImpl implements IAccountService {
     //    Card methods
 
     @Override
-    public void createAccountCard(CardDTO card, Long accountId) {
+    public void createAccountCard(CardDTO card, String userId) {
         try {
-            Optional<Account> account = accountRepository.findById(accountId);
+            Optional<Account> account = accountRepository.findByUserId(userId);
             card.setAccountId(account.get().getId());
             card.setName(account.get().getName());
             cardRepository.createCard(card);
@@ -128,16 +128,16 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public CardDTO getCardById(Long accountId, Long cardId) {
+    public CardDTO getCardById(String userId, Long cardId) {
         try {
-            Optional<Account> account = accountRepository.findById(accountId);
+            Optional<Account> account = accountRepository.findByUserId(userId);
             if (account.isEmpty()) {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
-            if (cardRepository.getCardsByAccount(accountId).isEmpty()) {
+            if (cardRepository.getCardsByAccount(account.get().getId()).isEmpty()) {
                 return new CardDTO();
             } else {
-                return cardRepository.getCardById(accountId, cardId);
+                return cardRepository.getCardById(account.get().getId(), cardId);
             }
         } catch (FeignException.NotFound ex) {
             throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
@@ -149,22 +149,23 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<CardDTO> getCardsByAccount(Long accountId) {
+    public List<CardDTO> getCardsByAccount(String userId) {
         try {
-            return cardRepository.getCardsByAccount(accountId);
+            Optional<Account> account = accountRepository.findByUserId(userId);
+            return cardRepository.getCardsByAccount(account.get().getId());
         } catch (FeignException ex) {
             throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public void deleteCard(Long accountId, Long cardId) {
+    public void deleteCard(String userId, Long cardId) {
         try {
-            Optional<Account> account = accountRepository.findById(accountId);
+            Optional<Account> account = accountRepository.findByUserId(userId);
             if (account.isEmpty()) {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
-            cardRepository.deleteCard(accountId, cardId);
+            cardRepository.deleteCard(account.get().getId(), cardId);
         } catch (FeignException.NotFound ex) {
             throw new CustomException("Card not found with that id", HttpStatus.NOT_FOUND);
         } catch (FeignException.Unauthorized ex) {
