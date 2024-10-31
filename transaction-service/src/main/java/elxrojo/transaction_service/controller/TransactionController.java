@@ -31,6 +31,10 @@ public class TransactionController {
     @GetMapping("/{accountId}")
     public ResponseEntity<List<TransactionDTO>> getTransactionByAccountId(@PathVariable Long accountId,
                                                                           @RequestParam(required = false) Integer limit) {
+
+        if (accountId == null || accountId <= 0) {
+            throw new CustomException("Invalid account ID!", HttpStatus.BAD_REQUEST);
+        }
         int defaultLimit = (limit != null) ? limit : 50;
         return ResponseEntity.ok(transactionService.getTransactionsByAccount(accountId, defaultLimit));
     }
