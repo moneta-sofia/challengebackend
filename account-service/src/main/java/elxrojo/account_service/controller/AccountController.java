@@ -96,26 +96,26 @@ public class AccountController {
 
 //    Card endpoints
 
-    @PostMapping("/{accountId}/card")
-    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable Long accountId) {
-        accountService.createAccountCard(card, accountId);
+    @PostMapping("/{userId}/card")
+    public ResponseEntity<?> createAccountCard(@RequestBody CardDTO card, @PathVariable String userId) {
+        accountService.createAccountCard(card, userId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/{accountId}/cards/{cardId}")
-    public ResponseEntity<CardDTO> getCardById(@PathVariable Long accountId, @PathVariable Long cardId) {
-        return ResponseEntity.ok(accountService.getCardById(accountId, cardId));
+    @GetMapping("/{userId}/cards/{cardId}")
+    public ResponseEntity<CardDTO> getCardById(@PathVariable String userId, @PathVariable Long cardId) {
+        return ResponseEntity.ok(accountService.getCardById(userId, cardId));
     }
 
 
-    @GetMapping("/{accountId}/card")
-    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable Long accountId) {
-        return ResponseEntity.ok(accountService.getCardsByAccount(accountId));
+    @GetMapping("/{userId}/card")
+    public ResponseEntity<List<CardDTO>> getCardsByAccount(@PathVariable String userId) {
+        return ResponseEntity.ok(accountService.getCardsByAccount(userId));
     }
 
-    @DeleteMapping("/{accountId}/cards/{cardId}")
-    public ResponseEntity<?> deleteCard(@PathVariable Long accountId, @PathVariable Long cardId) {
-        accountService.deleteCard(accountId, cardId);
+    @DeleteMapping("/{userId}/cards/{cardId}")
+    public ResponseEntity<?> deleteCard(@PathVariable String userId, @PathVariable Long cardId) {
+        accountService.deleteCard(userId, cardId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
