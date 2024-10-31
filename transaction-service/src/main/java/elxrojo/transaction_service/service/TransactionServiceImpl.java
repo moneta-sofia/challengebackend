@@ -10,10 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,5 +48,17 @@ public class TransactionServiceImpl implements ITransactionService {
         return transactions.stream()
                 .map(transaction -> mapper.convertValue(transaction, TransactionDTO.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public TransactionDTO getTransactionByAccount(Long accountId, Long transactionId){
+        Optional<Transaction> foundTransaction = transactionRepository.findById(transactionId);
+        if (foundTransaction.isEmpty()){
+            throw new CustomException("That activity doesn't exist!", HttpStatus.NOT_FOUND);
+        }
+        if (!Objects.equals(accountId, foundTransaction.get().getAccountId())){
+            throw new CustomException("Without permission!", HttpStatus.UNAUTHORIZED);
+        }
+        return mapper.convertValue(foundTransaction, TransactionDTO.class);
     }
 }

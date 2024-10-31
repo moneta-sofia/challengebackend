@@ -1,5 +1,6 @@
 package elxrojo.account_service.controller;
 
+import elxrojo.account_service.exception.CustomException;
 import elxrojo.account_service.model.DTO.AccountDTO;
 import elxrojo.account_service.model.DTO.CardDTO;
 import elxrojo.account_service.model.DTO.TransactionDTO;
@@ -49,7 +50,20 @@ public class AccountController {
     @GetMapping("/{userId}/transactions")
     public ResponseEntity<List<TransactionDTO>> getTransactionsByAccount(@PathVariable Long userId,
                                                                          @RequestParam(required = false) Integer limit) {
-        return ResponseEntity.ok(accountService.getTransactionById(userId, limit));
+        return ResponseEntity.ok(accountService.getTransactionsById(userId, limit));
+    }
+
+    @GetMapping("/{accountId}/activity/{transactionId}")
+    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId){
+        if (accountId == null || accountId <= 0) {
+            throw new CustomException("Invalid account ID!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (transactionId == null || transactionId <= 0) {
+            throw new CustomException("Invalid transaction ID!", HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok(accountService.getTransactionById(accountId, transactionId));
     }
 
 
