@@ -1,8 +1,10 @@
 package elxrojo.transaction_service.controller;
 
+import elxrojo.transaction_service.exception.CustomException;
 import elxrojo.transaction_service.model.DTO.TransactionDTO;
 import elxrojo.transaction_service.service.ITransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +37,12 @@ public class TransactionController {
 
     @GetMapping("/{transactionId}/account/{accountId}")
     public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId){
+        if (accountId == null || accountId <= 0) {
+            throw new CustomException("Invalid account ID!", HttpStatus.BAD_REQUEST);
+        }
+        if (transactionId == null || transactionId <= 0) {
+            throw new CustomException("Invalid transaction ID!", HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(transactionService.getTransactionByAccount(accountId, transactionId));
     }
 }
