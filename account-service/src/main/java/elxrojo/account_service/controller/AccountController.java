@@ -64,17 +64,17 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getTransactionsById(userId, limit));
     }
 
-    @GetMapping("/{accountId}/activity/{transactionId}")
-    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId){
-        if (accountId == null || accountId <= 0) {
-            throw new CustomException("Invalid account ID!", HttpStatus.BAD_REQUEST);
+    @GetMapping("/{userId}/activity/{transactionId}")
+    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable String userId, @PathVariable Long transactionId){
+        if (userId == null) {
+            throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
         }
 
         if (transactionId == null || transactionId <= 0) {
             throw new CustomException("Invalid transaction ID!", HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(accountService.getTransactionById(accountId, transactionId));
+        return ResponseEntity.ok(accountService.getTransactionById(userId, transactionId));
     }
 
 

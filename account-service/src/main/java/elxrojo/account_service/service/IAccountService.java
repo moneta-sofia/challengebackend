@@ -14,7 +14,7 @@ public interface IAccountService {
     AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated);
 
     List<TransactionDTO> getTransactionsById(String id, Integer limit);
-    TransactionDTO getTransactionById(Long accountId, Long transactionId);
+    TransactionDTO getTransactionById(String userId, Long transactionId);
 
     void createAccountCard(CardDTO card, Long accountId);
     List<CardDTO> getCardsByAccount(Long accountId);
