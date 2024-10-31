@@ -53,7 +53,7 @@ public class AccountController {
     public ResponseEntity<?> createTranference(@PathVariable String userId,
                                                @RequestParam Float amount,
                                                @RequestParam int transactionType,
-                                               @RequestParam String destination,
+                                               @RequestParam(required = false) String destination,
                                                @RequestHeader("Authorization") String barerToken){
 
         String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();

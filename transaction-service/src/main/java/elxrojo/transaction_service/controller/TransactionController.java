@@ -3,6 +3,7 @@ package elxrojo.transaction_service.controller;
 import elxrojo.transaction_service.exception.CustomException;
 import elxrojo.transaction_service.model.DTO.TransactionDTO;
 import elxrojo.transaction_service.service.ITransactionService;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class TransactionController {
                                    @RequestParam int transactionType,
                                    @RequestParam String origin,
                                    @RequestParam String name,
-                                   @RequestParam String destination,
+                                   @RequestParam(required = false) String destination,
                                    @RequestParam Long accountId) {
         transactionService.createTransaction(amount, transactionType, origin, name, destination, accountId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
