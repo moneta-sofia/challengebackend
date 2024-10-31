@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
@@ -78,9 +79,13 @@ public class AccountServiceImpl implements IAccountService {
     //    Transaction method
 
     @Override
-    public List<TransactionDTO> getTransactionsById(Long id, Integer limit) {
+    public List<TransactionDTO> getTransactionsById(String userID, Integer limit) {
         try {
-            return transactionRepository.getTransactionsByAccount(id, limit);
+            Optional<Account> accountFound = accountRepository.findByUserId(userID);
+            if (accountFound.isEmpty()){
+                throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
+            }
+            return transactionRepository.getTransactionsByAccount(accountFound.get().getId(), limit);
         } catch (FeignException ex) {
             throw new CustomException("An unexpected error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
