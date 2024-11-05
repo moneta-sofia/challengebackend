@@ -19,7 +19,7 @@ public class CardsTests {
         @Test
         @Order(1)
         public void createCard_positive() {
-//            Generando numero
+//          Generating a new card number
             StringBuilder cardNumberGenerated = new StringBuilder();
             for (int i = 0; i < 16; i++) {
                 cardNumberGenerated.append((int) (Math.random() * 10));
