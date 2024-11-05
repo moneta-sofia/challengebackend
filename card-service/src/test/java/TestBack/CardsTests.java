@@ -2,17 +2,20 @@ package TestBack;
 
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
+
 import java.time.YearMonth;
 
 import static io.restassured.RestAssured.given;
 
+@TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class CardsTests {
-    public static String userIDTest = "43783fa8-1c8a-4ba5-aec3-f31cdcbae18a";
-    public static Long accountID = 1L;
+    public static Long accountId = 1L;
     public static String cardNumber;
+    public static Long cardId;
 
 
     @Nested
+    @Order(1)
     @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
     class Post {
 
@@ -30,13 +33,13 @@ public class CardsTests {
             for (int i = 0; i < 3; i++) {
                 cvv.append((int) (Math.random() * 10));
             }
-
+//          Generating a new cvv
             JsonObject request = new JsonObject();
             request.addProperty("name", "Test Test");
             request.addProperty("number", cardNumberGenerated.toString());
             request.addProperty("cvc", cvv.toString());
             request.addProperty("expirationDate", YearMonth.now().plusYears(2).toString());
-            request.addProperty("accountId", accountID);
+            request.addProperty("accountId", accountId);
 
             given().contentType("application/json")
                     .body(request.toString())
@@ -65,20 +68,37 @@ public class CardsTests {
     }
 
     @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @Order(2)
     class Gets {
 
         @Test
+        @Order(1)
         public void GetAll() {
             given().get("http://localhost:8087/cards/").then().statusCode(200);
         }
 
         @Test
+        @Order(2)
         public void GetAllByAccount() {
             given()
-                    .get("http://localhost:8087/cards/account/" + accountID)
+                    .get("http://localhost:8087/cards/account/" + accountId)
                     .then()
                     .statusCode(200);
         }
+
+        @Test
+        @Order(3)
+        public void GetByNumber() {
+            int cardIdString = given()
+                    .get("http://localhost:8087/cards/number/" + cardNumber)
+                    .then()
+                    .statusCode(200)
+                    .log().body()
+                    .extract().path("id");
+            cardId = (long) cardIdString;
+        }
+
 
     }
 
