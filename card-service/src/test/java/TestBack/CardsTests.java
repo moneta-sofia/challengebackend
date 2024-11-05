@@ -100,6 +100,39 @@ public class CardsTests {
         }
 
 
+        @Nested
+        @Order(4)
+        class GetById {
+
+            @Test
+            public void positive() {
+                given()
+                        .get("http://localhost:8087/cards/" + cardId + "/account/" + accountId)
+                        .then()
+                        .log().body()
+                        .statusCode(200);
+            }
+
+            @Test
+            public void cardNotFound() {
+                given()
+                        .get("http://localhost:8087/cards/" + 100000 + "/account/" + accountId)
+                        .then()
+                        .log().body()
+                        .statusCode(404);
+            }
+
+            @Test
+            public void unauthorized() {
+                given()
+                        .get("http://localhost:8087/cards/" + cardId + "/account/" + 1000000)
+                        .then()
+                        .log().body()
+                        .statusCode(401);
+            }
+
+        }
+
     }
 
 
