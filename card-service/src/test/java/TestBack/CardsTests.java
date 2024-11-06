@@ -133,6 +133,14 @@ public class CardsTests {
 
         }
 
+        @Test
+        @Order(4)
+        public void getByAccount() {
+            given()
+                    .get("http://localhost:8087/cards/account/" + accountId)
+                    .then()
+                    .statusCode(200);
+        }
     }
 
 
