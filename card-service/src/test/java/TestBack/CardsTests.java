@@ -2,6 +2,7 @@ package TestBack;
 
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.YearMonth;
 
@@ -9,6 +10,8 @@ import static io.restassured.RestAssured.given;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class CardsTests {
+
+    private String baseUrl = "http://localhost:8087";
     public static Long accountId = 1L;
     public static String cardNumber;
     public static Long cardId;
@@ -43,7 +46,7 @@ public class CardsTests {
 
             given().contentType("application/json")
                     .body(request.toString())
-                    .post("http://localhost:8087/cards/")
+                    .post(baseUrl + "/cards/")
                     .then()
                     .statusCode(201);
         }
@@ -60,7 +63,7 @@ public class CardsTests {
 
             given().contentType("application/json")
                     .body(request.toString())
-                    .post("http://localhost:8087/cards/")
+                    .post(baseUrl + "/cards/")
                     .then()
                     .statusCode(400);
         }
@@ -75,14 +78,14 @@ public class CardsTests {
         @Test
         @Order(1)
         public void GetAll() {
-            given().get("http://localhost:8087/cards/").then().statusCode(200);
+            given().get(baseUrl + "/cards/").then().statusCode(200);
         }
 
         @Test
         @Order(2)
         public void GetAllByAccount() {
             given()
-                    .get("http://localhost:8087/cards/account/" + accountId)
+                    .get(baseUrl + "/cards/account/" + accountId)
                     .then()
                     .statusCode(200);
         }
@@ -91,7 +94,7 @@ public class CardsTests {
         @Order(3)
         public void GetByNumber() {
             int cardIdString = given()
-                    .get("http://localhost:8087/cards/number/" + cardNumber)
+                    .get(baseUrl + "/cards/number/" + cardNumber)
                     .then()
                     .statusCode(200)
                     .log().body()
@@ -107,7 +110,7 @@ public class CardsTests {
             @Test
             public void positive() {
                 given()
-                        .get("http://localhost:8087/cards/" + cardId + "/account/" + accountId)
+                        .get(baseUrl + "/cards/" + cardId + "/account/" + accountId)
                         .then()
                         .log().body()
                         .statusCode(200);
@@ -116,7 +119,7 @@ public class CardsTests {
             @Test
             public void cardNotFound() {
                 given()
-                        .get("http://localhost:8087/cards/" + 100000 + "/account/" + accountId)
+                        .get(baseUrl + "/cards/" + 100000 + "/account/" + accountId)
                         .then()
                         .log().body()
                         .statusCode(404);
@@ -125,7 +128,7 @@ public class CardsTests {
             @Test
             public void unauthorized() {
                 given()
-                        .get("http://localhost:8087/cards/" + cardId + "/account/" + 1000000)
+                        .get(baseUrl + "/cards/" + cardId + "/account/" + 1000000)
                         .then()
                         .log().body()
                         .statusCode(401);
@@ -137,7 +140,7 @@ public class CardsTests {
         @Order(4)
         public void getByAccount() {
             given()
-                    .get("http://localhost:8087/cards/account/" + accountId)
+                    .get(baseUrl + "/cards/account/" + accountId)
                     .then()
                     .statusCode(200);
         }
@@ -152,7 +155,7 @@ public class CardsTests {
         @Order(1)
         public void unauthorized() {
             given()
-                    .delete("http://localhost:8087/cards/" + cardId + "/account/" + 1000000)
+                    .delete(baseUrl + "/cards/" + cardId + "/account/" + 1000000)
                     .then()
                     .statusCode(401);
         }
@@ -161,7 +164,7 @@ public class CardsTests {
         @Order(2)
         public void positive() {
             given()
-                    .delete("http://localhost:8087/cards/" + cardId + "/account/" + accountId)
+                    .delete(baseUrl + "/cards/" + cardId + "/account/" + accountId)
                     .then()
                     .statusCode(200);
         }
@@ -170,7 +173,7 @@ public class CardsTests {
         @Order(3)
         public void notFound() {
             given()
-                    .delete("http://localhost:8087/cards/" + cardId + "/account/" + accountId)
+                    .delete(baseUrl + "/cards/" + cardId + "/account/" + accountId)
                     .then()
                     .statusCode(404);
         }
