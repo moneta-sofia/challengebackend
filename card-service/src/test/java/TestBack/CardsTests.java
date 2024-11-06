@@ -143,5 +143,39 @@ public class CardsTests {
         }
     }
 
+    @Nested
+    @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+    @Order(3)
+    class Delete {
+
+        @Test
+        @Order(1)
+        public void unauthorized() {
+            given()
+                    .delete("http://localhost:8087/cards/" + cardId + "/account/" + 1000000)
+                    .then()
+                    .statusCode(401);
+        }
+
+        @Test
+        @Order(2)
+        public void positive() {
+            given()
+                    .delete("http://localhost:8087/cards/" + cardId + "/account/" + accountId)
+                    .then()
+                    .statusCode(200);
+        }
+
+        @Test
+        @Order(3)
+        public void notFound() {
+            given()
+                    .delete("http://localhost:8087/cards/" + cardId + "/account/" + accountId)
+                    .then()
+                    .statusCode(404);
+        }
+
+
+    }
 
 }
