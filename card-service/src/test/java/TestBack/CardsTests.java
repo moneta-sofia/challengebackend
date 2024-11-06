@@ -25,22 +25,11 @@ public class CardsTests {
         @Test
         @Order(1)
         public void createCard_positive() {
-//          Generating a new card number
-            StringBuilder cardNumberGenerated = new StringBuilder();
-            for (int i = 0; i < 16; i++) {
-                cardNumberGenerated.append((int) (Math.random() * 10));
-            }
-            cardNumber = cardNumberGenerated.toString();
-
-            StringBuilder cvv = new StringBuilder();
-            for (int i = 0; i < 3; i++) {
-                cvv.append((int) (Math.random() * 10));
-            }
-//          Generating a new cvv
+            cardNumber = generateCardNumber() ;
             JsonObject request = new JsonObject();
             request.addProperty("name", "Test Test");
-            request.addProperty("number", cardNumberGenerated.toString());
-            request.addProperty("cvc", cvv.toString());
+            request.addProperty("number", cardNumber);
+            request.addProperty("cvc", generateCVV());
             request.addProperty("expirationDate", YearMonth.now().plusYears(2).toString());
             request.addProperty("accountId", accountId);
 
@@ -181,4 +170,22 @@ public class CardsTests {
 
     }
 
+
+//    Handler functions
+
+    public String generateCVV() {
+        StringBuilder cvv = new StringBuilder();
+        for (int i = 0; i < 3; i++) {
+            cvv.append((int) (Math.random() * 10));
+        }
+        return cvv.toString();
+    }
+
+    public String generateCardNumber() {
+        StringBuilder cardNumberGenerated = new StringBuilder();
+        for (int i = 0; i < 16; i++) {
+            cardNumberGenerated.append((int) (Math.random() * 10));
+        }
+        return cardNumberGenerated.toString();
+    }
 }
