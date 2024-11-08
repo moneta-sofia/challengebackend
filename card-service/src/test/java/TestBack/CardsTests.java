@@ -7,14 +7,16 @@ import org.springframework.beans.factory.annotation.Value;
 import java.time.YearMonth;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class CardsTests {
 
     private String baseUrl = "http://localhost:8087";
-    public static Long accountId = 1L;
+    public static int accountId = 1;
     public static String cardNumber;
-    public static Long cardId;
+    public static Integer cardId;
 
 
     @Nested
@@ -67,7 +69,11 @@ public class CardsTests {
         @Test
         @Order(1)
         public void GetAll() {
-            given().get(baseUrl + "/cards/").then().statusCode(200);
+            given()
+                    .get(baseUrl + "/cards/")
+                    .then()
+                    .statusCode(200)
+                    .body("size()", greaterThan(1));
         }
 
         @Test
@@ -76,7 +82,8 @@ public class CardsTests {
             given()
                     .get(baseUrl + "/cards/account/" + accountId)
                     .then()
-                    .statusCode(200);
+                    .statusCode(200)
+                    .body("size()", greaterThan(1));
         }
 
         @Test
@@ -86,9 +93,10 @@ public class CardsTests {
                     .get(baseUrl + "/cards/number/" + cardNumber)
                     .then()
                     .statusCode(200)
+                    .body("number", equalTo(cardNumber))
                     .log().body()
                     .extract().path("id");
-            cardId = (long) cardIdString;
+            cardId = cardIdString;
         }
 
 
@@ -102,6 +110,7 @@ public class CardsTests {
                         .get(baseUrl + "/cards/" + cardId + "/account/" + accountId)
                         .then()
                         .log().body()
+                        .body("id", equalTo(cardId))
                         .statusCode(200);
             }
 
@@ -127,10 +136,12 @@ public class CardsTests {
 
         @Test
         @Order(4)
-        public void getByAccount() {
+        public void getAllByAccount() {
             given()
                     .get(baseUrl + "/cards/account/" + accountId)
                     .then()
+                    .body("accountId[0]", equalTo(accountId))
+                    .body("size()", greaterThan(1))
                     .statusCode(200);
         }
     }
