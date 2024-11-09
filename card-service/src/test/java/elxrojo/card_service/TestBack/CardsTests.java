@@ -1,4 +1,4 @@
-package TestBack;
+package elxrojo.card_service.TestBack;
 
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
