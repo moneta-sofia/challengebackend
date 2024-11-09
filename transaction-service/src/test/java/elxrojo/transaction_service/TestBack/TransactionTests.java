@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.*;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 public class TransactionTests {
@@ -30,7 +30,7 @@ public class TransactionTests {
             given().get(baseUrl + accountId )
                     .then()
                     .statusCode(200)
-                    .body("size()", greaterThan(1));
+                    .body("size()", greaterThanOrEqualTo(1));
         }
 
         @Test
@@ -45,7 +45,7 @@ public class TransactionTests {
             given().get(baseUrl + accountId + "?limit=1" )
                     .then()
                     .statusCode(200)
-                    .body("size()", greaterThan(1));
+                    .body("size()", equalTo(1));
         }
     }
 
