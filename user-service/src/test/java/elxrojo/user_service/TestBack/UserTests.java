@@ -43,6 +43,7 @@ public class UserTests {
                     .body(userCreated.toString())
                     .post(baseUrl)
                     .then()
+                    .log().body()
                     .statusCode(201)
                     .body("accessToken", notNullValue())
                     .extract().path("accessToken");
@@ -110,6 +111,70 @@ public class UserTests {
                     .then()
                     .statusCode(400)
                     .body("details", equalTo("This phone already exists!"));
+        }
+    }
+
+    @Nested
+    @Order(2)
+    class login {
+
+        @Test
+        public void positive() {
+            JsonObject dataLogin = new JsonObject();
+            dataLogin.addProperty("email", email);
+            dataLogin.addProperty("password", "123456789Lol");
+
+            token = given().contentType("application/json")
+                    .body(dataLogin.toString())
+                    .post(baseUrl + "login")
+                    .then()
+                    .log().body()
+                    .statusCode(200)
+                    .body("token", notNullValue())
+                    .extract().path("token");
+        }
+
+        @Test
+        public void invalidEmail() {
+            JsonObject dataLogin = new JsonObject();
+            dataLogin.addProperty("email", "asddaasddassdaasdadsdas@correo.com");
+            dataLogin.addProperty("password", "123456789Lol");
+
+            given().contentType("application/json")
+                    .body(dataLogin.toString())
+                    .post(baseUrl + "login")
+                    .then()
+                    .log().body()
+                    .statusCode(404)
+                    .body("details", equalTo("Non-existent user :/"));
+        }
+        @Test
+        public void invalidPassword() {
+            JsonObject dataLogin = new JsonObject();
+            dataLogin.addProperty("email", email);
+            dataLogin.addProperty("password", "jkashdaskjhdaskjhdas782782");
+
+            given().contentType("application/json")
+                    .body(dataLogin.toString())
+                    .post(baseUrl + "login")
+                    .then()
+                    .log().body()
+                    .statusCode(401)
+                    .body("details", equalTo("Incorrect password :/"));
+        }
+        @Test
+        public void incompleteLogin() {
+            JsonObject dataLogin = new JsonObject();
+            dataLogin.addProperty("email", "");
+            dataLogin.addProperty("password", "");
+
+            given().contentType("application/json")
+                    .body(dataLogin.toString())
+                    .post(baseUrl + "login")
+                    .then()
+                    .log().body()
+                    .statusCode(400)
+                    .body("details", equalTo("Incomplete login information"));
         }
     }
 
