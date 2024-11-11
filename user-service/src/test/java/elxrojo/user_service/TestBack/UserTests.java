@@ -213,12 +213,49 @@ public class UserTests {
                     .statusCode(200)
                     .body("dni", equalTo(dni));
         }
+
         @Test
         public void notFound() {
             given()
                     .get(baseUrl + 1)
                     .then()
                     .statusCode(404);
+        }
+    }
+
+
+    @Nested
+    @Order(6)
+    class updateUser {
+
+        @Test
+        public void positive() {
+            JsonObject userUpdate = new JsonObject();
+            userUpdate.addProperty("firstName", "TestModified");
+
+            given()
+                    .contentType("application/json")
+                    .body(userUpdate.toString())
+                    .patch(baseUrl + id)
+                    .then()
+                    .log().body()
+                    .statusCode(200)
+                    .body("firstName", equalTo("TestModified"))
+                    .body("email", equalTo(email));
+        }
+
+        @Test
+        public void cannotEditPassword() {
+            JsonObject userUpdate = new JsonObject();
+            userUpdate.addProperty("password", "asd");
+
+            given()
+                    .contentType("application/json")
+                    .body(userUpdate.toString())
+                    .patch(baseUrl + id)
+                    .then()
+                    .log().body()
+                    .statusCode(400);
         }
     }
 
