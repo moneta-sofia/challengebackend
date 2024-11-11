@@ -9,6 +9,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class UserTests {
 
     private String baseUrl = "http://localhost:8081/users/";
@@ -115,7 +116,7 @@ public class UserTests {
     }
 
     @Nested
-    @Order(2)
+    @Order(3)
     class login {
 
         @Test
@@ -175,6 +176,20 @@ public class UserTests {
                     .log().body()
                     .statusCode(400)
                     .body("details", equalTo("Incomplete login information"));
+        }
+    }
+
+
+    @Order(4)
+    @Nested
+    class logout{
+        @Test
+        public void logoutFunction() {
+            given().header("Authorization", "Bearer " + token)
+                    .post(baseUrl+"logout")
+                    .then()
+                    .log().body()
+                    .statusCode(200);
         }
     }
 
