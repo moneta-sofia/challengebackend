@@ -14,6 +14,7 @@ public class UserTests {
 
     private String baseUrl = "http://localhost:8081/users/";
     static public Integer dni;
+    static public String id;
     static public Integer phone;
     static public String email;
     static public String token;
@@ -40,14 +41,17 @@ public class UserTests {
             userCreated.addProperty("phone", phone);
             userCreated.addProperty("password", "123456789Lol");
 
-            token = given().contentType("application/json")
+            var response = given().contentType("application/json")
                     .body(userCreated.toString())
                     .post(baseUrl)
                     .then()
                     .log().body()
                     .statusCode(201)
                     .body("accessToken", notNullValue())
-                    .extract().path("accessToken");
+                    .extract();
+
+            token = response.path("accessToken");
+            id = response.path("user.id");
         }
 
         @Test
@@ -149,6 +153,7 @@ public class UserTests {
                     .statusCode(404)
                     .body("details", equalTo("Non-existent user :/"));
         }
+
         @Test
         public void invalidPassword() {
             JsonObject dataLogin = new JsonObject();
@@ -163,6 +168,7 @@ public class UserTests {
                     .statusCode(401)
                     .body("details", equalTo("Incorrect password :/"));
         }
+
         @Test
         public void incompleteLogin() {
             JsonObject dataLogin = new JsonObject();
@@ -182,14 +188,37 @@ public class UserTests {
 
     @Order(4)
     @Nested
-    class logout{
+    class logout {
         @Test
-        public void logoutFunction() {
+        public void positive() {
             given().header("Authorization", "Bearer " + token)
-                    .post(baseUrl+"logout")
+                    .post(baseUrl + "logout")
                     .then()
                     .log().body()
                     .statusCode(200);
+        }
+    }
+
+
+    @Nested
+    @Order(5)
+    class getUserById {
+
+        @Test
+        public void positive() {
+            System.out.println(id);
+            given()
+                    .get(baseUrl + id)
+                    .then()
+                    .statusCode(200)
+                    .body("dni", equalTo(dni));
+        }
+        @Test
+        public void notFound() {
+            given()
+                    .get(baseUrl + 1)
+                    .then()
+                    .statusCode(404);
         }
     }
 
