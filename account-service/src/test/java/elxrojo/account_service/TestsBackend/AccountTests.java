@@ -113,10 +113,12 @@ public class AccountTests {
         }
 
         @Nested
+        @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
         @Order(3)
         class transactionTest {
 
             @Nested
+            @Order(1)
             class createTransaction {
                 @Test
                 public void positive() {
@@ -148,8 +150,8 @@ public class AccountTests {
                 }
             }
 
-
             @Nested
+            @Order(2)
             class getTransactionsByUser {
 
                 @Test
@@ -170,6 +172,41 @@ public class AccountTests {
                             .then()
                             .statusCode(200)
                             .body("size()", equalTo(1));
+                }
+
+            }
+
+            @Nested
+            @Order(3)
+            class getTransactionByUser {
+
+                @Test
+                public void positive() {
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .get(baseUrl + userId + "/activity/" + transactionId)
+                            .then()
+                            .statusCode(200)
+                            .body(notNullValue());
+                }
+
+                @Test
+                public void activityNotFound() {
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .get(baseUrl + userId + "/activity/" + "7631762373209")
+                            .then()
+                            .statusCode(404)
+                            .body("details", equalTo("That activity doesn't exist!"));
+                }
+                @Test
+                public void userNotFound() {
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .get(baseUrl + "823746247382" + "/activity/" + transactionId)
+                            .then()
+                            .statusCode(404)
+                            .body("details", equalTo("Account not found"));
                 }
 
             }
