@@ -58,7 +58,7 @@ public class UserController {
         String token = userService.login(loginData.get("email"), loginData.get("password"));
         HashMap<String, String> response = new HashMap<String, String>();
         response.put("token", token);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/logout")
