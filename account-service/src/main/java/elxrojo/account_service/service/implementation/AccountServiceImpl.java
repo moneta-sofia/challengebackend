@@ -115,7 +115,6 @@ public class AccountServiceImpl implements IAccountService {
         }
     }
 
-
     @Override
     public TransactionDTO getTransactionById(String userId, Long transactionId){
         try {
