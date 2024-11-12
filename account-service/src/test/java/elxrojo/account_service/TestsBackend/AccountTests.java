@@ -4,11 +4,11 @@ package elxrojo.account_service.TestsBackend;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.*;
 
+import java.time.YearMonth;
 import java.util.UUID;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -18,6 +18,8 @@ public class AccountTests {
     static public String token;
     static public Integer accountId = 1;
     static public Integer transactionId;
+    static public Integer cardId;
+    static public String  cardNumber;
     static public String userId = "43783fa8-1c8a-4ba5-aec3-f31cdcbae18a"; //Change it each time the BDD is cleaned
 
 
@@ -216,9 +218,139 @@ public class AccountTests {
 
         @Nested
         @Order(4)
+        @TestClassOrder(ClassOrderer.OrderAnnotation.class)
         class cardsTest {
 
+            @Nested
+            @Order(1)
+            @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+            class createCard {
+
+                @Order(1)
+                @Test
+                public void createCard_positive() {
+                    JsonObject cardRequest = new JsonObject();
+                    cardRequest.addProperty("name", "John Doe");
+                    cardNumber = generateCardNumber();
+                    cardRequest.addProperty("number", cardNumber);
+                    cardRequest.addProperty("cvc", "123");
+                    cardRequest.addProperty("expirationDate", YearMonth.now().plusYears(2).toString());
+
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .contentType("application/json")
+                            .body(cardRequest.toString())
+                            .post(baseUrl + userId + "/card")
+                            .then()
+                            .statusCode(201);
+                }
+
+                @Test
+                @Order(2)
+                public void createCard_cardAlreadyInUse() {
+                    JsonObject cardRequest = new JsonObject();
+                    cardRequest.addProperty("name", "John Doe");
+                    cardRequest.addProperty("number", cardNumber);
+                    cardRequest.addProperty("cvc", "123");
+                    cardRequest.addProperty("expirationDate", YearMonth.now().plusYears(2).toString());
+
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .contentType("application/json")
+                            .body(cardRequest.toString())
+                            .post(baseUrl + userId + "/card")
+                            .then()
+                            .statusCode(404)
+                            .body("details", equalTo("Card already in use"));
+                }
+            }
+
+            @Nested
+            @Order(2)
+            class getAllCards {
+                @Test
+                public void positive() {
+                    cardId = given()
+                            .get(baseUrl + userId + "/card")
+                            .then()
+                            .statusCode(200)
+                            .body("size()", greaterThan(1))
+                            .extract().path("[-1].id");
+                    System.out.println(cardId);
+                }
+            }
+
+            @Nested
+            @Order(3)
+            class getCardById {
+
+                @Test
+                public void positive() {
+                    given()
+                            .get(baseUrl + userId + "/cards/" + cardId)
+                            .then()
+                            .statusCode(200)
+                            .body("number", equalTo(cardNumber));
+                }
+
+                @Test
+                public void userNotFound() {
+                    given()
+                            .get(baseUrl + "98345798354" + "/cards/" + cardId)
+                            .then()
+                            .statusCode(404)
+                            .body("details", equalTo("Account not found"));
+                }
+
+                @Test
+                public void cardNotFound() {
+                    given()
+                            .get(baseUrl + userId + "/cards/" + "98345798354")
+                            .then()
+                            .statusCode(404)
+                            .body("details", equalTo("Card not found with that id"));
+                }
+            }
+
+            @Nested
+            @Order(4)
+            class deleteCard {
+
+                @Test
+                public void positive() {
+                    given()
+                            .delete(baseUrl + userId + "/cards/" + cardId)
+                            .then()
+                            .statusCode(200);
+                }
+
+                @Test
+                public void userNotFound() {
+                    given()
+                            .delete(baseUrl + "98345798354" + "/cards/" + cardId)
+                            .then()
+                            .statusCode(404)
+                            .body("details", equalTo("Account not found"));
+                }
+
+                @Test
+                public void cardNotFound() {
+                    given()
+                            .get(baseUrl + userId + "/cards/" + "98345798354")
+                            .then()
+                            .statusCode(404)
+                            .body("details", equalTo("Card not found with that id"));
+                }
+            }
         }
+    }
+    public String generateCardNumber() {
+
+        StringBuilder cardNumberGenerated = new StringBuilder();
+        for (int i = 0; i < 16; i++) {
+            cardNumberGenerated.append((int) (Math.random() * 10));
+        }
+        return cardNumberGenerated.toString();
     }
 
 }
