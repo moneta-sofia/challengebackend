@@ -17,8 +17,8 @@ public class AccountTests {
     private String baseUrl = "http://localhost:8085/accounts/";
     static public String token;
     static public Integer accountId = 1;
+    static public Integer transactionId;
     static public String userId = "43783fa8-1c8a-4ba5-aec3-f31cdcbae18a"; //Change it each time the BDD is cleaned
-    static public String cvu;
 
 
     @BeforeAll
@@ -144,13 +144,35 @@ public class AccountTests {
                             .post(baseUrl + "90878979798" + "/transferences?amount=1000&transactionType=2")
                             .then()
                             .statusCode(403)
-                            .log().body()
                             .body("details", equalTo("Without permission to do this action"));
                 }
             }
 
 
+            @Nested
+            class getTransactionsByUser {
 
+                @Test
+                public void positive() {
+                    transactionId = given()
+                            .header("Authorization", "Bearer " + token)
+                            .get(baseUrl + userId + "/activity")
+                            .then()
+                            .statusCode(200)
+                            .extract().path("id[0]");
+                }
+
+                @Test
+                public void positiveWithLimit() {
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .get(baseUrl + userId + "/activity?limit=1")
+                            .then()
+                            .statusCode(200)
+                            .body("size()", equalTo(1));
+                }
+
+            }
 
         }
 
