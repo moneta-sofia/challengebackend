@@ -26,7 +26,7 @@ public class Transaction {
     private ActivityType activityType;
 
     @Column(name = "transactionType")
-    private TransactionType transactionType; // deposit attribute
+    private TransactionType transactionType; // transfer attribute
 
     @Column(name = "origin", length = 22)
     private String origin;  // transfer attribute
@@ -47,27 +47,29 @@ public class Transaction {
     }
 
     // deposit
-    public Transaction(Long id, Float amount, ActivityType activityType, TransactionType transactionType, LocalDateTime dated, Long accountId) {
+    public Transaction(Long id, Float amount, ActivityType activityType, LocalDateTime dated, Long accountId) {
         this.id = id;
         this.amount = amount;
         this.activityType = activityType;
-        this.transactionType = transactionType;
-        this.dated = dated;
-        this.accountId = accountId;
-    }
-    public Transaction(Float amount, ActivityType activityType, TransactionType transactionType, LocalDateTime dated, Long accountId) {
-        this.amount = amount;
-        this.activityType = activityType;
-        this.transactionType = transactionType;
         this.dated = dated;
         this.accountId = accountId;
     }
 
-    // transfer
-    public Transaction(Long id, Float amount, ActivityType activityType, String origin, String name, String destination, LocalDateTime dated, Long accountId) {
+    public Transaction(Float amount, ActivityType activityType, LocalDateTime dated, Long accountId) {
+        this.amount = amount;
+        this.activityType = activityType;
+        this.dated = dated;
+        this.accountId = accountId;
+    }
+
+//    transfer
+
+
+    public Transaction(Long id, Float amount, ActivityType activityType, TransactionType transactionType, String origin, String name, String destination, LocalDateTime dated, Long accountId) {
         this.id = id;
         this.amount = amount;
         this.activityType = activityType;
+        this.transactionType = transactionType;
         this.origin = origin;
         this.name = name;
         this.destination = destination;
@@ -75,9 +77,10 @@ public class Transaction {
         this.accountId = accountId;
     }
 
-    public Transaction(Float amount, ActivityType activityType, String origin, String name, String destination, LocalDateTime dated, Long accountId) {
+    public Transaction(Float amount, ActivityType activityType, TransactionType transactionType, String origin, String name, String destination, LocalDateTime dated, Long accountId) {
         this.amount = amount;
         this.activityType = activityType;
+        this.transactionType = transactionType;
         this.origin = origin;
         this.name = name;
         this.destination = destination;
@@ -85,3 +88,4 @@ public class Transaction {
         this.accountId = accountId;
     }
 }
+
