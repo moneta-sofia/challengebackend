@@ -22,11 +22,13 @@ public class Transaction {
     @Column(name = "amount", nullable = false)
     private Float amount;
 
-    @Column(name = "activityType", nullable = false)
-    private ActivityType activityType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "activityType")
+    private ActivityType activityType; // transfer attribute
 
-    @Column(name = "transactionType")
-    private TransactionType transactionType; // transfer attribute
+    @Enumerated(EnumType.STRING)
+    @Column(name = "transactionType" , nullable = false)
+    private TransactionType transactionType;
 
     @Column(name = "origin", length = 22)
     private String origin;  // transfer attribute
@@ -47,20 +49,23 @@ public class Transaction {
     }
 
     // deposit
-    public Transaction(Long id, Float amount, ActivityType activityType, LocalDateTime dated, Long accountId) {
+
+    public Transaction(Long id, Float amount, TransactionType transactionType, LocalDateTime dated, Long accountId) {
         this.id = id;
         this.amount = amount;
-        this.activityType = activityType;
+        this.transactionType = transactionType;
+        this.dated = dated;
+        this.accountId = accountId;
+    }
+    public Transaction(Float amount, TransactionType transactionType, LocalDateTime dated, Long accountId) {
+        this.amount = amount;
+        this.transactionType = transactionType;
         this.dated = dated;
         this.accountId = accountId;
     }
 
-    public Transaction(Float amount, ActivityType activityType, LocalDateTime dated, Long accountId) {
-        this.amount = amount;
-        this.activityType = activityType;
-        this.dated = dated;
-        this.accountId = accountId;
-    }
+
+
 
 //    transfer
 

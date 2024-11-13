@@ -20,12 +20,13 @@ public class TransactionController {
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestParam Float amount,
-                                   @RequestParam int transactionType,
-                                   @RequestParam String origin,
-                                   @RequestParam String name,
-                                   @RequestParam(required = false) String destination,
-                                   @RequestParam Long accountId) {
-        transactionService.createTransaction(amount, transactionType, origin, name, destination, accountId);
+                                    @RequestParam(required = false) Integer activityType,
+                                    @RequestParam int transactionType,
+                                    @RequestParam(required = false) String origin ,
+                                    @RequestParam(required = false) String name,
+                                    @RequestParam(required = false) String destination,
+                                    @RequestParam Long accountId) {
+        transactionService.createTransaction(amount, activityType, transactionType, origin, name, destination, accountId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -41,7 +42,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{transactionId}/account/{accountId}")
-    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId){
+    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId) {
         if (accountId == null || accountId <= 0) {
             throw new CustomException("Invalid account ID!", HttpStatus.BAD_REQUEST);
         }
