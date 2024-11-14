@@ -13,13 +13,27 @@ public class TransactionTests {
     static public Integer transactionId;
 
 
-    @Test
     @Order(1)
-    public void createTransaction() {
-        given().post(baseUrl + "create?amount=1000&transactionType=2&origin=3903064887278333808094&name=John+Doe&destination=0563448657741817913221&accountId=" + accountId)
-                .then()
-                .log().body()
-                .statusCode(201);
+    @Nested
+    class createTransaction {
+
+        @Test
+        public void createTransference() {
+            given().post(baseUrl + "create?amount=10&transactionType=1&activityType=1&origin=5130537175978645296140&name=John+Doe&destination=6560721963391433856341&accountId=" + accountId)
+                    .then()
+                    .log().body()
+                    .statusCode(201);
+        }
+
+        @Test
+        public void createDeposit() {
+            given().post(baseUrl + "create?amount=100&transactionType=2&accountId=" + accountId)
+                    .then()
+                    .log().body()
+                    .statusCode(201);
+        }
+
+
     }
 
     @Nested
