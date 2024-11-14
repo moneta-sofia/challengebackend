@@ -7,4 +7,6 @@ import java.util.Optional;
 public interface IAccountRepositoryCustom {
 
     Optional<Account> findByUserId(String userId);
+    Optional<Account> findByCvu(String cvu);
+
 }

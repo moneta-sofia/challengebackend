@@ -50,15 +50,22 @@ public class AccountController {
 //    Transaction endpoints
 
     @PostMapping("{userId}/transferences")
-    public ResponseEntity<?> createDeposit(@PathVariable String userId,
-                                           @RequestParam Float amount,
-                                           @RequestHeader("Authorization") String barerToken) {
+    public ResponseEntity<?> createTransaction(@PathVariable String userId,
+                                               @RequestParam Float amount,
+                                               @RequestParam(required = false) String destination,
+                                               @RequestHeader("Authorization") String barerToken) {
 
         String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
         if (!idFromToken.equals(userId)) {
             throw new CustomException("Without permission to do this action", HttpStatus.FORBIDDEN);
         }
-        accountService.createDeposit(amount, userId);
+        if (destination == null || destination.isEmpty()){
+            System.out.println("deposit");
+            accountService.createDeposit(amount, userId);
+        } else {
+            System.out.println("transaction");
+            accountService.createTransaction(amount,destination, userId);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

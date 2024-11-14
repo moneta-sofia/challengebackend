@@ -16,13 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalInt;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
@@ -98,6 +96,29 @@ public class AccountServiceImpl implements IAccountService {
         if (response.getStatusCode() == HttpStatus.CREATED) {
             account.get().setBalance(account.get().getBalance() + amount);
             accountRepository.save(account.get());
+        }
+    }
+
+    @Override
+    public void createTransaction(Float amount, String destination, String userId) {
+        Account account = accountRepository.findByUserId(userId).orElseThrow(() ->  new CustomException("Account not found", HttpStatus.NOT_FOUND));
+
+        if ((account.getBalance() - amount) < 0) {
+            throw new CustomException("Not enough funds to withdraw", HttpStatus.GONE);
+        }
+
+        Account accountDestination = accountRepository.findByCvu(destination).orElseThrow(() -> new CustomException("Cannot found some account with cvu: " + destination, HttpStatus.BAD_REQUEST));
+
+//        Transaction Sent
+        ResponseEntity<?> responseT1 = transactionRepository.create(amount, 2, 1, account.getCvu(), accountDestination.getName(), accountDestination.getCvu(), account.getId());
+//        Transaction Received
+        ResponseEntity<?> responseT2 = transactionRepository.create(amount, 1, 1, account.getCvu(), account.getName(), accountDestination.getCvu(), accountDestination.getId());
+
+        if (responseT2.getStatusCode() == HttpStatus.CREATED && responseT2.getStatusCode() == HttpStatus.CREATED) {
+            account.setBalance(account.getBalance() - amount);
+            accountRepository.save(account);
+            accountDestination.setBalance(accountDestination.getBalance() + amount);
+            accountRepository.save(accountDestination);
         }
     }
 
