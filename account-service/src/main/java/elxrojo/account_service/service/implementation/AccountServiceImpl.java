@@ -52,19 +52,19 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public AccountDTO getAccountByUser(String userId) {
-            Optional<Account> account = accountRepository.findByUserId(userId);
-            if (account.isPresent()) {
-                return mapper.convertValue(account.get(), AccountDTO.class);
-            } else {
-                throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
-            }
+        Optional<Account> account = accountRepository.findByUserId(userId);
+        if (account.isPresent()) {
+            return mapper.convertValue(account.get(), AccountDTO.class);
+        } else {
+            throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
+        }
     }
 
 
     @Override
     public AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated) {
         Account account = accountRepository.findById(accountId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
-        if (accountUpdated.getId() != null && (!Objects.equals(account.getId(), accountUpdated.getId())) ){
+        if (accountUpdated.getId() != null && (!Objects.equals(account.getId(), accountUpdated.getId()))) {
             throw new CustomException("Cannot change the account id!", HttpStatus.BAD_REQUEST);
         }
 
@@ -81,22 +81,21 @@ public class AccountServiceImpl implements IAccountService {
     //    Transaction method
 
     @Override
-    public void createTransaction(Float amount, int transactionType, String destination, String userId){
-
+    public void createDeposit(Float amount, String userId) {
         Optional<Account> account = accountRepository.findByUserId(userId);
 
-        if (account.isEmpty()){
+        if (account.isEmpty()) {
             throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
         }
 
-        ResponseEntity<?> response = transactionRepository.create(amount,
-                transactionType,
-                account.get().getCvu(),
-                account.get().getName(),
-                destination,
-                account.get().getId());
+        if ((account.get().getBalance() + amount) < 0) {
+            throw new CustomException("Not enough funds to withdraw", HttpStatus.BAD_REQUEST);
+        }
 
-        if (response.getStatusCode() == HttpStatus.CREATED){
+
+        ResponseEntity<?> response = transactionRepository.create(amount, null, 2, null, null, null, account.get().getId());
+
+        if (response.getStatusCode() == HttpStatus.CREATED) {
             account.get().setBalance(account.get().getBalance() + amount);
             accountRepository.save(account.get());
         }
@@ -106,7 +105,7 @@ public class AccountServiceImpl implements IAccountService {
     public List<TransactionDTO> getTransactionsById(String userID, Integer limit) {
         try {
             Optional<Account> accountFound = accountRepository.findByUserId(userID);
-            if (accountFound.isEmpty()){
+            if (accountFound.isEmpty()) {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
             return transactionRepository.getTransactionsByAccount(accountFound.get().getId(), limit);
@@ -116,10 +115,10 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public TransactionDTO getTransactionById(String userId, Long transactionId){
+    public TransactionDTO getTransactionById(String userId, Long transactionId) {
         try {
             Optional<Account> accountfound = accountRepository.findByUserId(userId);
-            if (accountfound.isEmpty()){
+            if (accountfound.isEmpty()) {
                 throw new CustomException("Account not found", HttpStatus.NOT_FOUND);
             }
             return transactionRepository.getTransactionByAccount(accountfound.get().getId(), transactionId);

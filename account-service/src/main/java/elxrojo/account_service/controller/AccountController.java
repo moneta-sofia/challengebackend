@@ -50,17 +50,15 @@ public class AccountController {
 //    Transaction endpoints
 
     @PostMapping("{userId}/transferences")
-    public ResponseEntity<?> createTranference(@PathVariable String userId,
-                                               @RequestParam Float amount,
-                                               @RequestParam int transactionType,
-                                               @RequestParam(required = false) String destination,
-                                               @RequestHeader("Authorization") String barerToken){
+    public ResponseEntity<?> createDeposit(@PathVariable String userId,
+                                           @RequestParam Float amount,
+                                           @RequestHeader("Authorization") String barerToken) {
 
         String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
-        if (!idFromToken.equals(userId)){
+        if (!idFromToken.equals(userId)) {
             throw new CustomException("Without permission to do this action", HttpStatus.FORBIDDEN);
         }
-        accountService.createTransaction(amount,transactionType,destination,userId);
+        accountService.createDeposit(amount, userId);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -73,7 +71,7 @@ public class AccountController {
             throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
         }
         String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
-        if (!idFromToken.equals(userId)){
+        if (!idFromToken.equals(userId)) {
             throw new CustomException("Without permission to see this info", HttpStatus.FORBIDDEN);
         }
 
@@ -81,7 +79,7 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}/activity/{transactionId}")
-    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable String userId, @PathVariable Long transactionId){
+    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable String userId, @PathVariable Long transactionId) {
         if (userId == null) {
             throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
         }

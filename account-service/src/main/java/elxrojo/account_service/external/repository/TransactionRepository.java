@@ -29,9 +29,9 @@ public class TransactionRepository {
     public ResponseEntity<?> create(@RequestParam Float amount,
                                     @RequestParam(required = false) Integer activityType,
                                     @RequestParam int transactionType,
-                                    @RequestParam String origin,
-                                    @RequestParam String name,
-                                    @RequestParam String destination,
+                                    @RequestParam(required = false) String origin,
+                                    @RequestParam(required = false) String name,
+                                    @RequestParam(required = false) String destination,
                                     @RequestParam Long accountId) {
         return transactionRepository.create(amount, activityType, transactionType, origin, name, destination, accountId);
     }
