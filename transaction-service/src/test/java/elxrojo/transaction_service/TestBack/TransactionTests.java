@@ -19,7 +19,7 @@ public class TransactionTests {
 
         @Test
         public void createTransference() {
-            given().post(baseUrl + "create?amount=10&transactionType=1&activityType=1&origin=5130537175978645296140&name=John+Doe&destination=6560721963391433856341&accountId=" + accountId)
+            given().post(baseUrl + "create?amount=10&transactionType=2&activityType=1&origin=5130537175978645296140&name=John+Doe&destination=6560721963391433856341&accountId=" + accountId)
                     .then()
                     .log().body()
                     .statusCode(201);
@@ -93,4 +93,19 @@ public class TransactionTests {
                     .statusCode(401);
         }
     }
+
+    @Nested
+    @Order(4)
+    class getLatestDestinations {
+        @Test
+        public void positive() {
+            given()
+                    .get(baseUrl + accountId + "/destination")
+                    .then()
+                    .statusCode(200)
+                    .log().body()
+                    .body("size()", greaterThanOrEqualTo(1));
+        }
+    }
+
 }
