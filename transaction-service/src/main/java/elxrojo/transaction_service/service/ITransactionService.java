@@ -8,4 +8,5 @@ public interface ITransactionService {
     void createTransaction(Float amount, Integer activityType, int transactionType, String origin, String name, String destination, Long accountId);
     List<TransactionDTO> getTransactionsByAccount(Long accountId, int limit);
     TransactionDTO getTransactionByAccount(Long accountId, Long transactionId);
+    List<TransactionDTO> getLatestDestinations(Long accountId);
 }

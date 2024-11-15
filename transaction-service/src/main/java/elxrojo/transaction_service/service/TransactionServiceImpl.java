@@ -78,4 +78,12 @@ public class TransactionServiceImpl implements ITransactionService {
         }
         return mapper.convertValue(foundTransaction, TransactionDTO.class);
     }
+
+    @Override
+    public List<TransactionDTO> getLatestDestinations(Long accountId) {
+        return transactionRepository.getLatestDestinations(accountId)
+                .stream()
+                .map(transaction -> mapper.convertValue(transaction, TransactionDTO.class))
+                .collect(Collectors.toList());
+    }
 }

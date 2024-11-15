@@ -51,4 +51,12 @@ public class TransactionController {
         }
         return ResponseEntity.ok(transactionService.getTransactionByAccount(accountId, transactionId));
     }
+
+    @GetMapping("/{accountId}/destination")
+    public ResponseEntity<List<TransactionDTO>>  getLatestDestinations(@PathVariable Long accountId) {
+        if (accountId == null || accountId <= 0) {
+            throw new CustomException("Invalid account ID!", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(transactionService.getLatestDestinations(accountId));
+    }
 }
