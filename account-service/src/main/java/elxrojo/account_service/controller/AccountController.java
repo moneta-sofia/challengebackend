@@ -98,6 +98,19 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getTransactionById(userId, transactionId));
     }
 
+    @GetMapping("/{userId}/transferences")
+    public ResponseEntity<List<TransactionDTO>> getLatestDestinations(@PathVariable String userId,
+                                                                      @RequestHeader("Authorization") String barerToken) {
+        if (userId == null) {
+            throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
+        }
+        String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
+        if (!idFromToken.equals(userId)) {
+            throw new CustomException("Without permission to see this info", HttpStatus.FORBIDDEN);
+        }
+
+        return ResponseEntity.ok(accountService.getLatestDestinations(userId));
+    }
 
 //    Card endpoints
 

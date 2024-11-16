@@ -28,4 +28,7 @@ public interface IFeignTransactionRepository {
                              @RequestParam(required = false)  String name,
                              @RequestParam(required = false)  String destination,
                              @RequestParam Long accountId);
+
+    @GetMapping("/transactions/{accountId}/destination")
+    List<TransactionDTO>  getLatestDestinations(@PathVariable Long accountId);
 }

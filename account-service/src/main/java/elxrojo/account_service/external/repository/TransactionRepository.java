@@ -35,4 +35,8 @@ public class TransactionRepository {
                                     @RequestParam Long accountId) {
         return transactionRepository.create(amount, activityType, transactionType, origin, name, destination, accountId);
     }
+
+    public List<TransactionDTO> getLatestDestinations(@PathVariable Long accountId){
+        return transactionRepository.getLatestDestinations(accountId);
+    }
 }

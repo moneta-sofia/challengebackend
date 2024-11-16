@@ -114,7 +114,7 @@ public class AccountServiceImpl implements IAccountService {
 //        Transaction Received
         ResponseEntity<?> responseT2 = transactionRepository.create(amount, 1, 1, account.getCvu(), account.getName(), accountDestination.getCvu(), accountDestination.getId());
 
-        if (responseT2.getStatusCode() == HttpStatus.CREATED && responseT2.getStatusCode() == HttpStatus.CREATED) {
+        if (responseT2.getStatusCode() == HttpStatus.CREATED && responseT1.getStatusCode() == HttpStatus.CREATED) {
             account.setBalance(account.getBalance() - amount);
             accountRepository.save(account);
             accountDestination.setBalance(accountDestination.getBalance() + amount);
@@ -151,6 +151,12 @@ public class AccountServiceImpl implements IAccountService {
             throw new CustomException("An unexpected error ocurred", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+    }
+
+    @Override
+    public List<TransactionDTO> getLatestDestinations(String userId) {
+        Account account = accountRepository.findByUserId(userId).orElseThrow(() ->  new CustomException("Account not found", HttpStatus.NOT_FOUND));
+        return transactionRepository.getLatestDestinations(account.getId());
     }
 
 

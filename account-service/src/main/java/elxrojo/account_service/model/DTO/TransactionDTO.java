@@ -13,6 +13,7 @@ public class TransactionDTO {
 
     private Long id;
     private Float amount;
+    private ActivityType activityType;
     private TransactionType transactionType;
     private String origin;
     private String name;
