@@ -27,11 +27,16 @@ public class TransactionRepository {
     }
 
     public ResponseEntity<?> create(@RequestParam Float amount,
-                                 @RequestParam int transactionType,
-                                 @RequestParam String origin,
-                                 @RequestParam String name,
-                                 @RequestParam String destination,
-                                 @RequestParam Long accountId) {
-        return transactionRepository.create(amount,transactionType,origin,name,destination,accountId);
+                                    @RequestParam(required = false) Integer activityType,
+                                    @RequestParam int transactionType,
+                                    @RequestParam(required = false) String origin,
+                                    @RequestParam(required = false) String name,
+                                    @RequestParam(required = false) String destination,
+                                    @RequestParam Long accountId) {
+        return transactionRepository.create(amount, activityType, transactionType, origin, name, destination, accountId);
+    }
+
+    public List<TransactionDTO> getLatestDestinations(@PathVariable Long accountId){
+        return transactionRepository.getLatestDestinations(accountId);
     }
 }

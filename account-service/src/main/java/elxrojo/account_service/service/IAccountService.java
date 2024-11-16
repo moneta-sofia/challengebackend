@@ -13,9 +13,11 @@ public interface IAccountService {
     AccountDTO getAccountByUser(String userId);
     AccountDTO updateAccount(Long accountId, AccountDTO accountUpdated);
 
-    void createTransaction(Float amount, int transactionType, String destination, String userId);
+    void createDeposit(Float amount, String userId);
+    void createTransaction(Float amount, String destination, String userId);
     List<TransactionDTO> getTransactionsById(String id, Integer limit);
     TransactionDTO getTransactionById(String userId, Long transactionId);
+    List<TransactionDTO> getLatestDestinations(String userId);
 
     void createAccountCard(CardDTO card, String userId);
     List<CardDTO> getCardsByAccount(String userId);

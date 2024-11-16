@@ -5,7 +5,8 @@ import elxrojo.transaction_service.model.DTO.TransactionDTO;
 import java.util.List;
 
 public interface ITransactionService {
-    void createTransaction(Float amount, int transactionType, String origin, String name, String destination, Long accountId);
+    void createTransaction(Float amount, Integer activityType, int transactionType, String origin, String name, String destination, Long accountId);
     List<TransactionDTO> getTransactionsByAccount(Long accountId, int limit);
     TransactionDTO getTransactionByAccount(Long accountId, Long transactionId);
+    List<TransactionDTO> getLatestDestinations(Long accountId);
 }

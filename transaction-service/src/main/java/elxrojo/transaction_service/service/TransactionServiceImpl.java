@@ -2,6 +2,7 @@ package elxrojo.transaction_service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import elxrojo.transaction_service.exception.CustomException;
+import elxrojo.transaction_service.model.ActivityType;
 import elxrojo.transaction_service.model.DTO.TransactionDTO;
 import elxrojo.transaction_service.model.Transaction;
 import elxrojo.transaction_service.model.TransactionType;
@@ -29,16 +30,28 @@ public class TransactionServiceImpl implements ITransactionService {
     ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void createTransaction(Float amount, int transactionType, String origin, String name, String destination, Long accountId) {
-        Transaction transaction = new Transaction(
-                amount,
-                (transactionType == 1 ? TransactionType.deposit : TransactionType.transfer),
-                origin,
-                name,
-                destination,
-                LocalDateTime.now(),
-                accountId);
-        transactionRepository.save(transaction);
+    public void createTransaction(Float amount, Integer activityType, int transactionType, String origin, String name, String destination, Long accountId) {
+        if (transactionType == 1) {
+            Transaction transaction = new Transaction(
+                    amount,
+                    activityType == 1 ? ActivityType.transferIn : ActivityType.transferOut,
+                    TransactionType.transfer,
+                    origin,
+                    name,
+                    destination,
+                    LocalDateTime.now(),
+                    accountId
+            );
+            transactionRepository.save(transaction);
+        } else if (transactionType == 2) {
+            Transaction transaction = new Transaction(
+                    amount,
+                    TransactionType.deposit,
+                    LocalDateTime.now(),
+                    accountId
+            );
+            transactionRepository.save(transaction);
+        }
     }
 
     @Override
@@ -52,17 +65,25 @@ public class TransactionServiceImpl implements ITransactionService {
         return transactions.stream()
                 .map(transaction -> mapper.convertValue(transaction, TransactionDTO.class))
                 .collect(Collectors.toList());
-    }
+    } //refactor, return only deposits
 
     @Override
-    public TransactionDTO getTransactionByAccount(Long accountId, Long transactionId){
+    public TransactionDTO getTransactionByAccount(Long accountId, Long transactionId) {
         Optional<Transaction> foundTransaction = transactionRepository.findById(transactionId);
-        if (foundTransaction.isEmpty()){
+        if (foundTransaction.isEmpty()) {
             throw new CustomException("That activity doesn't exist!", HttpStatus.NOT_FOUND);
         }
-        if (!Objects.equals(accountId, foundTransaction.get().getAccountId())){
+        if (!Objects.equals(accountId, foundTransaction.get().getAccountId())) {
             throw new CustomException("Without permission!", HttpStatus.UNAUTHORIZED);
         }
         return mapper.convertValue(foundTransaction, TransactionDTO.class);
+    }
+
+    @Override
+    public List<TransactionDTO> getLatestDestinations(Long accountId) {
+        return transactionRepository.getLatestDestinations(accountId)
+                .stream()
+                .map(transaction -> mapper.convertValue(transaction, TransactionDTO.class))
+                .collect(Collectors.toList());
     }
 }

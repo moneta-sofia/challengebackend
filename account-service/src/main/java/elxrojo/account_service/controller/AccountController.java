@@ -50,17 +50,22 @@ public class AccountController {
 //    Transaction endpoints
 
     @PostMapping("{userId}/transferences")
-    public ResponseEntity<?> createTranference(@PathVariable String userId,
+    public ResponseEntity<?> createTransaction(@PathVariable String userId,
                                                @RequestParam Float amount,
-                                               @RequestParam int transactionType,
                                                @RequestParam(required = false) String destination,
-                                               @RequestHeader("Authorization") String barerToken){
+                                               @RequestHeader("Authorization") String barerToken) {
 
         String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
-        if (!idFromToken.equals(userId)){
+        if (!idFromToken.equals(userId)) {
             throw new CustomException("Without permission to do this action", HttpStatus.FORBIDDEN);
         }
-        accountService.createTransaction(amount,transactionType,destination,userId);
+        if (destination == null || destination.isEmpty()){
+            System.out.println("deposit");
+            accountService.createDeposit(amount, userId);
+        } else {
+            System.out.println("transaction");
+            accountService.createTransaction(amount,destination, userId);
+        }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -73,7 +78,7 @@ public class AccountController {
             throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
         }
         String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
-        if (!idFromToken.equals(userId)){
+        if (!idFromToken.equals(userId)) {
             throw new CustomException("Without permission to see this info", HttpStatus.FORBIDDEN);
         }
 
@@ -81,7 +86,7 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}/activity/{transactionId}")
-    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable String userId, @PathVariable Long transactionId){
+    public ResponseEntity<TransactionDTO> getTransactionByAccount(@PathVariable String userId, @PathVariable Long transactionId) {
         if (userId == null) {
             throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
         }
@@ -93,6 +98,19 @@ public class AccountController {
         return ResponseEntity.ok(accountService.getTransactionById(userId, transactionId));
     }
 
+    @GetMapping("/{userId}/transferences")
+    public ResponseEntity<List<TransactionDTO>> getLatestDestinations(@PathVariable String userId,
+                                                                      @RequestHeader("Authorization") String barerToken) {
+        if (userId == null) {
+            throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
+        }
+        String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
+        if (!idFromToken.equals(userId)) {
+            throw new CustomException("Without permission to see this info", HttpStatus.FORBIDDEN);
+        }
+
+        return ResponseEntity.ok(accountService.getLatestDestinations(userId));
+    }
 
 //    Card endpoints
 
