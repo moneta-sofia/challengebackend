@@ -18,16 +18,18 @@ public class TransactionController {
     @Autowired
     ITransactionService transactionService;
 
+
+
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestParam Float amount,
+    public ResponseEntity<TransactionDTO> create(@RequestParam Float amount,
                                     @RequestParam(required = false) Integer activityType,
                                     @RequestParam int transactionType,
                                     @RequestParam(required = false) String origin ,
                                     @RequestParam(required = false) String name,
                                     @RequestParam(required = false) String destination,
                                     @RequestParam Long accountId) {
-        transactionService.createTransaction(amount, activityType, transactionType, origin, name, destination, accountId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(transactionService.createTransaction(amount, activityType, transactionType, origin, name, destination, accountId));
     }
 
     @GetMapping("/{accountId}")

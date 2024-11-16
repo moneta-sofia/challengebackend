@@ -21,6 +21,7 @@
                     .authorizeExchange(exchanges -> exchanges
                             .pathMatchers("/users/login").permitAll()
                             .pathMatchers("/users/").permitAll()
+                            .pathMatchers("/accounts").permitAll()
                             .pathMatchers( HttpMethod.GET, "/users/{id}").permitAll()
                             .anyExchange().authenticated()
                     )

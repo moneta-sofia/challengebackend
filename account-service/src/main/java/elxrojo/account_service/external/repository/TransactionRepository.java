@@ -26,7 +26,7 @@ public class TransactionRepository {
         return transactionRepository.getTransactionByAccount(accountId, transactionId);
     }
 
-    public ResponseEntity<?> create(@RequestParam Float amount,
+    public TransactionDTO create(@RequestParam Float amount,
                                     @RequestParam(required = false) Integer activityType,
                                     @RequestParam int transactionType,
                                     @RequestParam(required = false) String origin,

@@ -30,9 +30,10 @@ public class TransactionServiceImpl implements ITransactionService {
     ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void createTransaction(Float amount, Integer activityType, int transactionType, String origin, String name, String destination, Long accountId) {
+    public TransactionDTO createTransaction(Float amount, Integer activityType, int transactionType, String origin, String name, String destination, Long accountId) {
+        Transaction transaction = null;
         if (transactionType == 1) {
-            Transaction transaction = new Transaction(
+            transaction = new Transaction(
                     amount,
                     activityType == 1 ? ActivityType.transferIn : ActivityType.transferOut,
                     TransactionType.transfer,
@@ -44,7 +45,7 @@ public class TransactionServiceImpl implements ITransactionService {
             );
             transactionRepository.save(transaction);
         } else if (transactionType == 2) {
-            Transaction transaction = new Transaction(
+            transaction = new Transaction(
                     amount,
                     TransactionType.deposit,
                     LocalDateTime.now(),
@@ -52,6 +53,7 @@ public class TransactionServiceImpl implements ITransactionService {
             );
             transactionRepository.save(transaction);
         }
+        return mapper.convertValue(transaction, TransactionDTO.class);
     }
 
     @Override

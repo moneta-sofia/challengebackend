@@ -21,7 +21,7 @@ public interface IFeignTransactionRepository {
     TransactionDTO getTransactionByAccount(@PathVariable Long accountId, @PathVariable Long transactionId);
 
     @PostMapping("/transactions/create")
-    ResponseEntity<?> create(@RequestParam Float amount,
+    TransactionDTO create(@RequestParam Float amount,
                              @RequestParam(required = false) Integer activityType,
                              @RequestParam int transactionType,
                              @RequestParam(required = false)  String origin,

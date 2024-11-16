@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountServiceImpl implements IAccountService {
@@ -39,6 +40,14 @@ public class AccountServiceImpl implements IAccountService {
 
     ObjectMapper mapper = new ObjectMapper();
 
+    @Override
+    public List<AccountDTO> getAllAccounts(){
+        List<Account> accounts = accountRepository.findAll();
+        return accounts
+                .stream()
+                .map(account-> mapper.convertValue(account, AccountDTO.class))
+                .collect(Collectors.toList());
+    }
 
     @Override
     public Long createAccount(String alias, String cvu, String userId, String name) {
@@ -79,7 +88,7 @@ public class AccountServiceImpl implements IAccountService {
     //    Transaction method
 
     @Override
-    public void createDeposit(Float amount, String userId) {
+    public TransactionDTO createDeposit(Float amount, String userId) {
         Optional<Account> account = accountRepository.findByUserId(userId);
 
         if (account.isEmpty()) {
@@ -91,16 +100,17 @@ public class AccountServiceImpl implements IAccountService {
         }
 
 
-        ResponseEntity<?> response = transactionRepository.create(amount, null, 2, null, null, null, account.get().getId());
+        TransactionDTO response = transactionRepository.create(amount, null, 2, null, null, null, account.get().getId());
 
-        if (response.getStatusCode() == HttpStatus.CREATED) {
+        if (response != null ) {
             account.get().setBalance(account.get().getBalance() + amount);
             accountRepository.save(account.get());
         }
+        return response;
     }
 
     @Override
-    public void createTransaction(Float amount, String destination, String userId) {
+    public TransactionDTO createTransaction(Float amount, String destination, String userId) {
         Account account = accountRepository.findByUserId(userId).orElseThrow(() ->  new CustomException("Account not found", HttpStatus.NOT_FOUND));
 
         if ((account.getBalance() - amount) < 0) {
@@ -110,16 +120,17 @@ public class AccountServiceImpl implements IAccountService {
         Account accountDestination = accountRepository.findByCvu(destination).orElseThrow(() -> new CustomException("Cannot found some account with cvu: " + destination, HttpStatus.BAD_REQUEST));
 
 //        Transaction Sent
-        ResponseEntity<?> responseT1 = transactionRepository.create(amount, 2, 1, account.getCvu(), accountDestination.getName(), accountDestination.getCvu(), account.getId());
+        TransactionDTO responseT1 = transactionRepository.create(amount, 2, 1, account.getCvu(), accountDestination.getName(), accountDestination.getCvu(), account.getId());
 //        Transaction Received
-        ResponseEntity<?> responseT2 = transactionRepository.create(amount, 1, 1, account.getCvu(), account.getName(), accountDestination.getCvu(), accountDestination.getId());
+        TransactionDTO responseT2 = transactionRepository.create(amount, 1, 1, account.getCvu(), account.getName(), accountDestination.getCvu(), accountDestination.getId());
 
-        if (responseT2.getStatusCode() == HttpStatus.CREATED && responseT1.getStatusCode() == HttpStatus.CREATED) {
+        if (responseT2 != null && responseT1 != null) {
             account.setBalance(account.getBalance() - amount);
             accountRepository.save(account);
             accountDestination.setBalance(accountDestination.getBalance() + amount);
             accountRepository.save(accountDestination);
         }
+        return responseT1;
     }
 
     @Override

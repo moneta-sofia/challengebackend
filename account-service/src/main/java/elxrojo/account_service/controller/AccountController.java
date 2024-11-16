@@ -23,6 +23,12 @@ public class AccountController {
     @Autowired
     IAccountService accountService;
 
+    @GetMapping
+    public ResponseEntity<List<AccountDTO>> getAllAccounts(){
+        return ResponseEntity.ok(accountService.getAllAccounts());
+    }
+
+
     @PostMapping("/")
     public ResponseEntity<Long> createAccount(@RequestBody AccountDTO account) {
         Long idAccountCreated = accountService.createAccount(
@@ -50,7 +56,7 @@ public class AccountController {
 //    Transaction endpoints
 
     @PostMapping("{userId}/transferences")
-    public ResponseEntity<?> createTransaction(@PathVariable String userId,
+    public ResponseEntity<TransactionDTO> createTransaction(@PathVariable String userId,
                                                @RequestParam Float amount,
                                                @RequestParam(required = false) String destination,
                                                @RequestHeader("Authorization") String barerToken) {
@@ -59,14 +65,16 @@ public class AccountController {
         if (!idFromToken.equals(userId)) {
             throw new CustomException("Without permission to do this action", HttpStatus.FORBIDDEN);
         }
+
+        TransactionDTO transaction;
         if (destination == null || destination.isEmpty()){
             System.out.println("deposit");
-            accountService.createDeposit(amount, userId);
+            transaction = accountService.createDeposit(amount, userId);
         } else {
             System.out.println("transaction");
-            accountService.createTransaction(amount,destination, userId);
+            transaction = accountService.createTransaction(amount,destination, userId);
         }
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
     }
 
 
