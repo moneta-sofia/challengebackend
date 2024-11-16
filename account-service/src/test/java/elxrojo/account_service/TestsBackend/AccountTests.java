@@ -213,6 +213,31 @@ public class AccountTests {
 
             }
 
+            @Nested
+            @Order(4)
+            class getLatestDestinations {
+
+                @Test
+                public void positive() {
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .get(baseUrl + userId + "/transferences")
+                            .then()
+                            .statusCode(200)
+                            .body("size()", greaterThanOrEqualTo(1));
+                }
+
+                @Test
+                public void withouthPermissions() {
+                    given()
+                            .header("Authorization", "Bearer " + token)
+                            .get(baseUrl + "5e855825-0402-401c-8e77-b709ff1zzz0e" + "/transferences")
+                            .then()
+                            .statusCode(403)
+                            .body("size()", greaterThanOrEqualTo(1));
+                }
+            }
+
         }
 
 
