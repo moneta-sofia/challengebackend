@@ -24,7 +24,7 @@ public class AccountController {
     IAccountService accountService;
 
     @GetMapping
-    public ResponseEntity<List<AccountDTO>> getAllAccounts(){
+    public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         return ResponseEntity.ok(accountService.getAllAccounts());
     }
 
@@ -57,9 +57,9 @@ public class AccountController {
 
     @PostMapping("{userId}/transferences")
     public ResponseEntity<TransactionDTO> createTransaction(@PathVariable String userId,
-                                               @RequestParam Float amount,
-                                               @RequestParam(required = false) String destination,
-                                               @RequestHeader("Authorization") String barerToken) {
+                                                            @RequestParam Float amount,
+                                                            @RequestParam(required = false) String destination,
+                                                            @RequestHeader("Authorization") String barerToken) {
 
         String idFromToken = JWT.decode(barerToken.substring("Bearer ".length())).getSubject();
         if (!idFromToken.equals(userId)) {
@@ -67,12 +67,12 @@ public class AccountController {
         }
 
         TransactionDTO transaction;
-        if (destination == null || destination.isEmpty()){
+        if (destination == null || destination.isEmpty()) {
             System.out.println("deposit");
             transaction = accountService.createDeposit(amount, userId);
         } else {
             System.out.println("transaction");
-            transaction = accountService.createTransaction(amount,destination, userId);
+            transaction = accountService.createTransaction(amount, destination, userId);
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
     }
@@ -107,8 +107,8 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}/transferences")
-    public ResponseEntity<List<TransactionDTO>> getLatestDestinations(@PathVariable String userId,
-                                                                      @RequestHeader("Authorization") String barerToken) {
+    public ResponseEntity<List<AccountDTO>> getLatestDestinations(@PathVariable String userId,
+                                                                  @RequestHeader("Authorization") String barerToken) {
         if (userId == null) {
             throw new CustomException("Invalid user ID!", HttpStatus.BAD_REQUEST);
         }

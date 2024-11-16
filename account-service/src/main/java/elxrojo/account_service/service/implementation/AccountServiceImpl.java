@@ -41,11 +41,11 @@ public class AccountServiceImpl implements IAccountService {
     ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public List<AccountDTO> getAllAccounts(){
+    public List<AccountDTO> getAllAccounts() {
         List<Account> accounts = accountRepository.findAll();
         return accounts
                 .stream()
-                .map(account-> mapper.convertValue(account, AccountDTO.class))
+                .map(account -> mapper.convertValue(account, AccountDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -102,7 +102,7 @@ public class AccountServiceImpl implements IAccountService {
 
         TransactionDTO response = transactionRepository.create(amount, null, 2, null, null, null, account.get().getId());
 
-        if (response != null ) {
+        if (response != null) {
             account.get().setBalance(account.get().getBalance() + amount);
             accountRepository.save(account.get());
         }
@@ -111,7 +111,7 @@ public class AccountServiceImpl implements IAccountService {
 
     @Override
     public TransactionDTO createTransaction(Float amount, String destination, String userId) {
-        Account account = accountRepository.findByUserId(userId).orElseThrow(() ->  new CustomException("Account not found", HttpStatus.NOT_FOUND));
+        Account account = accountRepository.findByUserId(userId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
 
         if ((account.getBalance() - amount) < 0) {
             throw new CustomException("Not enough funds to withdraw", HttpStatus.GONE);
@@ -165,9 +165,23 @@ public class AccountServiceImpl implements IAccountService {
     }
 
     @Override
-    public List<TransactionDTO> getLatestDestinations(String userId) {
-        Account account = accountRepository.findByUserId(userId).orElseThrow(() ->  new CustomException("Account not found", HttpStatus.NOT_FOUND));
-        return transactionRepository.getLatestDestinations(account.getId());
+    public List<AccountDTO> getLatestDestinations(String userId) {
+        Account account = accountRepository.findByUserId(userId).orElseThrow(() -> new CustomException("Account not found", HttpStatus.NOT_FOUND));
+
+        List<TransactionDTO> transactions = transactionRepository.getLatestDestinations(account.getId());
+
+        List<AccountDTO> recentAccounts =
+                transactions
+                        .stream()
+                        .map(transaction -> accountRepository.findByCvu(transaction.getDestination())
+                                .map(accountEntity -> mapper.convertValue(accountEntity, AccountDTO.class))
+                                .orElseThrow(() -> new CustomException(
+                                        "Destination account not found for CVU: " + transaction.getDestination(),
+                                        HttpStatus.NOT_FOUND
+                                )))
+                        .toList();
+
+        return recentAccounts;
     }
 
 

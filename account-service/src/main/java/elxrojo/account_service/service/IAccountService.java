@@ -18,7 +18,7 @@ public interface IAccountService {
     TransactionDTO createTransaction(Float amount, String destination, String userId);
     List<TransactionDTO> getTransactionsById(String id, Integer limit);
     TransactionDTO getTransactionById(String userId, Long transactionId);
-    List<TransactionDTO> getLatestDestinations(String userId);
+    List<AccountDTO> getLatestDestinations(String userId);
 
     void createAccountCard(CardDTO card, String userId);
     List<CardDTO> getCardsByAccount(String userId);
