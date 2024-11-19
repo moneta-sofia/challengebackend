@@ -10,7 +10,7 @@ services:
     build: config-server/
     mem_limit: 512m
     ports:
-      - 8888:8080
+      - 8888:8888
   user-service:
     build: user-service/
     mem_limit: 512m
