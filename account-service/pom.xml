@@ -149,7 +149,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>accounts</finalName>
+		<finalName>account-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

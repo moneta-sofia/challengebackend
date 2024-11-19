@@ -1,7 +1,7 @@
 version: '1.0'
 
 services:
-  eureka-service:
+  eureka-server:
     build: eureka-server/
     mem_limit: 512m
     ports:
@@ -16,26 +16,37 @@ services:
     mem_limit: 512m
     ports:
       - 8081:8080
+    env_file:
+      - .env
   account-service:
     build: account-service/
     mem_limit: 512m
     ports:
       - 8085:8080
+    env_file:
+      - .env
   transaction-service:
     build: transaction-service/
     mem_limit: 512m
     ports:
       - 8086:8080
+    env_file:
+      - .env
   card-service:
     build: card-service/
     mem_limit: 512m
     ports:
       - 8087:8080
+    env_file:
+      - .env
   gateway:
     build: gateway/
     mem_limit: 512m
     ports:
       - 8083:8083
+
+
+
 
 
 

@@ -1,9 +1,12 @@
 server:
   port: 8083
-
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka
 spring:
   application:
-    name: gateway-service
+    name: gateway
   security:
     oauth2:
       resourceserver:
@@ -13,22 +16,22 @@ spring:
     gateway:
       routes:
         - id: user-service
-          uri: http://localhost:8081
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/users/**
 
         - id: account-service
-          uri: http://localhost:8085
+          uri: lb://ACCOUNT-SERVICE
           predicates:
             - Path=/accounts/**
 
         - id: transaction-service
-          uri: http://localhost:8086
+          uri: lb://TRANSACTION-SERVICE
           predicates:
             - Path=/transactions/**
 
         - id: card-service
-          uri: http://localhost:8087
+          uri: lb://CARD-SERVICE
           predicates:
             - Path=/cards/**
 

@@ -114,7 +114,7 @@
 	</dependencyManagement>
 
 	<build>
-		<finalName>transactions</finalName>
+		<finalName>transaction-service</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
