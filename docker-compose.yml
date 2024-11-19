@@ -1,0 +1,43 @@
+version: '1.0'
+
+services:
+  eureka-service:
+    build: eureka-server/
+    mem_limit: 512m
+    ports:
+      - 8761:8761
+  config-server:
+    build: config-server/
+    mem_limit: 512m
+    ports:
+      - 8888:8080
+  user-service:
+    build: user-service/
+    mem_limit: 512m
+    ports:
+      - 8081:8080
+  account-service:
+    build: account-service/
+    mem_limit: 512m
+    ports:
+      - 8085:8080
+  transaction-service:
+    build: transaction-service/
+    mem_limit: 512m
+    ports:
+      - 8086:8080
+  card-service:
+    build: card-service/
+    mem_limit: 512m
+    ports:
+      - 8087:8080
+  gateway:
+    build: gateway/
+    mem_limit: 512m
+    ports:
+      - 8083:8083
+
+
+
+
+
