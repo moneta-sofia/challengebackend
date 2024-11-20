@@ -11,6 +11,8 @@ services:
     mem_limit: 512m
     ports:
       - 8888:8888
+    env_file:
+      - .env
   user-service:
     build: user-service/
     mem_limit: 512m
