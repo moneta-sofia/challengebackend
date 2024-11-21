@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "account-service", url = "http://localhost:8085")
+@FeignClient(name = "account-service", url = "http://account-service:8085")
 public interface IFeignAccountRepository {
 
     @PostMapping("/accounts/")
