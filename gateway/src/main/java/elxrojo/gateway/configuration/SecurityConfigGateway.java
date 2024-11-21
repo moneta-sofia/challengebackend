@@ -27,7 +27,7 @@
                     )
                     .csrf(csrf -> csrf.disable())
                     .oauth2ResourceServer(oauth2 -> oauth2
-                            .jwt(jwt -> jwt.jwkSetUri("http://ecstatic_mendeleev:8080/realms/BackendChallenge/protocol/openid-connect/certs"))
+                            .jwt(jwt -> jwt.jwkSetUri("http://keycloak:8080/realms/BackendChallenge/protocol/openid-connect/certs"))
                     );
             return http.build();
         }

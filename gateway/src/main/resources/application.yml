@@ -11,7 +11,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://ecstatic_mendeleev:8080/realms/BackendChallenge
+          issuer-uri: http://keycloak:8080/realms/BackendChallenge
   cloud:
     gateway:
       routes:
