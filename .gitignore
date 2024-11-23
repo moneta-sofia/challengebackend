@@ -8,6 +8,7 @@ target/
 .env
 .run
 realm-export.json
+*.tar
 
 ### STS ###
 .apt_generated
