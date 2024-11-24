@@ -1,14 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
     <title>Bucket Contents</title>
+    <style>
+        * {
+            padding: 0;
+        }
+
+        body {
+            background-color: rgb(46, 46, 46);
+            color: white;
+            width: 99%;
+            font-family: 'Rubik';
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 50px;
+            padding: 20px;
+        }
+
+        h2 {
+            color: rgba(255, 255, 255, 0.849);
+        }
+
+        h3, p {
+            margin: 10px;
+        }
+
+        li, a {
+            padding: 7px;
+            color: rgba(255, 104, 104, 0.842);
+            font-weight: 500;
+        }
+
+        #contenedor {
+            display: flex;
+            width: 100%;
+            justify-content: space-around;
+        }
+
+        #tip {
+            background-color: rgba(0, 0, 0, 0.333);
+            padding-top: 30px;
+            padding-bottom: 30px;
+            padding-left: 50px;
+            margin: 10px;
+            margin-top: 50px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        #exclamation {
+            font-size: 35px;
+            padding-right: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Available Files</h1>
-    <ul>
-        <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/file1.txt">file1.txt</a></li>
-        <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/file2.txt">file2.txt</a></li>
-        <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/image.png">image.png</a></li>
-    </ul>
+    <div>
+        <ul id="contenedor">
+            <div>
+                <h2>Servicios principales</h2>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/eureka-server.tar">Eureka Server</a></li>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/config-server.tar">Config Server</a></li>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/gateway.tar">Gateway</a></li>
+            </div>
+            <div>
+                <h2>Servicios extras</h2>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/user-service.tar">User Service</a></li>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/account-service.tar">Account Service</a></li>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/transaction-service.tar">Transaction Service</a></li>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/card-service.tar">Card Service</a></li>
+            </div>
+            <div>
+                <h2>Archivos necesarios</h2>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/.env">Variables de entorno (.env)</a></li>
+                <li><a href="https://backend-challenge.s3.us-east-2.amazonaws.com/project/docker-compose.yml">Docker Compose</a></li>
+            </div>
+        </ul>
+    </div>
+    <div id="tip">
+        <p id="exclamation">❗</p>
+        <div>
+            <h3>Una vez descargados los servicios, importa las imagenes con el comando:</h3>
+            <p>docker load -i nombre-del-archivo.tar </p>
+        </div>
+    </div>
 </body>
 </html>
