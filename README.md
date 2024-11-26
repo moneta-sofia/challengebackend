@@ -33,7 +33,7 @@ Este proyecto esta desarrollado en Java junto a las tecnologías de SpringBoot, 
 Este es el diagrama UML final que representa la estructura completa de la base de datos. Incluye todas las entidades, atributos, relaciones y cardinalidades necesarias para el correcto funcionamiento del sistema.
 
 ![](https://i.imgur.com/XDcFxc4.png)
-
+ 
 Mientras qe en este grafico se puede ver e interpretar la arquitectura general del sistema, que muestra cómo se comunican entre sí los servicios.
 
 ![](https://i.imgur.com/JMjvI9P.png)
@@ -66,6 +66,8 @@ Tarjetas
 - Obtener tarjetas  Cuenta
 - Obtener tarjeta 
 - Eliminar tarjeta
+
+
 ## Ejecutar en local
 
 Clona el proyecto
@@ -82,12 +84,8 @@ Accede al directorio del proyecto clonado
 > [!IMPORTANT] 
 > Asegúrate de configurar las variables de entorno necesarias para el proyecto.
 
-Las que vas a necesitar para keycloack estan en el archivo [.env](./.env)
+Las variables de ejemplo las podrás encontrar en el archivo [.env.example](./.env.example)
 
-Debes agregar las credenciales de una base de datos tuya en las variables
-`DB_URL`
-`DB_USERNAME`
-`DB_PASSWORD`
 
 Por último, levanta los servicios con docker
 ```
