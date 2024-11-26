@@ -31,10 +31,10 @@ Este proyecto esta desarrollado en Java junto a las tecnologías de SpringBoot, 
 ## Estructura
 
 Este es el diagrama UML final que representa la estructura completa de la base de datos. Incluye todas las entidades, atributos, relaciones y cardinalidades necesarias para el correcto funcionamiento del sistema.
-![](https://imgur.com/a/1M5RmDt)
+![](https://i.imgur.com/XDcFxc4.png)
 
 Mientras qe en este grafico se puede ver e interpretar la arquitectura general del sistema, que muestra cómo se comunican entre sí los servicios.
-![](https://imgur.com/a/B364Zmp)
+![](https://i.imgur.com/JMjvI9P.png)
 > [!NOTE]  
 > Las flechas con colores representan una interacción mediante protocolos REST, mientras que las punteadas representan una comunicación a través de Feign.
 ## Funciones
