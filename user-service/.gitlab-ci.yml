@@ -1,46 +1,54 @@
 stages:
+  - detect
   - build
-  - test
-#  - deploy
 
 variables:
-  MAVEN_CLI_OPTS: "-s .mvn/wrapper/maven-wrapper.properties"
-#  MAVEN_OPTS: "-Dmaven.test.skip=true"
+  MAVEN_CLI_OPTS: "-DskipTests"
 
-build:
+detect_changes:
+  stage: detect
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Detectando cambios en los servicios..."
+    - >
+      if git diff --quiet HEAD~1 HEAD -- user-service/; then
+        echo "No hay cambios en service-a";
+      else
+        echo "user-service cambiado"; echo "BUILD_USER_SERVICE=true" >> variables.env;
+  artifacts:
+    paths:
+      - variables.env
+
+
+
+
+build_user_service:
   stage: build
   image: maven:3.8.1-openjdk-17
   script:
     - echo "Compilando el microservicio..."
     - cd user-service
-    - mvn clean package
+    - mvn clean package $MAVEN_CLI_OPTS -f
   artifacts:
     paths:
       - target/*.jar
   only:
     - main
+  rules:
+    - exists:
+        - variables.env
+    - if: $BUILD_USER_SERVICE == "true"
 
-test:
-  stage: test
-  image: maven:3.8.1-jdk-11
-  script:
-    - echo "Ejecutando pruebas..."
-    - mvn test
-  artifacts:
-    when: always
-    paths:
-      - target/surefire-reports/
-  only:
-    - merge_requests
-
-#deploy:
-#  stage: deploy
+#test:
+#  stage: test
 #  image: maven:3.8.1-jdk-11
 #  script:
-#    - echo "Desplegando el microservicio..."
-#    - mvn deploy
+#    - echo "Ejecutando pruebas..."
+#    - mvn test
+#  artifacts:
+#    when: always
+#    paths:
+#      - target/surefire-reports/
 #  only:
-#    - main
-#  environment:
-#    name: production
-#    url: https://my-payment-service.com
+#    - merge_requests
+#
