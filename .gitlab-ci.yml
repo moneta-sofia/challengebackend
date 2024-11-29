@@ -1,6 +1,7 @@
 stages:
   - build
-  - test
+  - dockerize
+  - upload
 
 include:
   - local: '/user-service/.gitlab-ci.yml'
@@ -9,4 +10,3 @@ workflow:
   rules:
     - changes:
         - user-service/**
-
