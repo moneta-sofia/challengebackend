@@ -1,5 +1,5 @@
 FROM openjdk:17
-ARG JAR_FILE=target/config-server.jar
+ARG JAR_FILE=config-server.jar
 COPY ${JAR_FILE} app.jar
 ENTRYPOINT ["java","-jar","app.jar"]
 EXPOSE 8080

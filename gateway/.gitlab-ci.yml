@@ -1,0 +1,57 @@
+stages:
+  - build
+  - dockerize
+  - upload
+
+variables:
+  MAVEN_CLI_OPTS: "-DskipTests"
+  DOCKER_IMAGE_NAME: "gateway"
+  AWS_S3_BUCKET: "backend-challenge"
+  AWS_REGION: "us-east-2"
+
+
+build_gateway:
+  stage: build
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Compilando el microservicio gateway..."
+    - cd gateway
+    - mvn clean package $MAVEN_CLI_OPTS
+    - ls -l target/
+    - ls -l
+
+  artifacts:
+    paths:
+      - gateway/target/*.jar
+
+dockerize_gateway:
+  stage: dockerize
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "Preparando el archivo JAR para el build Docker..."
+    - mv gateway/target/gateway.jar gateway/ # Copia el JAR al nivel del Dockerfile
+    - echo "Construyendo la imagen Docker de gateway..."
+    - docker build -t $DOCKER_IMAGE_NAME:gateway-latest -f gateway/Dockerfile gateway/
+    - docker save $DOCKER_IMAGE_NAME:gateway-latest > gateway.tar
+  artifacts:
+    paths:
+      - gateway.tar
+
+
+upload_to_s3:
+  stage: upload
+  image: amazonlinux:2
+  before_script:
+    - yum install -y aws-cli
+  script:
+    - ls -l
+    - echo "Configurando AWS CLI..."
+    - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+    - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+    - aws configure set region $AWS_REGION
+    - echo "Verificando configuración de AWS CLI..."
+    - aws s3 ls
+    - echo "Subiendo imagen Docker a S3..."
+    - aws s3 cp gateway.tar s3://$AWS_S3_BUCKET/project/gateway.tar --region $AWS_REGION

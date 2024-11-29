@@ -8,6 +8,7 @@ include:
   - local: '/account-service/.gitlab-ci.yml'
   - local: '/card-service/.gitlab-ci.yml'
   - local: '/transaction-service/.gitlab-ci.yml'
+  - local: '/eureka-server/.gitlab-ci.yml'
 
 workflow:
   rules:
@@ -16,3 +17,4 @@ workflow:
         - account-service/**
         - card-service/**
         - transaction-service/**
+        - eureka-server/**
