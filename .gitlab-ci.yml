@@ -5,8 +5,10 @@ stages:
 
 include:
   - local: '/user-service/.gitlab-ci.yml'
+  - local: '/account-service/.gitlab-ci.yml'
 
 workflow:
   rules:
     - changes:
         - user-service/**
+        - account-service/**

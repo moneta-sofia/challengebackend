@@ -5,39 +5,39 @@ stages:
 
 variables:
   MAVEN_CLI_OPTS: "-DskipTests"
-  DOCKER_IMAGE_NAME: "user-service"
+  DOCKER_IMAGE_NAME: "account-service"
   AWS_S3_BUCKET: "backend-challenge"
   AWS_REGION: "us-east-2"
 
 
-build_user_service:
+build_account_service:
   stage: build
   image: maven:3.8.1-openjdk-17
   script:
-    - echo "Compilando el microservicio user-service..."
-    - cd user-service
+    - echo "Compilando el microservicio account-service..."
+    - cd account-service
     - mvn clean package $MAVEN_CLI_OPTS
     - ls -l target/
     - ls -l
 
   artifacts:
     paths:
-      - user-service/target/*.jar
+      - account-service/target/*.jar
 
-dockerize_user_service:
+dockerize_account_service:
   stage: dockerize
   image: docker:latest
   services:
     - docker:dind
   script:
     - echo "Preparando el archivo JAR para el build Docker..."
-    - mv user-service/target/user-service.jar user-service/ # Copia el JAR al nivel del Dockerfile
-    - echo "Construyendo la imagen Docker de user-service..."
-    - docker build -t $DOCKER_IMAGE_NAME:user-service-latest -f user-service/Dockerfile user-service/
-    - docker save $DOCKER_IMAGE_NAME:user-service-latest > user-service.tar
+    - mv account-service/target/account-service.jar account-service/ # Copia el JAR al nivel del Dockerfile
+    - echo "Construyendo la imagen Docker de account-service..."
+    - docker build -t $DOCKER_IMAGE_NAME:account-service-latest -f account-service/Dockerfile account-service/
+    - docker save $DOCKER_IMAGE_NAME:account-service-latest > account-service.tar
   artifacts:
     paths:
-      - user-service.tar
+      - account-service.tar
 
 
 upload_to_s3:
@@ -54,4 +54,4 @@ upload_to_s3:
     - echo "Verificando configuración de AWS CLI..."
     - aws s3 ls
     - echo "Subiendo imagen Docker a S3..."
-    - aws s3 cp user-service.tar s3://$AWS_S3_BUCKET/project/user-service.tar --region $AWS_REGION
+    - aws s3 cp account-service.tar s3://$AWS_S3_BUCKET/project/account-service.tar --region $AWS_REGION
