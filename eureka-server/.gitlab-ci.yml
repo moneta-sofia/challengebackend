@@ -40,7 +40,7 @@ dockerize_eureka_service:
       - eureka-server.tar
 
 
-upload_to_s3:
+upload_eureka_server_to_s3:
   stage: upload
   image: amazonlinux:2
   before_script:

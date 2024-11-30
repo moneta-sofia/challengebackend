@@ -20,5 +20,5 @@ workflow:
         - card-service/**
         - transaction-service/**
         - eureka-server/**
-        - cnfig-server/**
+        - config-server/**
         - gateway/**

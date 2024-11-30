@@ -40,7 +40,7 @@ dockerize_account_service:
       - account-service.tar
 
 
-upload_to_s3:
+upload_account_service_to_s3:
   stage: upload
   image: amazonlinux:2
   before_script:
