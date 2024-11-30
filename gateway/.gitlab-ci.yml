@@ -16,7 +16,7 @@ build_gateway:
   script:
     - echo "Compilando el microservicio gateway..."
     - cd gateway
-    - mvn clean package $MAVEN_CLI_OPTS
+    - mvn clean install $MAVEN_CLI_OPTS
     - ls -l target/
     - ls -l
 

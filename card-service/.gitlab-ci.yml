@@ -16,7 +16,7 @@ build_card_service:
   script:
     - echo "Compilando el microservicio card-service..."
     - cd card-service
-    - mvn clean package $MAVEN_CLI_OPTS
+    - mvn clean install $MAVEN_CLI_OPTS
     - ls -l target/
     - ls -l
 

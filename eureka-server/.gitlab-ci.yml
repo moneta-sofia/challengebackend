@@ -16,7 +16,7 @@ build_eureka_service:
   script:
     - echo "Compilando el microservicio eureka-server..."
     - cd eureka-server
-    - mvn clean package $MAVEN_CLI_OPTS
+    - mvn clean install $MAVEN_CLI_OPTS
     - ls -l target/
     - ls -l
 

@@ -16,7 +16,7 @@ build_transaction_service:
   script:
     - echo "Compilando el microservicio transaction-service..."
     - cd transaction-service
-    - mvn clean package $MAVEN_CLI_OPTS
+    - mvn clean install $MAVEN_CLI_OPTS
     - ls -l target/
     - ls -l
 

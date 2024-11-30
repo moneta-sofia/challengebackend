@@ -16,7 +16,7 @@ build_account_service:
   script:
     - echo "Compilando el microservicio account-service..."
     - cd account-service
-    - mvn clean package $MAVEN_CLI_OPTS
+    - mvn clean install $MAVEN_CLI_OPTS
     - ls -l target/
     - ls -l
 
