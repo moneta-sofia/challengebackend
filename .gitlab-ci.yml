@@ -5,20 +5,20 @@ stages:
 
 include:
   - local: '/user-service/.gitlab-ci.yml'
-#  - local: '/account-service/.gitlab-ci.yml'
-#  - local: '/card-service/.gitlab-ci.yml'
-#  - local: '/transaction-service/.gitlab-ci.yml'
-#  - local: '/eureka-server/.gitlab-ci.yml'
-#  - local: '/config-server/.gitlab-ci.yml'
-#  - local: '/gateway/.gitlab-ci.yml'
+  - local: '/account-service/.gitlab-ci.yml'
+  - local: '/card-service/.gitlab-ci.yml'
+  - local: '/transaction-service/.gitlab-ci.yml'
+  - local: '/eureka-server/.gitlab-ci.yml'
+  - local: '/config-server/.gitlab-ci.yml'
+  - local: '/gateway/.gitlab-ci.yml'
 
 workflow:
   rules:
     - changes:
         - user-service/**
-#        - account-service/**
-#        - card-service/**
-#        - transaction-service/**
-#        - eureka-server/**
-#        - config-server/**
-#        - gateway/**
+        - account-service/**
+        - card-service/**
+        - transaction-service/**
+        - eureka-server/**
+        - config-server/**
+        - gateway/**
