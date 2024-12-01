@@ -12,7 +12,6 @@ variables:
 
 build_account_service:
   stage: build
-  needs: [upload_user_service_to_s3]
   image: maven:3.8.1-openjdk-17
   script:
     - echo "Compilando el microservicio account-service..."
@@ -27,7 +26,6 @@ build_account_service:
 
 dockerize_account_service:
   stage: dockerize
-  needs: [build_account_service]
   image: docker:latest
   services:
     - docker:dind
@@ -44,7 +42,6 @@ dockerize_account_service:
 
 upload_account_service_to_s3:
   stage: upload
-  needs: [dockerize_account_service]
   image: amazonlinux:2
   before_script:
     - yum install -y aws-cli

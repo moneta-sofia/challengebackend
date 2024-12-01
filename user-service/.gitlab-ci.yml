@@ -26,7 +26,6 @@ build_user_service:
 
 dockerize_user_service:
   stage: dockerize
-  needs: [build_user_service]
   image: docker:latest
   services:
     - docker:dind
@@ -43,7 +42,6 @@ dockerize_user_service:
 
 upload_user_service_to_s3:
   stage: upload
-  needs: [dockerize_user_service]
   image: amazonlinux:2
   before_script:
     - yum install -y aws-cli
