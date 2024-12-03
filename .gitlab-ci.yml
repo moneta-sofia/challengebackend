@@ -8,111 +8,267 @@ stages:
   - build_account
   - dockerize_account
   - upload_account
-  - build_config
-  - dockerize_config
-  - upload_config
+  - build_config_server
+  - dockerize_config_server
+  - upload_config_server
   - build_gateway
   - dockerize_gateway
   - upload_gateway
-  - build_card
-  - dockerize_card
-  - upload_card
-  - build_transaction
-  - dockerize_transaction
-  - upload_transaction
+  - build_card_service
+  - dockerize_card_service
+  - upload_card_service
+  - build_transaction_service
+  - dockerize_transaction_service
+  - upload_transaction_service
 
-.build_template: &build_template
-  stage: build
+variables:
+  MAVEN_CLI_OPTS: "-DskipTests"
+  AWS_S3_BUCKET: "backend-challenge"
+  AWS_REGION: "us-east-2"
+
+# Jobs de Eureka
+build_eureka_service:
+  stage: build_eureka
   image: maven:3.8.1-openjdk-17
   script:
-    - echo "Compilando el microservicio $SERVICE_NAME..."
-    - cd $SERVICE_NAME
+    - echo "Compilando el microservicio eureka-server..."
+    - cd eureka-server
     - mvn clean install $MAVEN_CLI_OPTS
   artifacts:
     paths:
-      - $SERVICE_NAME/target/*.jar
+      - eureka-server/target/*.jar
 
-build_config_server:
-  <<: *build_template
-  variables:
-    SERVICE_NAME: config-server
-
-build_gateway:
-  <<: *build_template
-  variables:
-    SERVICE_NAME: gateway
-
-build_card_service:
-  <<: *build_template
-  variables:
-    SERVICE_NAME: card-service
-
-build_transaction_service:
-  <<: *build_template
-  variables:
-    SERVICE_NAME: transaction-service
-
-.dockerize_template: &dockerize_template
-  stage: dockerize
+dockerize_eureka_service:
+  stage: dockerize_eureka
+  needs:
+    - build_eureka_service
   image: docker:latest
   services:
     - docker:dind
   script:
-    - mv $SERVICE_NAME/target/$SERVICE_NAME.jar $SERVICE_NAME/
-    - docker build -t $DOCKER_IMAGE_NAME:$SERVICE_NAME-latest -f $SERVICE_NAME/Dockerfile $SERVICE_NAME/
-    - docker save $DOCKER_IMAGE_NAME:$SERVICE_NAME-latest > $SERVICE_NAME.tar
+    - mv eureka-server/target/eureka-server.jar eureka-server/
+    - docker build -t eureka-server:eureka-server-latest -f eureka-server/Dockerfile eureka-server/
+    - docker save eureka-server:eureka-server-latest > eureka-server.tar
   artifacts:
     paths:
-      - $SERVICE_NAME.tar
+      - eureka-server.tar
 
-dockerize_config_server:
-  <<: *dockerize_template
-  variables:
-    SERVICE_NAME: config-server
-    DOCKER_IMAGE_NAME: config-server
-
-dockerize_gateway:
-  <<: *dockerize_template
-  variables:
-    SERVICE_NAME: gateway
-    DOCKER_IMAGE_NAME: gateway
-
-dockerize_card_service:
-  <<: *dockerize_template
-  variables:
-    SERVICE_NAME: card-service
-    DOCKER_IMAGE_NAME: card-service
-
-dockerize_transaction_service:
-  <<: *dockerize_template
-  variables:
-    SERVICE_NAME: transaction-service
-    DOCKER_IMAGE_NAME: transaction-service
-
-.upload_template: &upload_template
-  stage: upload
+upload_eureka_service:
+  stage: upload_eureka
+  needs:
+    - dockerize_eureka_service
   image: amazonlinux:2
   before_script:
     - yum install -y aws-cli
   script:
-    - aws s3 cp $SERVICE_NAME.tar s3://$AWS_S3_BUCKET/project/$SERVICE_NAME.tar --region $AWS_REGION
+    - aws s3 cp eureka-server.tar s3://$AWS_S3_BUCKET/project/eureka-server.tar --region $AWS_REGION
 
-upload_config_service_to_s3:
-  <<: *upload_template
-  variables:
-    SERVICE_NAME: config-server
+# Jobs de User
+build_user_service:
+  stage: build_user
+  needs:
+    - upload_eureka_service
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Compilando el microservicio user-service..."
+    - cd user-service
+    - mvn clean install $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - user-service/target/*.jar
 
-upload_gateway_to_s3:
-  <<: *upload_template
-  variables:
-    SERVICE_NAME: gateway
+dockerize_user_service:
+  stage: dockerize_user
+  needs:
+    - build_user_service
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - mv user-service/target/user-service.jar user-service/
+    - docker build -t user-service:user-service-latest -f user-service/Dockerfile user-service/
+    - docker save user-service:user-service-latest > user-service.tar
+  artifacts:
+    paths:
+      - user-service.tar
 
-upload_card_service_to_s3:
-  <<: *upload_template
-  variables:
-    SERVICE_NAME: card-service
+upload_user_service:
+  stage: upload_user
+  needs:
+    - dockerize_user_service
+  image: amazonlinux:2
+  before_script:
+    - yum install -y aws-cli
+  script:
+    - aws s3 cp user-service.tar s3://$AWS_S3_BUCKET/project/user-service.tar --region $AWS_REGION
 
-upload_transaction_service_to_s3:
-  <<: *upload_template
-  variables:
-    SERVICE_NAME: transaction-service
+# Jobs de Account
+build_account_service:
+  stage: build_account
+  needs:
+    - upload_user_service
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Compilando el microservicio account-service..."
+    - cd account-service
+    - mvn clean install $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - account-service/target/*.jar
+
+dockerize_account_service:
+  stage: dockerize_account
+  needs:
+    - build_account_service
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - mv account-service/target/account-service.jar account-service/
+    - docker build -t account-service:account-service-latest -f account-service/Dockerfile account-service/
+    - docker save account-service:account-service-latest > account-service.tar
+  artifacts:
+    paths:
+      - account-service.tar
+
+upload_account_service:
+  stage: upload_account
+  needs:
+    - dockerize_account_service
+  image: amazonlinux:2
+  before_script:
+    - yum install -y aws-cli
+  script:
+    - aws s3 cp account-service.tar s3://$AWS_S3_BUCKET/project/account-service.tar --region $AWS_REGION
+
+# Jobs de Config Server
+build_config_server:
+  stage: build_config_server
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Compilando el microservicio config-server..."
+    - cd config-server
+    - mvn clean install $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - config-server/target/*.jar
+
+dockerize_config_server:
+  stage: dockerize_config_server
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - mv config-server/target/config-server.jar config-server/
+    - docker build -t config-server:config-server-latest -f config-server/Dockerfile config-server/
+    - docker save config-server:config-server-latest > config-server.tar
+  artifacts:
+    paths:
+      - config-server.tar
+
+upload_config_server:
+  stage: upload_config_server
+  image: amazonlinux:2
+  before_script:
+    - yum install -y aws-cli
+  script:
+    - aws s3 cp config-server.tar s3://$AWS_S3_BUCKET/project/config-server.tar --region $AWS_REGION
+
+# Jobs de Gateway
+build_gateway:
+  stage: build_gateway
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Compilando el microservicio gateway..."
+    - cd gateway
+    - mvn clean install $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - gateway/target/*.jar
+
+dockerize_gateway:
+  stage: dockerize_gateway
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - mv gateway/target/gateway.jar gateway/
+    - docker build -t gateway:gateway-latest -f gateway/Dockerfile gateway/
+    - docker save gateway:gateway-latest > gateway.tar
+  artifacts:
+    paths:
+      - gateway.tar
+
+upload_gateway:
+  stage: upload_gateway
+  image: amazonlinux:2
+  before_script:
+    - yum install -y aws-cli
+  script:
+    - aws s3 cp gateway.tar s3://$AWS_S3_BUCKET/project/gateway.tar --region $AWS_REGION
+
+# Jobs de Card Service
+build_card_service:
+  stage: build_card_service
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Compilando el microservicio card-service..."
+    - cd card-service
+    - mvn clean install $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - card-service/target/*.jar
+
+dockerize_card_service:
+  stage: dockerize_card_service
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - mv card-service/target/card-service.jar card-service/
+    - docker build -t card-service:card-service-latest -f card-service/Dockerfile card-service/
+    - docker save card-service:card-service-latest > card-service.tar
+  artifacts:
+    paths:
+      - card-service.tar
+
+upload_card_service:
+  stage: upload_card_service
+  image: amazonlinux:2
+  before_script:
+    - yum install -y aws-cli
+  script:
+    - aws s3 cp card-service.tar s3://$AWS_S3_BUCKET/project/card-service.tar --region $AWS_REGION
+
+# Jobs de Transaction Service
+build_transaction_service:
+  stage: build_transaction_service
+  image: maven:3.8.1-openjdk-17
+  script:
+    - echo "Compilando el microservicio transaction-service..."
+    - cd transaction-service
+    - mvn clean install $MAVEN_CLI_OPTS
+  artifacts:
+    paths:
+      - transaction-service/target/*.jar
+
+dockerize_transaction_service:
+  stage: dockerize_transaction_service
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - mv transaction-service/target/transaction-service.jar transaction-service/
+    - docker build -t transaction-service:transaction-service-latest -f transaction-service/Dockerfile transaction-service/
+    - docker save transaction-service:transaction-service-latest > transaction-service.tar
+  artifacts:
+    paths:
+      - transaction-service.tar
+
+upload_transaction_service:
+  stage: upload_transaction_service
+  image: amazonlinux:2
+  before_script:
+    - yum install -y aws-cli
+  script:
+    - aws s3 cp transaction-service.tar s3://
