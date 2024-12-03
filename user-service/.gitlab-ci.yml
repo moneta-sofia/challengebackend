@@ -12,6 +12,8 @@ variables:
 
 build_user_service:
   stage: build
+  needs:
+  - upload_eureka_server_to_s3
   image: maven:3.8.1-openjdk-17
   script:
     - echo "Compilando el microservicio user-service..."
@@ -26,6 +28,8 @@ build_user_service:
 
 dockerize_user_service:
   stage: dockerize
+  needs:
+    - build_user_service
   image: docker:latest
   services:
     - docker:dind
@@ -42,6 +46,8 @@ dockerize_user_service:
 
 upload_user_service_to_s3:
   stage: upload
+  needs:
+    - dockerize_user_service
   image: amazonlinux:2
   before_script:
     - yum install -y aws-cli

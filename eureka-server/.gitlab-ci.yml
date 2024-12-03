@@ -42,6 +42,8 @@ dockerize_eureka_service:
 
 upload_eureka_server_to_s3:
   stage: upload
+  needs:
+    - dockerize_eureka
   image: amazonlinux:2
   before_script:
     - yum install -y aws-cli
