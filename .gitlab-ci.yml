@@ -26,7 +26,6 @@ variables:
   AWS_S3_BUCKET: "backend-challenge"
   AWS_REGION: "us-east-2"
 
-
 # Jobs de Eureka
 build_eureka_service:
   stage: build_eureka
@@ -272,4 +271,4 @@ upload_transaction_service:
   before_script:
     - yum install -y aws-cli
   script:
-    - aws s3 cp transaction-service.tar s3://
+    - aws s3 cp transaction-service.tar s3://$AWS_S3_BUCKET/project/transaction-service.tar --region $AWS_REGION
