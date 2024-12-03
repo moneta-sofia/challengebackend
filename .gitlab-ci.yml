@@ -21,7 +21,6 @@ stages:
   - dockerize_transaction
   - upload_transaction
 
-
 .build_template: &build_template
   stage: build
   image: maven:3.8.1-openjdk-17
@@ -53,7 +52,6 @@ build_transaction_service:
   variables:
     SERVICE_NAME: transaction-service
 
-
 .dockerize_template: &dockerize_template
   stage: dockerize
   image: docker:latest
@@ -79,7 +77,17 @@ dockerize_gateway:
     SERVICE_NAME: gateway
     DOCKER_IMAGE_NAME: gateway
 
+dockerize_card_service:
+  <<: *dockerize_template
+  variables:
+    SERVICE_NAME: card-service
+    DOCKER_IMAGE_NAME: card-service
 
+dockerize_transaction_service:
+  <<: *dockerize_template
+  variables:
+    SERVICE_NAME: transaction-service
+    DOCKER_IMAGE_NAME: transaction-service
 
 .upload_template: &upload_template
   stage: upload
@@ -99,3 +107,12 @@ upload_gateway_to_s3:
   variables:
     SERVICE_NAME: gateway
 
+upload_card_service_to_s3:
+  <<: *upload_template
+  variables:
+    SERVICE_NAME: card-service
+
+upload_transaction_service_to_s3:
+  <<: *upload_template
+  variables:
+    SERVICE_NAME: transaction-service
