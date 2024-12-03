@@ -26,6 +26,7 @@ variables:
   AWS_S3_BUCKET: "backend-challenge"
   AWS_REGION: "us-east-2"
 
+
 # Jobs de Eureka
 build_eureka_service:
   stage: build_eureka
