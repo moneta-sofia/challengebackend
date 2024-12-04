@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@FeignClient(name = "card-service", url = "http://card-service:8087")
+@FeignClient(name = "card-service", url = "http://localhost:8087")
 public interface IFeignCardRepository {
 
     @PostMapping("/cards/")

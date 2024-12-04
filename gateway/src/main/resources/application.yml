@@ -1,9 +1,15 @@
 server:
   port: 8083
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        security: DEBUG
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://eureka-server:8761/eureka
+      defaultZone: http://localhost:8761/eureka
 spring:
   application:
     name: gateway
@@ -11,27 +17,27 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://keycloak:8080/realms/BackendChallenge
+          issuer-uri: http://localhost:8080/realms/BackendChallenge
   cloud:
     gateway:
       routes:
         - id: user-service
-          uri: lb://USER-SERVICE
+          uri: http://localhost:8081
           predicates:
             - Path=/users/**
 
         - id: account-service
-          uri: lb://ACCOUNT-SERVICE
+          uri: http://localhost:8085
           predicates:
             - Path=/accounts/**
 
         - id: transaction-service
-          uri: lb://TRANSACTION-SERVICE
+          uri: http://localhost:8086
           predicates:
             - Path=/transactions/**
 
         - id: card-service
-          uri: lb://CARD-SERVICE
+          uri: http://localhost:8087
           predicates:
             - Path=/cards/**
 

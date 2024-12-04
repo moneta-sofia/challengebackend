@@ -27,7 +27,7 @@
                     )
                     .csrf(csrf -> csrf.disable())
                     .oauth2ResourceServer(oauth2 -> oauth2
-                            .jwt(jwt -> jwt.jwkSetUri("http://keycloak:8080/realms/BackendChallenge/protocol/openid-connect/certs"))
+                            .jwt(jwt -> jwt.jwkSetUri("http://localhost:8080/realms/BackendChallenge/protocol/openid-connect/certs"))
                     );
             return http.build();
         }
@@ -35,7 +35,7 @@
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.addAllowedOrigin("http://localhost:3000");
+            configuration.addAllowedOrigin("https://challengebackend-front-jz37wv8rg-elxrojos-projects.vercel.app");
             configuration.addAllowedMethod("*");
             configuration.addAllowedHeader("*");
             configuration.setAllowCredentials(true);

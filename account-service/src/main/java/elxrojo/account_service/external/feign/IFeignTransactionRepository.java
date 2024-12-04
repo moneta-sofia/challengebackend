@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "transaction-service", url = "http://transaction-service:8086")
+@FeignClient(name = "transaction-service", url = "http://localhost:8086")
 public interface IFeignTransactionRepository {
 
     @GetMapping("/transactions/{accountId}")
