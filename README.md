@@ -34,7 +34,7 @@ Este es el diagrama UML final que representa la estructura completa de la base d
 
 ![](https://i.imgur.com/XDcFxc4.png)
  
-Mientras qe en este grafico se puede ver e interpretar la arquitectura general del sistema, que muestra cómo se comunican entre sí los servicios.
+Mientras que en este gráfico se puede ver e interpretar la arquitectura general del sistema, que muestra cómo se comunican entre sí los servicios.
 
 ![](https://i.imgur.com/JMjvI9P.png)
 > [!NOTE]  
@@ -81,6 +81,21 @@ Accede al directorio del proyecto clonado
 ```bash
   cd challengebackend
 ```
+Ejecutar los servicios en el siguiente orden
+
+#### 1. Eureka Server
+#### 2. Gateway
+#### 3. User Service
+#### 4. Account Service
+#### 5. Card Service
+#### 6. Transaction service
+
+#### x. Config Server (en refactorización)
+
+> [!NOTE]  
+> ¿Te gustaría experimentar las funcionalidades desde un frontend? Accede al siguiente enlace: [**`Frontend del proyecto`**](https://challengebackend-front-jz37wv8rg-elxrojos-projects.vercel.app/)
+
+
 > [!IMPORTANT] 
 > Asegúrate de configurar las variables de entorno necesarias para el proyecto.
 
