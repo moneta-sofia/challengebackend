@@ -106,6 +106,9 @@ Por último, levanta los servicios con docker
 ```
   docker-compose up -d
 ```
+> [!IMPORTANT]
+> Al iniciar la imagen de Docker de Keycloak, asegúrate de importar las configuraciones necesarias para garantizar una correcta autorización y autenticación. [realm-export.json](./realm-export.json)
+
 
 ## Tests
 
