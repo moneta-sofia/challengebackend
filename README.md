@@ -93,7 +93,7 @@ Ejecutar los servicios en el siguiente orden
 #### x. Config Server (en refactorización)
 
 > [!NOTE]  
-> ¿Te gustaría experimentar las funcionalidades desde un frontend? Accede al siguiente enlace: [**`Frontend del proyecto`**](https://challengebackend-front-jz37wv8rg-elxrojos-projects.vercel.app/)
+> ¿Te gustaría experimentar las funcionalidades desde un frontend? Accede al siguiente enlace: [**`Frontend del proyecto`**](https://challengebackend-front-jz37wv8rg-elxrojos-projects.vercel.app/) (Desactivar adblock)
 
 
 > [!IMPORTANT] 
